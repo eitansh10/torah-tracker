@@ -975,30 +975,22 @@ export default function App() {
   useEffect(()=>{
     async function load(){
       try{
-        const[ps,gs,ss,as,ad]=await Promise.all([
-          window.storage.get("p3").catch(()=>null),
-          window.storage.get("g3").catch(()=>null),
-          window.storage.get("s3").catch(()=>null),
-          window.storage.get("a3").catch(()=>null),
-          window.storage.get("ad3").catch(()=>null),
-        ]);
-        if(ps?.value){const d=desProg(JSON.parse(ps.value));if(d)setProg(d);}
-        if(gs?.value) setGoals(JSON.parse(gs.value));
-        if(ss?.value) setSett(JSON.parse(ss.value));
-        if(as?.value) setActivity(JSON.parse(as.value));
-        if(ad?.value) setActiveDays(JSON.parse(ad.value));
-      }catch{}
+        const ps = localStorage.getItem("prog_v2");
+        const gs = localStorage.getItem("goals_v2");
+        const ss = localStorage.getItem("sett_v2");
+        
+        if(ps){const d=desProg(JSON.parse(ps));if(d)setProg(d);}
+        if(gs) setGoals(JSON.parse(gs));
+        if(ss) setSett(JSON.parse(ss));
+      } catch{}
       setLoaded(true);
     }
     load();
   },[]);
 
-  useEffect(()=>{if(!loaded)return;window.storage.set("p3",JSON.stringify(serProg(prog))).catch(()=>{});},[prog,loaded]);
-  useEffect(()=>{if(!loaded)return;window.storage.set("g3",JSON.stringify(goals)).catch(()=>{});},[goals,loaded]);
-  useEffect(()=>{if(!loaded)return;window.storage.set("s3",JSON.stringify(sett)).catch(()=>{});},[sett,loaded]);
-  useEffect(()=>{if(!loaded)return;window.storage.set("a3",JSON.stringify(activity.slice(0,50))).catch(()=>{});},[activity,loaded]);
-  useEffect(()=>{if(!loaded)return;window.storage.set("ad3",JSON.stringify(activeDays.slice(-60))).catch(()=>{});},[activeDays,loaded]);
-
+  useEffect(()=>{if(!loaded)return;localStorage.setItem("prog_v2",JSON.stringify(serProg(prog)));},[prog,loaded]);
+  useEffect(()=>{if(!loaded)return;localStorage.setItem("goals_v2",JSON.stringify(goals));},[goals,loaded]);
+  useEffect(()=>{if(!loaded)return;localStorage.setItem("sett_v2",JSON.stringify(sett));},[sett,loaded]);
   function onActivity(item) {
     const now=new Date();
     const time=now.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});
