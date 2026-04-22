@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from "react";
+import { Analytics } from '@vercel/analytics/react';
 
 /* ── HEBREW DATE (proper letters, not digits) ── */
 function toHeb(n) {
@@ -1076,6 +1077,7 @@ export default function App() {
           </button>
         ))}
       </div>
+      <Analytics />
     </div>
   );
 }
