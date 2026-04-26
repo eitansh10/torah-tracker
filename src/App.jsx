@@ -207,21 +207,18 @@ function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 function getSefariaUrl(cat, bookName, key, tMode) {
   if(!bookName || !key) return "";
   try {
-    const engBook = SEFARIA_MAP[bookName] || encodeURIComponent(bookName.replace(/ /g, "_"));
-    let k = String(key);
-    
-    if(cat === "gemara") return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
-    if(cat === "mishna") return `https://www.sefaria.org.il/Mishnah_${engBook}.${k.replace(':', '.')}?lang=he`;
-    if(cat === "tanach") {
-      let ch = k;
+    let ref = "";
+    if(cat === "gemara") ref = `${bookName} ${key}`;
+    else if(cat === "mishna") ref = `משנה ${bookName} ${String(key).replace(':', ' ')}`;
+    else if(cat === "tanach") {
+      let ch = key;
       if(tMode === "parshiot") ch = PARASHA_CHAPTERS[key]?.[0] || 1;
-      return `https://www.sefaria.org.il/${engBook}.${ch}?lang=he`;
+      ref = `${bookName} ${ch}`;
     }
-    if(["musar", "ravKook", "machshava"].includes(cat)) {
-      if (bookName === "נפש החיים") return `https://www.sefaria.org.il/${engBook}%2C_Gate_I.${k}?lang=he`;
-      return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
-    }
-    return "";
+    else if(["musar", "ravKook", "machshava"].includes(cat)) ref = `${bookName} ${key}`;
+    else return "";
+    
+    return "https://www.sefaria.org.il/" + encodeURIComponent(ref);
   } catch(e) { return ""; }
 }
 
@@ -347,7 +344,7 @@ function LegalSheet({show, onClose, type, T}) {
       <div style={{fontSize:T.f(13), color:T.muted, lineHeight:1.6}}>
         {type === 'terms' ? (
           <>
-            <p>ברוכים הבאים לאפליקציית מעקב למידה תורנית.</p>
+            <p>ברוכים הבאים לאפליקציית Torah Track.</p>
             <p>השימוש באפליקציה זו מותנה בהסכמתך לתנאים הבאים. האפליקציה נועדה לסייע למשתמשים לעקוב אחר התקדמות הלימוד שלהם.</p>
             <p>אנו שומרים לעצמנו את הזכות לעדכן או לשנות את האפליקציה בכל עת. אין באפליקציה משום הבטחה או התחייבות לגבי זמינות רצופה של הנתונים.</p>
           </>
@@ -995,7 +992,7 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
         </div>
       </div>
       <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:2,marginTop:24}}>
-        <div style={{fontWeight:800,color:T.gold||GOLD,fontSize:T.f(14)}}>מעקב למידה תורנית</div>
+        <div style={{fontWeight:800,color:T.gold||GOLD,fontSize:T.f(14)}}>Torah Track</div>
         <div>{T.UI.developedBy}</div>
         <div>{T.UI.allRights}</div>
       </div>
@@ -1016,7 +1013,7 @@ function InstallGuide({ T, onClose }) {
         <div style={{display:"flex", justifyContent:"center", color:T.gold||GOLD, marginBottom:16}}><IcoStar /></div>
         <h2 style={{margin:"0 0 12px 0", fontSize:T.f(20), color:T.navy}}>התקן כאפליקציה</h2>
         <p style={{margin:"0 0 24px 0", fontSize:T.f(14), color:T.muted, lineHeight:1.5}}>
-          הוסף את מעקב הלמידה למסך הבית שלך לחוויה מהירה וחלקה יותר, בדיוק כמו אפליקציה רגילה.
+          הוסף את Torah Track למסך הבית שלך לחוויה מהירה וחלקה יותר, בדיוק כמו אפליקציה רגילה.
         </p>
         
         <div style={{background:T.input, padding:"16px", borderRadius:12, marginBottom:24, textAlign:T.isEn?"left":"right"}}>
@@ -1075,7 +1072,7 @@ function AuthScreen({onLogin,T}){
     <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,gap:20,background:T.bg}}>
       <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}><IcoBook/></div>
       <div style={{textAlign:"center"}}>
-        <div style={{fontSize:T.f(26),fontWeight:900,color:T.navy,marginBottom:4}}>מעקב למידה תורנית</div>
+        <div style={{fontSize:T.f(26),fontWeight:900,color:T.navy,marginBottom:4}}>Torah Track</div>
         <div style={{fontSize:T.f(12),color:GOLD,fontWeight:600,marginBottom:8}}>{T.UI.developedBy}</div>
       </div>
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
@@ -1168,7 +1165,7 @@ export default function App(){
 
   useEffect(() => {
     // מנקה זבל מגרסאות קודמות
-    ["u11", "u10", "u9", "u8", "u7", "p11"].forEach(k => localStorage.removeItem(k));
+    ["u11", "u10", "u9", "u8", "u7", "p11", "p12"].forEach(k => localStorage.removeItem(k));
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
