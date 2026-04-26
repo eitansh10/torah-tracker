@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ── ICONS (Clean SVGs with A11y) ── */
+/* ── ICONS (Clean SVGs) ── */
 const IcoBook = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
 const IcoFlame = ()=><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>;
 const IcoStar = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
@@ -113,14 +113,14 @@ const PARSHIOT = [
 ];
 
 const HALACHOT = [
-  "קריאת שמע של ערבית — מצווה לקרוא קריאת שמע בלילה, ויש לקרוא את שלוש פרשיותיה.",
-  "תפילת שחרית — חייב אדם להתפלל שחרית בכוונה, ולא יתפלל כשהוא עייף או ישנוני.",
-  "ברכת המזון — חיוב דאורייתא לברך ברכת המזון אחר כל אכילת לחם בשיעור כביצה.",
-  "מזוזה — כל פתח של בית חייב במזוזה, ויש לקבוע אותה בתוך שליש העליון של הפתח.",
-  "שבת — מצוות עשה לזכור את יום השבת ולקדש אותו בדברים.",
-  "כיבוד אב ואם — מצוות עשה לכבד אב ואם, ואיסור חמור לבזותם.",
-  "צדקה — חייב אדם לתת צדקה לפחות עשירית מהכנסותיו.",
-  "לשון הרע — אסור מדאורייתא לדבר לשון הרע, אפילו אמת.",
+  { t: "קריאת שמע של ערבית — מצווה לקרוא קריאת שמע בלילה, ויש לקרוא את שלוש פרשיותיה.", s: "שולחן ערוך, אורח חיים רל״ה" },
+  { t: "תפילת שחרית — חייב אדם להתפלל שחרית בכוונה, ולא יתפלל כשהוא עייף או ישנוני.", s: "שולחן ערוך, אורח חיים פ״ט" },
+  { t: "ברכת המזון — חיוב דאורייתא לברך ברכת המזון אחר כל אכילת לחם בשיעור כביצה.", s: "שולחן ערוך, אורח חיים קפ״ד" },
+  { t: "מזוזה — כל פתח של בית חייב במזוזה, ויש לקבוע אותה בתוך שליש העליון של הפתח.", s: "שולחן ערוך, יורה דעה רפ״ט" },
+  { t: "שבת — מצוות עשה לזכור את יום השבת ולקדש אותו בדברים.", s: "שולחן ערוך, אורח חיים רע״א" },
+  { t: "כיבוד אב ואם — מצוות עשה לכבד אב ואם, ואיסור חמור לבזותם.", s: "שולחן ערוך, יורה דעה ר״מ" },
+  { t: "צדקה — חייב אדם לתת צדקה לפחות עשירית מהכנסותיו.", s: "שולחן ערוך, יורה דעה רמ״ט" },
+  { t: "לשון הרע — אסור מדאורייתא לדבר לשון הרע, אפילו אמת.", s: "חפץ חיים, הלכות איסור לשון הרע א" },
 ];
 
 /* ── DATA ── */
@@ -195,10 +195,13 @@ function bkTotal(cat,i,custom) {
   if(cat==="custom") return (custom||[])[i]?.chapters||0;
   return 0;
 }
+
+// תוקן באג מתמטי שחישב את התנ"ך בטעות גם עבור שאר הספרים
 function calcDone(prog,cat,i) {
   if(cat==="gemara"){const g=prog.gemara?.[i];if(!g)return 0;if(g.full)return GEMARA[i]?.d||0;return Math.round((g.done?.size||0)/2);}
   if(cat==="mishna"){const m=prog.mishna?.[i];if(!m)return 0;if(m.full)return totalMs(i);return m.done?.size||0;}
   if(cat==="custom") return prog.custom?.[i]?.done?.size||0;
+  if(cat==="tanach") return prog.tanach?.[i]?.size||0;
   return prog[cat]?.[i]?.size||0;
 }
 function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
@@ -207,18 +210,21 @@ function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 function getSefariaUrl(cat, bookName, key, tMode) {
   if(!bookName || !key) return "";
   try {
-    let ref = "";
-    if(cat === "gemara") ref = `${bookName} ${key}`;
-    else if(cat === "mishna") ref = `משנה ${bookName} ${String(key).replace(':', ' ')}`;
-    else if(cat === "tanach") {
-      let ch = key;
-      if(tMode === "parshiot") ch = PARASHA_CHAPTERS[key]?.[0] || 1;
-      ref = `${bookName} ${ch}`;
-    }
-    else if(["musar", "ravKook", "machshava"].includes(cat)) ref = `${bookName} ${key}`;
-    else return "";
+    const engBook = SEFARIA_MAP[bookName] || encodeURIComponent(bookName.replace(/ /g, "_"));
+    let k = String(key);
     
-    return "https://www.sefaria.org.il/" + encodeURIComponent(ref);
+    if(cat === "gemara") return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
+    if(cat === "mishna") return `https://www.sefaria.org.il/Mishnah_${engBook}.${k.replace(':', '.')}?lang=he`;
+    if(cat === "tanach") {
+      let ch = k;
+      if(tMode === "parshiot") ch = PARASHA_CHAPTERS[key]?.[0] || 1;
+      return `https://www.sefaria.org.il/${engBook}.${ch}?lang=he`;
+    }
+    if(["musar", "ravKook", "machshava"].includes(cat)) {
+      if (bookName === "נפש החיים") return `https://www.sefaria.org.il/${engBook}%2C_Gate_I.${k}?lang=he`;
+      return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
+    }
+    return "";
   } catch(e) { return ""; }
 }
 
@@ -442,7 +448,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     return false;
   }
 
-  function toggle(key){
+  function toggle(key, forceLabel){
     const wasOn=isOn(key);
     setProg(prev=>{
       if(cat==="gemara"){const g={...prev.gemara},cur=g[idx]||{done:new Set(),full:false};let nd=new Set(cur.done);if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const allOn=ak.every(k=>nd.has(k));allOn?ak.forEach(k=>nd.delete(k)):ak.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}g[idx]={done:nd,full:false};return{...prev,gemara:g};}
@@ -461,7 +467,10 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       }
       const cp={...prev[cat]},nd=new Set(cp[idx]||[]);nd.has(key)?nd.delete(key):nd.add(key);cp[idx]=nd;return{...prev,[cat]:cp};
     });
-    if(!wasOn) onActivity({cat,bk:item?.n||"",label:String(key)});
+    if(!wasOn) {
+        const itemLabel = forceLabel || items.find(i=>i.key===key)?.label || String(key);
+        onActivity({cat,bk:item?.n||"",label:itemLabel});
+    }
   }
 
   function setGFull(full){setProg(prev=>{const g={...prev.gemara},cur=g[idx]||{done:new Set()};if(full){const nd=new Set();const D=GEMARA[idx]?.d||0;for(let d=2;d<=D;d++){nd.add(`${d}a`);nd.add(`${d}b`);}g[idx]={done:nd,full:true};}else g[idx]={done:cur.done,full:false};return{...prev,gemara:g};});if(full)onActivity({cat,bk:item?.n||"",label:T.UI.completed});}
@@ -544,7 +553,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
                 
                 return (
                   <div key={String(it.key)} style={{position:"relative", height:"100%"}}>
-                    <button onClick={()=>toggle(it.key)} style={{width:"100%",height:"100%",padding:isParsh?"14px 4px":"11px 4px",border:`2px solid ${on?col:part?col:T.border}`,borderRadius:10,fontSize:T.f(12),cursor:"pointer",background:bg,color:fc,fontWeight:on||part?700:400,minHeight:isParsh?50:44,fontFamily:T.font,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2,boxSizing:"border-box"}}>
+                    <button onClick={()=>toggle(it.key, it.label)} style={{width:"100%",height:"100%",padding:isParsh?"14px 4px":"11px 4px",border:`2px solid ${on?col:part?col:T.border}`,borderRadius:10,fontSize:T.f(12),cursor:"pointer",background:bg,color:fc,fontWeight:on||part?700:400,minHeight:isParsh?50:44,fontFamily:T.font,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2,boxSizing:"border-box"}}>
                       <span>{it.label}</span>
                       {it.sub&&<span style={{fontSize:T.f(9),opacity:.7}}>{it.sub}</span>}
                       {chzN>0&&<span style={{fontSize:10,background:"rgba(255,255,255,0.35)",borderRadius:10,padding:"1px 6px",marginTop:2}}>×{chzN}</span>}
@@ -590,7 +599,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 }
 
 /* ── HOME ── */
-function HomeScreen({prog,goals,T,cc,setTab,streak,activity}){
+function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
   const today=useMemo(()=>hebDateFull(),[]);
   const[now,setNow]=useState(new Date());
   useEffect(()=>{const id=setInterval(()=>setNow(new Date()),30000);return()=>clearInterval(id);},[]);
@@ -605,7 +614,7 @@ function HomeScreen({prog,goals,T,cc,setTab,streak,activity}){
       .then(r=>r.json()).then(d=>{
         const parasha=d.items?.find(i=>i.category==="parashat"||i.category==="parasha");
         if(parasha){
-           const cleanTitle = parasha.title.replace(/[\u0591-\u05C7]/g, '');
+           const cleanTitle = parasha.title.replace(/[\u0591-\u05C7]/g, '').trim();
            setShabbatData({parasha:cleanTitle});
         }
       }).catch(()=>{});
@@ -645,6 +654,21 @@ function HomeScreen({prog,goals,T,cc,setTab,streak,activity}){
   const hh=String(now.getHours()).padStart(2,"0"), mm2=String(now.getMinutes()).padStart(2,"0");
   function fmtTime(iso){if(!iso)return"";try{return new Date(iso).toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});}catch{return "";}}
 
+  function goToDafYomi() {
+    const idx = GEMARA.findIndex(m => m.n === dafYomi.masechet);
+    if(idx !== -1) setDetail({cat: 'gemara', idx});
+  }
+
+  function goToParasha() {
+    if(!shabbatData) return;
+    const pName = shabbatData.parasha.replace('פרשת ', '').trim();
+    const bookIdx = PARSHIOT.findIndex(book => book.includes(pName));
+    if(bookIdx !== -1) {
+      setProg(prev => ({...prev, tmode: {...prev.tmode, [bookIdx]: 'parshiot'}}));
+      setDetail({cat: 'tanach', idx: bookIdx});
+    }
+  }
+
   return (
     <div style={{flex:1,overflow:"auto",background:T.bg}}>
       <div style={{background:`linear-gradient(160deg,#0A1E3A 0%,${NAVY} 60%,#173A5A 100%)`,padding:"22px 18px",position:"relative",overflow:"hidden"}}>
@@ -665,12 +689,12 @@ function HomeScreen({prog,goals,T,cc,setTab,streak,activity}){
           <div style={{fontSize:T.f(11),color:"rgba(255,255,255,0.6)",fontStyle:"italic",borderRight:T.isEn?"none":`2px solid ${GOLD}`,borderLeft:T.isEn?`2px solid ${GOLD}`:"none",paddingRight:T.isEn?0:9,paddingLeft:T.isEn?9:0,marginBottom:14,lineHeight:1.5}}>"{quote}"</div>
           
           <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:4}}>
-            {dafYomi.masechet&&<div style={{flex:1, minWidth:"130px", background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"8px 12px",border:`1px solid rgba(201,168,76,0.3)`}}>
+            {dafYomi.masechet&&<div onClick={goToDafYomi} style={{flex:1, minWidth:"130px", background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"8px 12px",border:`1px solid rgba(201,168,76,0.3)`, cursor:"pointer"}}>
               <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:2}}><IcoBook/> {T.UI.dafYomi}</div>
               <div style={{fontSize:T.f(14),fontWeight:700,color:"#fff"}}>{dafYomi.masechet} {T.isEn?"Daf":"דף"} {dafYomi.dafHeb}</div>
             </div>}
             
-            {shabbatData?.parasha&&<div style={{flex:1, minWidth:"130px", background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"8px 12px",border:`1px solid rgba(201,168,76,0.2)`}}>
+            {shabbatData?.parasha&&<div onClick={goToParasha} style={{flex:1, minWidth:"130px", background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"8px 12px",border:`1px solid rgba(201,168,76,0.2)`, cursor:"pointer"}}>
               <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:2}}><IcoStar/> {T.UI.parasha}</div>
               <div style={{fontSize:T.f(13),fontWeight:600,color:"#fff"}}>{shabbatData.parasha}</div>
             </div>}
@@ -699,8 +723,9 @@ function HomeScreen({prog,goals,T,cc,setTab,streak,activity}){
         </div>
 
         <div style={{background:T.card,borderRadius:14,padding:"13px 14px",marginBottom:14,boxShadow:T.shadow,borderRight:`3px solid ${GOLD}`}}>
-          <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(11),fontWeight:700,color:GOLD,marginBottom:5}}><IcoScroll/> {T.UI.halacha}</div>
-          <div style={{fontSize:T.f(13),color:T.navy,lineHeight:1.6}}>{halacha}</div>
+          <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(11),fontWeight:700,color:GOLD,marginBottom:5}}><IcoScroll/> הלכה יומית</div>
+          <div style={{fontSize:T.f(13),color:T.navy,lineHeight:1.6, marginBottom:6}}>{halacha.t}</div>
+          <div style={{fontSize:T.f(10),color:T.muted}}>{halacha.s}</div>
         </div>
 
         {zmanim&&<div style={{background:T.card,borderRadius:14,padding:"13px 14px",marginBottom:14,boxShadow:T.shadow}}>
@@ -708,8 +733,10 @@ function HomeScreen({prog,goals,T,cc,setTab,streak,activity}){
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
             {[
               {l:"הנץ החמה",k:"sunrise"},
-              {l:"סוף זמן קריאת שמע",k:"sofZmanShmaMGA"},
-              {l:"סוף זמן תפילה",k:"sofZmanTfillaMGA"},
+              {l:"סוף זמ\"ק (מג\"א)",k:"sofZmanShmaMGA"},
+              {l:"סוף זמ\"ק (גר\"א)",k:"sofZmanShma"},
+              {l:"סוף תפילה (מג\"א)",k:"sofZmanTfillaMGA"},
+              {l:"סוף תפילה (גר\"א)",k:"sofZmanTfilla"},
               {l:"חצות",k:"chatzot"},
               {l:"שקיעה",k:"sunset"},
               {l:"צאת הכוכבים",k:"tzeit7083deg"}
@@ -746,7 +773,7 @@ function HomeScreen({prog,goals,T,cc,setTab,streak,activity}){
                 <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:i<Math.min(activity.length,5)-1?`1px solid ${T.border}`:"none"}}>
                   <div style={{color:cc[a.cat]||T.primary}}><IcoBook/></div>
                   <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:T.f(13),fontWeight:600,color:T.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.bk}</div>
+                    <div style={{fontSize:T.f(13),fontWeight:600,color:T.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.bk} {a.label ? `- ${a.label}` : ''}</div>
                     <div style={{fontSize:T.f(11),color:T.muted}}>{a.timeStr}</div>
                   </div>
                   <div style={{width:8,height:8,borderRadius:"50%",background:cc[a.cat]||T.primary,flexShrink:0}}/>
@@ -905,7 +932,7 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
 }
 
 /* ── STATS ── */
-function StatsScreen({prog,T,cc}){
+function StatsScreen({prog,activity,T,cc}){
   const S=useMemo(()=>({
     dapim:GEMARA.reduce((s,_,i)=>s+calcDone(prog,"gemara",i),0),
     mishna:MISHNA.reduce((s,_,i)=>s+calcDone(prog,"mishna",i),0),
@@ -913,16 +940,39 @@ function StatsScreen({prog,T,cc}){
     gFull:GEMARA.filter((_,i)=>{const d=calcDone(prog,"gemara",i);return d>0&&d>=GEMARA[i].d;}).length,
     mFull:MISHNA.filter((_,i)=>{const d=calcDone(prog,"mishna",i);return d>0&&d>=totalMs(i);}).length,
   }),[prog]);
+  
+  const A=useMemo(()=>{
+    const now = new Date();
+    const w = activity.filter(a => (now - new Date(a.date)) < 7*86400000).length;
+    const m = activity.filter(a => (now - new Date(a.date)) < 30*86400000).length;
+    const y = activity.filter(a => (now - new Date(a.date)) < 365*86400000).length;
+    return {w, m, y};
+  },[activity]);
+
   const rows=[
     {cat:"gemara",l:T.CAT_L.gemara,dn:S.dapim,tot:TOTAL_DAPIM,x:`${S.gFull} ${T.UI.fullTractates}`,unit:T.CAT_UNIT.gemara},
     {cat:"mishna",l:T.CAT_L.mishna,dn:S.mishna,tot:MISHNA.reduce((s,_,i)=>s+totalMs(i),0),x:`${S.mFull} ${T.UI.fullTractates}`,unit:T.CAT_UNIT.mishna},
     {cat:"tanach",l:T.CAT_L.tanach,dn:S.tanach,tot:TANACH.reduce((s,t)=>s+t.c,0),x:"",unit:T.CAT_UNIT.tanach},
   ];
+
   return (
     <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
         <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.stats}</div>
       </div>
+
+      <div style={{background:T.card,borderRadius:16,padding:"16px",marginBottom:20,boxShadow:T.shadow, border:`1px solid ${GOLD}44`}}>
+        <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:12}}>קצב למידה (סעיפים שסומנו)</div>
+        <div style={{display:"flex",gap:10}}>
+          {[{l:"השבוע",v:A.w},{l:"החודש",v:A.m},{l:"השנה",v:A.y}].map(s=>(
+            <div key={s.l} style={{flex:1,background:T.input,borderRadius:12,padding:"10px 8px",textAlign:"center"}}>
+              <div style={{fontSize:T.f(22),fontWeight:900,color:T.primary}}>{s.v}</div>
+              <div style={{fontSize:T.f(11),color:T.muted,marginTop:2}}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(100px, 1fr))",gap:10,marginBottom:20}}>
         {[{l:T.CAT_UNIT.gemara,v:S.dapim,c:cc.gemara},{l:T.UI.fullTractates,v:S.gFull,c:cc.gemara},{l:T.CAT_UNIT.mishna,v:S.mishna,c:cc.mishna},{l:T.CAT_UNIT.tanach,v:S.tanach,c:cc.tanach}].map(s=>(
           <div key={s.l} style={{background:T.card,borderRadius:14,padding:"12px 10px",boxShadow:T.shadow}}><div style={{fontSize:T.f(26),fontWeight:900,color:s.c}}>{s.v}</div><div style={{fontSize:T.f(11),color:T.muted,marginTop:2}}>{s.l}</div></div>
@@ -1064,7 +1114,6 @@ function AuthScreen({onLogin,T}){
     onLogin({name,email,method:"register", pass});
   }
   function googleLogin(){
-    // We assume Google login implies agreement, or you can force it there too.
     onLogin({method:"google"});
   }
 
@@ -1144,15 +1193,12 @@ export default function App(){
   const[loaded,setLoaded]=useState(false);
   const[showInstallPrompt, setShowInstallPrompt]=useState(false);
 
-  // Install Prompt Logic
   useEffect(() => {
-    // Check if running in standalone mode (already installed)
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
     const hasSeenPrompt = localStorage.getItem('hideInstallGuide');
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile && !isStandalone && !hasSeenPrompt) {
-        // Show after 3.5 seconds to not interrupt login flow immediately
         const timer = setTimeout(() => setShowInstallPrompt(true), 3500);
         return () => clearTimeout(timer);
     }
@@ -1164,7 +1210,7 @@ export default function App(){
   }
 
   useEffect(() => {
-    // מנקה זבל מגרסאות קודמות
+    // ניקוי זיכרון מגרסאות ישנות כדי לטעון מהענן כראוי
     ["u11", "u10", "u9", "u8", "u7", "p11", "p12"].forEach(k => localStorage.removeItem(k));
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -1208,14 +1254,6 @@ export default function App(){
     return () => clearTimeout(timeoutId);
   }, [prog, goals, sett, activity, activeDays, loaded, user]);
 
-  function onActivity(item){
-    const now=new Date();
-    const timeStr=now.toLocaleDateString("he-IL",{day:"numeric",month:"numeric"})+' '+now.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});
-    const date=todayKey();
-    setActivity(prev=>[{...item,timeStr,date},...prev].slice(0,50));
-    setActiveDays(prev=>{if(prev.includes(date))return prev;return [...prev,date].slice(-60);});
-  }
-
   const streak=useMemo(()=>{
     if(!activeDays.length)return 0;
     const sorted=[...activeDays].sort().reverse();
@@ -1250,7 +1288,13 @@ export default function App(){
   function handleLogout(){signOut(auth);setTab("home");}
 
   if(!user)return <div style={appSt}><AuthScreen onLogin={handleLogin} T={T}/></div>;
-  if(detail)return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={onActivity}/></div>;
+  if(detail)return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(item)=>{
+    const now=new Date();
+    const timeStr=now.toLocaleDateString("he-IL",{day:"numeric",month:"numeric"})+' '+now.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});
+    const date=todayKey();
+    setActivity(prev=>[{...item,timeStr,date},...prev].slice(0,50));
+    setActiveDays(prev=>{if(prev.includes(date))return prev;return [...prev,date].slice(-60);});
+  }}/></div>;
 
   const NAV=[
     {k:"home",l:T.UI.home,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},
@@ -1262,10 +1306,10 @@ export default function App(){
 
   return (
     <div style={appSt}>
-      {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} streak={streak} activity={activity}/>}
+      {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} setProg={setProg} streak={streak} activity={activity}/>}
       {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
       {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
-      {tab==="stats"&&<StatsScreen prog={prog} T={T} cc={cc}/>}
+      {tab==="stats"&&<StatsScreen prog={prog} activity={activity} T={T} cc={cc}/>}
       {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={handleLogout} user={user}/>}
       <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>
         {NAV.map(it=>(
