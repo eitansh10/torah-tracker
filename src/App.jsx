@@ -199,7 +199,7 @@ function calcDone(prog,cat,i) {
   if(cat==="gemara"){const g=prog.gemara?.[i];if(!g)return 0;if(g.full)return GEMARA[i]?.d||0;return Math.round((g.done?.size||0)/2);}
   if(cat==="mishna"){const m=prog.mishna?.[i];if(!m)return 0;if(m.full)return totalMs(i);return m.done?.size||0;}
   if(cat==="custom") return prog.custom?.[i]?.done?.size||0;
-  return prog.tanach?.[i]?.size||0;
+  return prog[cat]?.[i]?.size||0;
 }
 function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 
@@ -207,18 +207,21 @@ function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 function getSefariaUrl(cat, bookName, key, tMode) {
   if(!bookName || !key) return "";
   try {
-    let ref = "";
-    if(cat === "gemara") ref = `${bookName} ${key}`;
-    else if(cat === "mishna") ref = `משנה ${bookName} ${String(key).replace(':', ' ')}`;
-    else if(cat === "tanach") {
-      let ch = key;
-      if(tMode === "parshiot") ch = PARASHA_CHAPTERS[key]?.[0] || 1;
-      ref = `${bookName} ${ch}`;
-    }
-    else if(["musar", "ravKook", "machshava"].includes(cat)) ref = `${bookName} ${key}`;
-    else return "";
+    const engBook = SEFARIA_MAP[bookName] || encodeURIComponent(bookName.replace(/ /g, "_"));
+    let k = String(key);
     
-    return "https://www.sefaria.org.il/" + encodeURIComponent(ref);
+    if(cat === "gemara") return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
+    if(cat === "mishna") return `https://www.sefaria.org.il/Mishnah_${engBook}.${k.replace(':', '.')}?lang=he`;
+    if(cat === "tanach") {
+      let ch = k;
+      if(tMode === "parshiot") ch = PARASHA_CHAPTERS[key]?.[0] || 1;
+      return `https://www.sefaria.org.il/${engBook}.${ch}?lang=he`;
+    }
+    if(["musar", "ravKook", "machshava"].includes(cat)) {
+      if (bookName === "נפש החיים") return `https://www.sefaria.org.il/${engBook}%2C_Gate_I.${k}?lang=he`;
+      return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
+    }
+    return "";
   } catch(e) { return ""; }
 }
 
@@ -1101,6 +1104,9 @@ export default function App(){
   const[loaded,setLoaded]=useState(false);
 
   useEffect(() => {
+    // מנקה זבל מגרסאות קודמות
+    ["u11", "u10", "u9", "u8", "u7"].forEach(k => localStorage.removeItem(k));
+
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser({ 
