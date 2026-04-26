@@ -1004,6 +1004,49 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
   );
 }
 
+/* ── INSTALL GUIDE COMPONENT ── */
+function InstallGuide({ T, onClose }) {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isAndroid = /android/i.test(navigator.userAgent);
+
+  return (
+    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", display:"flex", alignItems:"flex-end", zIndex:9999}}>
+      <div style={{background:T.card, width:"100%", padding:"24px 20px 40px", borderRadius:"24px 24px 0 0", boxSizing:"border-box", textAlign:"center", animation:"slideUp 0.3s ease-out"}}>
+        <div style={{width:40, height:5, background:T.border, borderRadius:10, margin:"0 auto 20px"}}/>
+        <div style={{display:"flex", justifyContent:"center", color:T.gold||GOLD, marginBottom:16}}><IcoStar /></div>
+        <h2 style={{margin:"0 0 12px 0", fontSize:T.f(20), color:T.navy}}>התקן כאפליקציה</h2>
+        <p style={{margin:"0 0 24px 0", fontSize:T.f(14), color:T.muted, lineHeight:1.5}}>
+          הוסף את מעקב הלמידה למסך הבית שלך לחוויה מהירה וחלקה יותר, בדיוק כמו אפליקציה רגילה.
+        </p>
+        
+        <div style={{background:T.input, padding:"16px", borderRadius:12, marginBottom:24, textAlign:T.isEn?"left":"right"}}>
+          {isIOS ? (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. בתחתית המסך, לחץ על סמל השיתוף ⍐</div>
+              <div>2. גלול למטה ובחר <strong>"הוסף למסך הבית"</strong> ➕</div>
+            </div>
+          ) : isAndroid ? (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. למעלה בדפדפן, לחץ על תפריט הנקודות ⋮</div>
+              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
+            </div>
+          ) : (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. לחץ על תפריט הדפדפן ⋮</div>
+              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
+            </div>
+          )}
+        </div>
+        
+        <button onClick={onClose} style={{background:T.primary, color:"white", border:"none", padding:"14px", width:"100%", borderRadius:12, fontSize:T.f(15), fontWeight:700, cursor:"pointer"}}>
+          הבנתי, תודה
+        </button>
+      </div>
+      <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
+    </div>
+  );
+}
+
 /* ── AUTH SCREEN ── */
 function AuthScreen({onLogin,T}){
   const[mode,setMode]=useState("choose"); 
@@ -1102,10 +1145,30 @@ export default function App(){
   const[activity,setActivity]=useState([]);
   const[activeDays,setActiveDays]=useState([]);
   const[loaded,setLoaded]=useState(false);
+  const[showInstallPrompt, setShowInstallPrompt]=useState(false);
+
+  // Install Prompt Logic
+  useEffect(() => {
+    // Check if running in standalone mode (already installed)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const hasSeenPrompt = localStorage.getItem('hideInstallGuide');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile && !isStandalone && !hasSeenPrompt) {
+        // Show after 3.5 seconds to not interrupt login flow immediately
+        const timer = setTimeout(() => setShowInstallPrompt(true), 3500);
+        return () => clearTimeout(timer);
+    }
+  }, []);
+
+  function handleCloseInstallPrompt() {
+      localStorage.setItem('hideInstallGuide', '1');
+      setShowInstallPrompt(false);
+  }
 
   useEffect(() => {
     // מנקה זבל מגרסאות קודמות
-    ["u11", "u10", "u9", "u8", "u7"].forEach(k => localStorage.removeItem(k));
+    ["u11", "u10", "u9", "u8", "u7", "p11"].forEach(k => localStorage.removeItem(k));
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -1214,6 +1277,7 @@ export default function App(){
           </button>
         ))}
       </div>
+      {showInstallPrompt && <InstallGuide T={T} onClose={handleCloseInstallPrompt} />}
     </div>
   );
 }
