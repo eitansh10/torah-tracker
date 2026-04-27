@@ -27,6 +27,7 @@ const IcoScroll = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 
 const IcoHeart = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
 const IcoCalendar = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
 const IcoDots = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
+const IcoAI = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path d="M16 13h.01"/><path d="M12 13h.01"/><path d="M8 13h.01"/></svg>;
 
 /* ── HEBREW DATE ── */
 function toHeb(n) {
@@ -54,18 +55,9 @@ function hebDateFull(d) {
 function hebStr(s) { return s ? hebDateFull(new Date(s+"T12:00:00")) : ""; }
 function todayKey() { return new Date().toISOString().slice(0,10); }
 
-/* ── DAF YOMI ── */
+/* ── DATA ── */
 const DAF_YOMI_MASECHTOS = [
-  {n:"ברכות",d:64},{n:"שבת",d:157},{n:"עירובין",d:105},{n:"פסחים",d:121},
-  {n:"שקלים",d:22},{n:"יומא",d:88},{n:"סוכה",d:56},{n:"ביצה",d:40},
-  {n:"ראש השנה",d:35},{n:"תענית",d:31},{n:"מגילה",d:32},{n:"מועד קטן",d:29},
-  {n:"חגיגה",d:27},{n:"יבמות",d:122},{n:"כתובות",d:112},{n:"נדרים",d:91},
-  {n:"נזיר",d:66},{n:"סוטה",d:49},{n:"גיטין",d:90},{n:"קידושין",d:82},
-  {n:"בבא קמא",d:119},{n:"בבא מציעא",d:119},{n:"בבא בתרא",d:176},
-  {n:"סנהדרין",d:113},{n:"מכות",d:24},{n:"שבועות",d:49},{n:"עבודה זרה",d:76},
-  {n:"הוריות",d:14},{n:"זבחים",d:120},{n:"מנחות",d:110},{n:"חולין",d:142},
-  {n:"בכורות",d:61},{n:"ערכין",d:34},{n:"תמורה",d:34},{n:"כריתות",d:28},
-  {n:"מעילה",d:22},{n:"נידה",d:73},
+  {n:"ברכות",d:64},{n:"שבת",d:157},{n:"עירובין",d:105},{n:"פסחים",d:121},{n:"שקלים",d:22},{n:"יומא",d:88},{n:"סוכה",d:56},{n:"ביצה",d:40},{n:"ראש השנה",d:35},{n:"תענית",d:31},{n:"מגילה",d:32},{n:"מועד קטן",d:29},{n:"חגיגה",d:27},{n:"יבמות",d:122},{n:"כתובות",d:112},{n:"נדרים",d:91},{n:"נזיר",d:66},{n:"סוטה",d:49},{n:"גיטין",d:90},{n:"קידושין",d:82},{n:"בבא קמא",d:119},{n:"בבא מציעא",d:119},{n:"בבא בתרא",d:176},{n:"סנהדרין",d:113},{n:"מכות",d:24},{n:"שבועות",d:49},{n:"עבודה זרה",d:76},{n:"הוריות",d:14},{n:"זבחים",d:120},{n:"מנחות",d:110},{n:"חולין",d:142},{n:"בכורות",d:61},{n:"ערכין",d:34},{n:"תמורה",d:34},{n:"כריתות",d:28},{n:"מעילה",d:22},{n:"נידה",d:73}
 ];
 const TOTAL_DAPIM = 2711;
 const CYCLE14_START = new Date("2020-01-05");
@@ -82,34 +74,19 @@ function getDafYomi() {
   return {masechet:mas,daf,dafHeb:toHeb(daf)};
 }
 
-/* ── PARASHA CHAPTERS ── */
 const PARASHA_CHAPTERS = {
-  "בראשית":[1,2,3,4,5,6],"נח":[6,7,8,9,10,11],"לך לך":[12,13,14,15,16,17],
-  "וירא":[18,19,20,21,22],"חיי שרה":[23,24,25],"תולדות":[25,26,27,28],
-  "ויצא":[28,29,30,31,32],"וישלח":[32,33,34,35,36],"וישב":[37,38,39,40],
-  "מקץ":[41,42,43,44],"ויגש":[44,45,46,47],"ויחי":[47,48,49,50],
-  "שמות":[1,2,3,4,5,6],"וארא":[6,7,8,9],"בא":[10,11,12,13],
-  "בשלח":[13,14,15,16,17],"יתרו":[18,19,20],"משפטים":[21,22,23,24],
-  "תרומה":[25,26,27],"תצוה":[27,28,29,30],"כי תשא":[30,31,32,33,34],
-  "ויקהל":[35,36,37,38],"פקודי":[38,39,40],
-  "ויקרא":[1,2,3,4,5],"צו":[6,7,8],"שמיני":[9,10,11],
-  "תזריע":[12,13],"מצורע":[14,15],"אחרי מות":[16,17,18],
-  "קדושים":[19,20],"אמור":[21,22,23,24],"בהר":[25,26],"בחוקותי":[26,27],
-  "במדבר":[1,2,3,4],"נשא":[4,5,6,7],"בהעלותך":[8,9,10,11,12],
-  "שלח":[13,14,15],"קרח":[16,17,18],"חקת":[19,20,21],
-  "בלק":[22,23,24,25],"פינחס":[25,26,27,28,29,30],
-  "מטות":[30,31,32],"מסעי":[33,34,35,36],
-  "דברים":[1,2,3],"ואתחנן":[3,4,5,6,7],"עקב":[7,8,9,10,11],
-  "ראה":[11,12,13,14,15,16],"שופטים":[16,17,18,19,20,21],
-  "כי תצא":[21,22,23,24,25],"כי תבוא":[26,27,28,29],
-  "נצבים":[29,30],"וילך":[31],"האזינו":[32],"וזאת הברכה":[33,34],
+  "בראשית":[1,2,3,4,5,6],"נח":[6,7,8,9,10,11],"לך לך":[12,13,14,15,16,17],"וירא":[18,19,20,21,22],"חיי שרה":[23,24,25],"תולדות":[25,26,27,28],"ויצא":[28,29,30,31,32],"וישלח":[32,33,34,35,36],"וישב":[37,38,39,40],"מקץ":[41,42,43,44],"ויגש":[44,45,46,47],"ויחי":[47,48,49,50],
+  "שמות":[1,2,3,4,5,6],"וארא":[6,7,8,9],"בא":[10,11,12,13],"בשלח":[13,14,15,16,17],"יתרו":[18,19,20],"משפטים":[21,22,23,24],"תרומה":[25,26,27],"תצוה":[27,28,29,30],"כי תשא":[30,31,32,33,34],"ויקהל":[35,36,37,38],"פקודי":[38,39,40],
+  "ויקרא":[1,2,3,4,5],"צו":[6,7,8],"שמיני":[9,10,11],"תזריע":[12,13],"מצורע":[14,15],"אחרי מות":[16,17,18],"קדושים":[19,20],"אמור":[21,22,23,24],"בהר":[25,26],"בחוקותי":[26,27],
+  "במדבר":[1,2,3,4],"נשא":[4,5,6,7],"בהעלותך":[8,9,10,11,12],"שלח":[13,14,15],"קרח":[16,17,18],"חקת":[19,20,21],"בלק":[22,23,24,25],"פינחס":[25,26,27,28,29,30],"מטות":[30,31,32],"מסעי":[33,34,35,36],
+  "דברים":[1,2,3],"ואתחנן":[3,4,5,6,7],"עקב":[7,8,9,10,11],"ראה":[11,12,13,14,15,16],"שופטים":[16,17,18,19,20,21],"כי תצא":[21,22,23,24,25],"כי תבוא":[26,27,28,29],"נצבים":[29,30],"וילך":[31],"האזינו":[32],"וזאת הברכה":[33,34]
 };
 const PARSHIOT = [
   ["בראשית","נח","לך לך","וירא","חיי שרה","תולדות","ויצא","וישלח","וישב","מקץ","ויגש","ויחי"],
   ["שמות","וארא","בא","בשלח","יתרו","משפטים","תרומה","תצוה","כי תשא","ויקהל","פקודי"],
   ["ויקרא","צו","שמיני","תזריע","מצורע","אחרי מות","קדושים","אמור","בהר","בחוקותי"],
   ["במדבר","נשא","בהעלותך","שלח","קרח","חקת","בלק","פינחס","מטות","מסעי"],
-  ["דברים","ואתחנן","עקב","ראה","שופטים","כי תצא","כי תבוא","נצבים","וילך","האזינו","וזאת הברכה"],
+  ["דברים","ואתחנן","עקב","ראה","שופטים","כי תצא","כי תבוא","נצבים","וילך","האזינו","וזאת הברכה"]
 ];
 
 const HALACHOT = [
@@ -120,10 +97,9 @@ const HALACHOT = [
   { t: "שבת — מצוות עשה לזכור את יום השבת ולקדש אותו בדברים.", s: "שולחן ערוך, אורח חיים רע״א" },
   { t: "כיבוד אב ואם — מצוות עשה לכבד אב ואם, ואיסור חמור לבזותם.", s: "שולחן ערוך, יורה דעה ר״מ" },
   { t: "צדקה — חייב אדם לתת צדקה לפחות עשירית מהכנסותיו.", s: "שולחן ערוך, יורה דעה רמ״ט" },
-  { t: "לשון הרע — אסור מדאורייתא לדבר לשון הרע, אפילו אמת.", s: "חפץ חיים, הלכות איסור לשון הרע א" },
+  { t: "לשון הרע — אסור מדאורייתא לדבר לשון הרע, אפילו אמת.", s: "חפץ חיים, הלכות איסור לשון הרע א" }
 ];
 
-/* ── DATA ── */
 const GEMARA=[{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",d:157,p:24},{n:"עירובין",s:"מועד",d:105,p:10},{n:"פסחים",s:"מועד",d:121,p:10},{n:"שקלים",s:"מועד",d:22,p:8},{n:"יומא",s:"מועד",d:88,p:8},{n:"סוכה",s:"מועד",d:56,p:5},{n:"ביצה",s:"מועד",d:40,p:5},{n:"ראש השנה",s:"מועד",d:35,p:4},{n:"תענית",s:"מועד",d:31,p:4},{n:"מגילה",s:"מועד",d:32,p:4},{n:"מועד קטן",s:"מועד",d:29,p:3},{n:"חגיגה",s:"מועד",d:27,p:3},{n:"יבמות",s:"נשים",d:122,p:16},{n:"כתובות",s:"נשים",d:112,p:13},{n:"נדרים",s:"נשים",d:91,p:11},{n:"נזיר",s:"נשים",d:66,p:9},{n:"סוטה",s:"נשים",d:49,p:9},{n:"גיטין",s:"נשים",d:90,p:9},{n:"קידושין",s:"נשים",d:82,p:4},{n:"בבא קמא",s:"נזיקין",d:119,p:10},{n:"בבא מציעא",s:"נזיקין",d:119,p:10},{n:"בבא בתרא",s:"נזיקין",d:176,p:10},{n:"סנהדרין",s:"נזיקין",d:113,p:11},{n:"מכות",s:"נזיקין",d:24,p:3},{n:"שבועות",s:"נזיקין",d:49,p:8},{n:"עבודה זרה",s:"נזיקין",d:76,p:5},{n:"הוריות",s:"נזיקין",d:14,p:3},{n:"זבחים",s:"קדשים",d:120,p:14},{n:"מנחות",s:"קדשים",d:110,p:13},{n:"חולין",s:"קדשים",d:142,p:12},{n:"בכורות",s:"קדשים",d:61,p:9},{n:"ערכין",s:"קדשים",d:34,p:9},{n:"תמורה",s:"קדשים",d:34,p:7},{n:"כריתות",s:"קדשים",d:28,p:6},{n:"מעילה",s:"קדשים",d:22,p:6},{n:"נידה",s:"טהרות",d:73,p:10}];
 const MISHNA=[{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
 const TANACH=[{b:"בראשית",s:"תורה",c:50},{b:"שמות",s:"תורה",c:40},{b:"ויקרא",s:"תורה",c:27},{b:"במדבר",s:"תורה",c:36},{b:"דברים",s:"תורה",c:34},{b:"יהושע",s:"נביאים",c:24},{b:"שופטים",s:"נביאים",c:21},{b:"שמואל א",s:"נביאים",c:31},{b:"שמואל ב",s:"נביאים",c:24},{b:"מלכים א",s:"נביאים",c:22},{b:"מלכים ב",s:"נביאים",c:25},{b:"ישעיהו",s:"נביאים",c:66},{b:"ירמיהו",s:"נביאים",c:52},{b:"יחזקאל",s:"נביאים",c:48},{b:"הושע",s:"נביאים",c:14},{b:"יואל",s:"נביאים",c:4},{b:"עמוס",s:"נביאים",c:9},{b:"עובדיה",s:"נביאים",c:1},{b:"יונה",s:"נביאים",c:4},{b:"מיכה",s:"נביאים",c:7},{b:"נחום",s:"נביאים",c:3},{b:"חבקוק",s:"נביאים",c:3},{b:"צפניה",s:"נביאים",c:3},{b:"חגי",s:"נביאים",c:2},{b:"זכריה",s:"נביאים",c:14},{b:"מלאכי",s:"נביאים",c:3},{b:"תהלים",s:"כתובים",c:150},{b:"משלי",s:"כתובים",c:31},{b:"איוב",s:"כתובים",c:42},{b:"שיר השירים",s:"כתובים",c:8},{b:"רות",s:"כתובים",c:4},{b:"איכה",s:"כתובים",c:5},{b:"קהלת",s:"כתובים",c:12},{b:"אסתר",s:"כתובים",c:10},{b:"דניאל",s:"כתובים",c:12},{b:"עזרא",s:"כתובים",c:10},{b:"נחמיה",s:"כתובים",c:13},{b:"דברי הימים א",s:"כתובים",c:29},{b:"דברי הימים ב",s:"כתובים",c:36}];
@@ -196,7 +172,7 @@ function bkTotal(cat,i,custom) {
   return 0;
 }
 
-// תוקן באג מתמטי שחישב את התנ"ך בטעות גם עבור שאר הספרים
+// תוקן באג חישוב שזייף נתונים בין ספרים בקטגוריות שונות
 function calcDone(prog,cat,i) {
   if(cat==="gemara"){const g=prog.gemara?.[i];if(!g)return 0;if(g.full)return GEMARA[i]?.d||0;return Math.round((g.done?.size||0)/2);}
   if(cat==="mishna"){const m=prog.mishna?.[i];if(!m)return 0;if(m.full)return totalMs(i);return m.done?.size||0;}
@@ -206,7 +182,7 @@ function calcDone(prog,cat,i) {
 }
 function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 
-/* ── SEFARIA LINK GENERATOR (RTL SAFE) ── */
+/* ── SEFARIA LINK GENERATOR ── */
 function getSefariaUrl(cat, bookName, key, tMode) {
   if(!bookName || !key) return "";
   try {
@@ -229,18 +205,30 @@ function getSefariaUrl(cat, bookName, key, tMode) {
 }
 
 function getSefariaText(cat, tMode, isEn) {
-    if(isEn) return "Read this section on Sefaria";
+    if(isEn) return "Read on Sefaria";
     if(cat === "gemara") return "למד דף זה בספריא";
     if(cat === "mishna") return "למד משנה זו בספריא";
     if(cat === "tanach" && tMode === "parshiot") return "למד פרשה זו בספריא";
     return "למד פרק זה בספריא";
 }
 
+/* ── AI PROMPTS ── */
+function getAIPrompt(type, cat, bookName, key, T) {
+  const hebCat = T.isEn ? cat : T.CAT_L[cat];
+  if(type === "summary") {
+    return `אני לומד עכשיו ${hebCat} - ${bookName} ${key}. אשמח לסיכום תמציתי, ברור ומחולק לנקודות של העניינים המרכזיים שנלמדו כאן.`;
+  }
+  if(type === "quiz") {
+    return `אני לומד עכשיו ${hebCat} - ${bookName} ${key}. תכין לי חידון אמריקאי של 5 שאלות לבחון את עצמי על החומר, עם 4 אפשרויות לכל שאלה. בסוף תכתוב את התשובות הנכונות.`;
+  }
+  return "";
+}
+
 /* ── STORAGE ── */
 function serProg(prog) {
   const o={gemara:{},mishna:{},tanach:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
-  for(const[k,v] of Object.entries(prog.gemara||{})) o.gemara[k]={done:[...(v.done||new Set())],full:!!v.full};
-  for(const[k,v] of Object.entries(prog.mishna||{})) o.mishna[k]={done:[...(v.done||new Set())],full:!!v.full};
+  for(const[k,v] of Object.entries(prog.gemara||{})) o.gemara[k]={done:[...(v.done||new Set())]};
+  for(const[k,v] of Object.entries(prog.mishna||{})) o.mishna[k]={done:[...(v.done||new Set())]};
   for(const[k,v] of Object.entries(prog.tanach||{})) o.tanach[k]=[...v];
   o.tmode={...prog.tmode};
   for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(prog[c]||{})) o[c][k]=[...v];
@@ -251,8 +239,8 @@ function serProg(prog) {
 function desProg(data) {
   if(!data) return null;
   const o={gemara:{},mishna:{},tanach:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
-  for(const[k,v] of Object.entries(data.gemara||{})) o.gemara[k]={done:new Set(v.done),full:!!v.full};
-  for(const[k,v] of Object.entries(data.mishna||{})) o.mishna[k]={done:new Set(v.done),full:!!v.full};
+  for(const[k,v] of Object.entries(data.gemara||{})) o.gemara[k]={done:new Set(v.done)};
+  for(const[k,v] of Object.entries(data.mishna||{})) o.mishna[k]={done:new Set(v.done)};
   for(const[k,v] of Object.entries(data.tanach||{})) o.tanach[k]=new Set(v);
   o.tmode={...data.tmode};
   for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(data[c]||{})) o[c][k]=new Set(v);
@@ -309,7 +297,7 @@ function mkT(dark,sz,lang) {
     login: "כניסה", register: "יצירת חשבון", email: "אימייל", password: "סיסמה", name: "שם מלא",
     continueWith: "המשך עם", or: "או", enterDetails: "הכנס את פרטי החשבון", newAccount: "פתח חשבון חדש",
     onTrack: "במסלול ✓", behind: "מאחור", perDay: "נדרש ליום", currPace: "יעד נוכחי", fullTractates: "ספרים שלמים",
-    dedicateDesc: "הקדש את לימודך להצלחת, רפואת או לעילוי נשמת יקיריך. שים לב: ההקדשות יוצגו באפליקציה באופן פומבי לכלל הלומדים.", submitDedication: "שלח בקשת הקדשה",
+    dedicateDesc: "הקדש את לימודך להצלחת, רפואת או לעילוי נשמת יקיריך. ההקדשות יוצגו באפליקציה באופן פומבי לכלל הלומדים.", submitDedication: "שלח בקשת הקדשה",
     continueSefaria: "המשך לימוד מהמקום שעצרת", legal: "תקנון ופרטיות", terms: "תנאי שימוש", privacy: "מדיניות פרטיות",
     agreeTerms: "אני מסכים/ה לתקנון ולמדיניות הפרטיות", mustAgree: "יש לאשר את התקנון כדי להירשם"
   };
@@ -323,7 +311,7 @@ function mkT(dark,sz,lang) {
 /* ── UI PRIMITIVES ── */
 function Bar({p,color,h,dark}){return <div style={{background:dark?"rgba(255,255,255,0.08)":"rgba(26,58,107,0.08)",borderRadius:99,height:h||6,overflow:"hidden"}}><div style={{width:`${p}%`,height:"100%",background:color,borderRadius:99,transition:"width .4s"}}/></div>;}
 function Ring({p,color,size=60,stroke=7,label,sub,dark}){const r=(size-stroke)/2,c=2*Math.PI*r,off=c-(p/100)*c;return <div style={{position:"relative",width:size,height:size,flexShrink:0}}><svg width={size} height={size} style={{transform:"rotate(-90deg)",display:"block"}}><circle cx={size/2} cy={size/2} r={r} fill="none" stroke={dark?"rgba(255,255,255,0.10)":"rgba(26,58,107,0.08)"} strokeWidth={stroke}/><circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth={stroke} strokeDasharray={c} strokeDashoffset={off} strokeLinecap="round" style={{transition:"stroke-dashoffset .5s"}}/></svg><div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:1}}><span style={{fontSize:size<50?10:13,fontWeight:800,lineHeight:1}}>{label}</span>{sub&&<span style={{fontSize:7,opacity:.6,lineHeight:1}}>{sub}</span>}</div></div>;}
-function Sheet({show,onClose,title,T,children}){if(!show)return null;return <div onClick={e=>e.target===e.currentTarget&&onClose()} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.65)",display:"flex",alignItems:"flex-end",zIndex:600}}><div style={{background:T.card,borderRadius:"22px 22px 0 0",padding:"16px 18px 52px",width:"100%",maxWidth:480,margin:"0 auto",maxHeight:"90vh",overflowY:"auto",boxSizing:"border-box"}}><div style={{width:38,height:4,background:T.border,borderRadius:99,margin:"0 auto 14px"}}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}><span style={{fontSize:T.f(17),fontWeight:700,color:T.navy,fontFamily:T.font}}>{title}</span><button aria-label="Close" onClick={onClose} style={{background:T.input,border:"none",cursor:"pointer",color:T.muted,fontSize:18,padding:"3px 12px",borderRadius:9,fontFamily:T.font}}>✕</button></div>{children}</div></div>;}
+function Sheet({show,onClose,title,T,children}){if(!show)return null;return <div onClick={e=>e.target===e.currentTarget&&onClose()} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.65)",display:"flex",alignItems:"flex-end",zIndex:600}}><div style={{background:T.card,borderRadius:"22px 22px 0 0",padding:"16px 18px 52px",width:"100%",maxWidth:800,margin:"0 auto",maxHeight:"90vh",overflowY:"auto",boxSizing:"border-box"}}><div style={{width:38,height:4,background:T.border,borderRadius:99,margin:"0 auto 14px"}}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}><span style={{fontSize:T.f(17),fontWeight:700,color:T.navy,fontFamily:T.font}}>{title}</span><button aria-label="Close" onClick={onClose} style={{background:T.input,border:"none",cursor:"pointer",color:T.muted,fontSize:18,padding:"3px 12px",borderRadius:9,fontFamily:T.font}}>✕</button></div>{children}</div></div>;}
 function FI({T,style,...r}){return <input {...r} style={{width:"100%",padding:"11px 13px",borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,color:T.navy,fontSize:"16px",fontFamily:T.font,direction:T.isEn?"ltr":"rtl",outline:"none",boxSizing:"border-box",...(style||{})}}/>;}
 function FS({T,children,style,...r}){return <select {...r} style={{width:"100%",padding:"11px 13px",borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,color:T.navy,fontSize:"16px",fontFamily:T.font,direction:T.isEn?"ltr":"rtl",outline:"none",boxSizing:"border-box",...(style||{})}}>{children}</select>;}
 function FTA({T,style,...r}){return <textarea {...r} style={{width:"100%",padding:"11px 13px",borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,color:T.navy,fontSize:"16px",fontFamily:T.font,direction:T.isEn?"ltr":"rtl",outline:"none",boxSizing:"border-box",resize:"vertical",minHeight:90,...(style||{})}}/>;}
@@ -422,8 +410,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   },[cat,idx,viewMode,tMode,prog.custom, T.isEn, T.UI.mishnayot, isTorah]);
 
   function isOn(key){
-    if(cat==="gemara"){const g=prog.gemara?.[idx];if(!g)return false;if(g.full)return true;if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);return ak.length>0&&ak.every(k=>safeHas(g.done, k));}return safeHas(g.done, key);}
-    if(cat==="mishna"){const m=prog.mishna?.[idx];if(!m)return false;if(m.full)return true;if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);return mk.length>0&&mk.every(k=>safeHas(m.done, k));}return safeHas(m.done, key);}
+    if(cat==="gemara"){const g=prog.gemara?.[idx];if(!g)return false;if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);return ak.length>0&&ak.every(k=>safeHas(g.done, k));}return safeHas(g.done, key);}
+    if(cat==="mishna"){const m=prog.mishna?.[idx];if(!m)return false;if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);return mk.length>0&&mk.every(k=>safeHas(m.done, k));}return safeHas(m.done, key);}
     if(cat==="custom") return safeHas(prog.custom?.[idx]?.done, key);
     if(cat==="tanach"){
       if(typeof key==="string"){
@@ -437,8 +425,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   }
 
   function isPartial(key){
-    if(cat==="gemara"&&String(key).startsWith("p")){const g=prog.gemara?.[idx];if(!g||g.full)return false;const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const cnt=ak.filter(k=>safeHas(g.done, k)).length;return cnt>0&&cnt<ak.length;}
-    if(cat==="mishna"&&String(key).startsWith("pp")){const m=prog.mishna?.[idx];if(!m||m.full)return false;const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const cnt=mk.filter(k=>safeHas(m.done, k)).length;return cnt>0&&cnt<mk.length;}
+    if(cat==="gemara"&&String(key).startsWith("p")){const g=prog.gemara?.[idx];if(!g)return false;const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const cnt=ak.filter(k=>safeHas(g.done, k)).length;return cnt>0&&cnt<ak.length;}
+    if(cat==="mishna"&&String(key).startsWith("pp")){const m=prog.mishna?.[idx];if(!m)return false;const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const cnt=mk.filter(k=>safeHas(m.done, k)).length;return cnt>0&&cnt<mk.length;}
     if(cat==="tanach"&&typeof key==="string"){
       const chapters=PARASHA_CHAPTERS[key];
       if(!chapters) return false;
@@ -451,8 +439,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   function toggle(key, forceLabel){
     const wasOn=isOn(key);
     setProg(prev=>{
-      if(cat==="gemara"){const g={...prev.gemara},cur=g[idx]||{done:new Set(),full:false};let nd=new Set(cur.done);if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const allOn=ak.every(k=>nd.has(k));allOn?ak.forEach(k=>nd.delete(k)):ak.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}g[idx]={done:nd,full:false};return{...prev,gemara:g};}
-      if(cat==="mishna"){const mm={...prev.mishna},cur=mm[idx]||{done:new Set(),full:false};let nd=new Set(cur.done);if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const allOn=mk.every(k=>nd.has(k));allOn?mk.forEach(k=>nd.delete(k)):mk.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}mm[idx]={done:nd,full:false};return{...prev,mishna:mm};}
+      if(cat==="gemara"){const g={...prev.gemara},cur=g[idx]||{done:new Set()};let nd=new Set(cur.done);if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const allOn=ak.every(k=>nd.has(k));allOn?ak.forEach(k=>nd.delete(k)):ak.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}g[idx]={done:nd};return{...prev,gemara:g};}
+      if(cat==="mishna"){const mm={...prev.mishna},cur=mm[idx]||{done:new Set()};let nd=new Set(cur.done);if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const allOn=mk.every(k=>nd.has(k));allOn?mk.forEach(k=>nd.delete(k)):mk.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}mm[idx]={done:nd};return{...prev,mishna:mm};}
       if(cat==="custom"){const arr=[...prev.custom],nd=new Set(arr[idx].done);nd.has(key)?nd.delete(key):nd.add(key);arr[idx]={...arr[idx],done:nd};return{...prev,custom:arr};}
       if(cat==="tanach"){
         const tp={...prev.tanach},nd=new Set(tp[idx]||[]);
@@ -473,13 +461,10 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     }
   }
 
-  function setGFull(full){setProg(prev=>{const g={...prev.gemara},cur=g[idx]||{done:new Set()};if(full){const nd=new Set();const D=GEMARA[idx]?.d||0;for(let d=2;d<=D;d++){nd.add(`${d}a`);nd.add(`${d}b`);}g[idx]={done:nd,full:true};}else g[idx]={done:cur.done,full:false};return{...prev,gemara:g};});if(full)onActivity({cat,bk:item?.n||"",label:T.UI.completed});}
-  function setMFull(full){setProg(prev=>{const mm={...prev.mishna},cur=mm[idx]||{done:new Set()};if(full){const nd=new Set();const ms=MISHNA[idx]?.ms||[];ms.forEach((cnt,pi)=>{for(let m=1;m<=cnt;m++)nd.add(`${pi+1}:${m}`);});mm[idx]={done:nd,full:true};}else mm[idx]={done:cur.done,full:false};return{...prev,mishna:mm};});if(full)onActivity({cat,bk:item?.n||"",label:T.UI.completed});}
   function setTMode(mode){setProg(prev=>({...prev,tmode:{...(prev.tmode||{}),[idx]:mode}}));}
 
-  const isFull=(cat==="gemara"&&!!prog.gemara?.[idx]?.full)||(cat==="mishna"&&!!prog.mishna?.[idx]?.full);
-  const totForMode=isFull?bkTotal(cat,idx,prog.custom):cat==="tanach"?TANACH[idx]?.c||0:items.length;
-  const doneCnt=isFull?bkTotal(cat,idx,prog.custom):cat==="tanach"?(prog.tanach?.[idx]?.size||0):items.filter(it=>isOn(it.key)).length;
+  const totForMode=cat==="tanach"?TANACH[idx]?.c||0:items.length;
+  const doneCnt=cat==="tanach"?(prog.tanach?.[idx]?.size||0):items.filter(it=>isOn(it.key)).length;
   const p=pct(doneCnt,totForMode);
   const isParsh=cat==="tanach"&&tMode==="parshiot"&&isTorah;
 
@@ -504,27 +489,25 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
         </div>
         <div style={{marginTop:12}}><Bar p={p} color={col} h={8} dark={T.dark}/></div>
         
-        {!isFull && nextSefariaUrl && (
+        {nextSefariaUrl && (
           <a href={nextSefariaUrl} target="_blank" rel="noreferrer" style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px 14px", background:col, color:"#fff", borderRadius:12, textDecoration:"none", fontWeight:700, marginTop:14, fontSize:T.f(14)}}>
             <IcoBook /> {T.UI.continueSefaria}
           </a>
         )}
       </div>
       <div style={{flex:1,overflow:"auto",padding:"14px 16px 32px"}}>
-        {cat==="gemara"&&!isFull&&(<div style={{marginBottom:16}}>
+        {cat==="gemara"&&(<div style={{marginBottom:16}}>
           <div style={{fontSize:T.f(12),color:T.muted,marginBottom:8,fontWeight:600}}>{T.UI.markBy}</div>
           <div style={{display:"flex",gap:8}}>
             <MB active={viewMode==="amudim"} onClick={()=>setViewMode("amudim")} label={T.UI.amudim} color={col} T={T}/>
             <MB active={viewMode==="perakim"} onClick={()=>setViewMode("perakim")} label={T.UI.perakim} color={col} T={T}/>
-            <MB active={!!isFull} onClick={()=>setGFull(true)} label={T.UI.full} color={col} T={T}/>
           </div>
         </div>)}
-        {cat==="mishna"&&!isFull&&(<div style={{marginBottom:16}}>
+        {cat==="mishna"&&(<div style={{marginBottom:16}}>
           <div style={{fontSize:T.f(12),color:T.muted,marginBottom:8,fontWeight:600}}>{T.UI.markBy}</div>
           <div style={{display:"flex",gap:8}}>
             <MB active={viewMode==="mishna"} onClick={()=>setViewMode("mishna")} label={T.UI.mishnayot} color={col} T={T}/>
             <MB active={viewMode==="perakim"} onClick={()=>setViewMode("perakim")} label={T.UI.perakim} color={col} T={T}/>
-            <MB active={!!isFull} onClick={()=>setMFull(true)} label={T.UI.full} color={col} T={T}/>
           </div>
         </div>)}
         {isTorah&&(<div style={{marginBottom:16}}>
@@ -534,56 +517,60 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
             <MB active={tMode==="parshiot"} onClick={()=>setTMode("parshiot")} label={T.UI.parshiot} color={col} T={T}/>
           </div>
         </div>)}
-        {isFull?(
-          <div style={{padding:28,background:lightCol,borderRadius:16,textAlign:"center",border:`2px solid ${col}`}}>
-            <div style={{display:"flex",justifyContent:"center",marginBottom:8}}><IcoHeart /></div>
-            <div style={{fontSize:T.f(18),fontWeight:900,color:col}}>{item?.n} — {T.UI.completed}!</div>
-            <button onClick={()=>cat==="gemara"?setGFull(false):setMFull(false)} style={{marginTop:14,fontSize:T.f(13),color:T.muted,background:"none",border:"none",cursor:"pointer",textDecoration:"underline",fontFamily:T.font}}>{T.UI.cancel}</button>
-          </div>
-        ):(
-          <>
-            <div style={{display:"grid",gridTemplateColumns:`repeat(auto-fill, minmax(70px, 1fr))`,gap:8}}>
-              {items.map(it=>{
-                if(!it) return null;
-                const on=isOn(it.key),part=isPartial(it.key);
-                const nk=`${cat}:${idx}:${it.key}`;
-                const hasN=!!(prog.notes?.[nk]||"").trim(),chzN=prog.chazara?.[nk]||0;
-                const bg=on?col:part?(col+"33"):"transparent";
-                const fc=on?"#fff":part?col:T.muted;
-                
-                return (
-                  <div key={String(it.key)} style={{position:"relative", height:"100%"}}>
-                    <button onClick={()=>toggle(it.key, it.label)} style={{width:"100%",height:"100%",padding:isParsh?"14px 4px":"11px 4px",border:`2px solid ${on?col:part?col:T.border}`,borderRadius:10,fontSize:T.f(12),cursor:"pointer",background:bg,color:fc,fontWeight:on||part?700:400,minHeight:isParsh?50:44,fontFamily:T.font,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2,boxSizing:"border-box"}}>
-                      <span>{it.label}</span>
-                      {it.sub&&<span style={{fontSize:T.f(9),opacity:.7}}>{it.sub}</span>}
-                      {chzN>0&&<span style={{fontSize:10,background:"rgba(255,255,255,0.35)",borderRadius:10,padding:"1px 6px",marginTop:2}}>×{chzN}</span>}
-                    </button>
-                    <button aria-label="Options" onClick={e=>{e.stopPropagation();openNote(it.key,it.label);}} style={{position:"absolute",top:0,right:0,padding:"6px",background:"transparent",border:"none",cursor:"pointer",color:on||part?"rgba(255,255,255,0.8)":T.muted,display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1}}>
-                       <IcoDots/>
-                    </button>
-                    {hasN&&<div style={{position:"absolute", top:6, left:6, width:6, height:6, borderRadius:"50%", background:GOLD}}/>}
-                  </div>
-                );
-              })}
-            </div>
-            {items.length>0&&(
-              <div style={{display:"flex",gap:10,marginTop:16}}>
-                <button onClick={()=>items.forEach(it=>!isOn(it.key)&&toggle(it.key))} style={{flex:1,padding:11,borderRadius:10,border:`1.5px solid ${T.border}`,background:"none",cursor:"pointer",fontSize:T.f(13),color:T.navy,fontFamily:T.font}}>{T.UI.markAll}</button>
-                <button onClick={()=>items.forEach(it=>(isOn(it.key)||isPartial(it.key))&&toggle(it.key))} style={{flex:1,padding:11,borderRadius:10,border:`1.5px solid ${T.border}`,background:"none",cursor:"pointer",fontSize:T.f(13),color:T.muted,fontFamily:T.font}}>{T.UI.clearAll}</button>
+        
+        <div style={{display:"grid",gridTemplateColumns:`repeat(auto-fill, minmax(70px, 1fr))`,gap:8}}>
+          {items.map(it=>{
+            if(!it) return null;
+            const on=isOn(it.key),part=isPartial(it.key);
+            const nk=`${cat}:${idx}:${it.key}`;
+            const hasN=!!(prog.notes?.[nk]||"").trim(),chzN=prog.chazara?.[nk]||0;
+            const bg=on?col:part?(col+"33"):"transparent";
+            const fc=on?"#fff":part?col:T.muted;
+            
+            return (
+              <div key={String(it.key)} style={{position:"relative", height:"100%"}}>
+                <button onClick={()=>toggle(it.key, it.label)} style={{width:"100%",height:"100%",padding:isParsh?"14px 4px":"11px 4px",border:`2px solid ${on?col:part?col:T.border}`,borderRadius:10,fontSize:T.f(12),cursor:"pointer",background:bg,color:fc,fontWeight:on||part?700:400,minHeight:isParsh?50:44,fontFamily:T.font,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:2,boxSizing:"border-box"}}>
+                  <span>{it.label}</span>
+                  {it.sub&&<span style={{fontSize:T.f(9),opacity:.7}}>{it.sub}</span>}
+                  {chzN>0&&<span style={{fontSize:10,background:"rgba(255,255,255,0.35)",borderRadius:10,padding:"1px 6px",marginTop:2}}>×{chzN}</span>}
+                </button>
+                <button aria-label="Options" onClick={e=>{e.stopPropagation();openNote(it.key,it.label);}} style={{position:"absolute",top:0,right:0,padding:"6px",background:"transparent",border:"none",cursor:"pointer",color:on||part?"rgba(255,255,255,0.8)":T.muted,display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1}}>
+                   <IcoDots/>
+                </button>
+                {hasN&&<div style={{position:"absolute", top:6, left:6, width:6, height:6, borderRadius:"50%", background:GOLD}}/>}
               </div>
-            )}
-            <div style={{textAlign:"center", marginTop:16, fontSize:T.f(11), color:T.muted}}>
-               💡 לחיצה על ⋮ תפתח אפשרויות קריאה והערות.
-            </div>
-          </>
+            );
+          })}
+        </div>
+        {items.length>0&&(
+          <div style={{display:"flex",gap:10,marginTop:16}}>
+            <button onClick={()=>items.forEach(it=>!isOn(it.key)&&toggle(it.key))} style={{flex:1,padding:11,borderRadius:10,border:`1.5px solid ${T.border}`,background:"none",cursor:"pointer",fontSize:T.f(13),color:T.navy,fontFamily:T.font}}>{T.UI.markAll}</button>
+            <button onClick={()=>items.forEach(it=>(isOn(it.key)||isPartial(it.key))&&toggle(it.key))} style={{flex:1,padding:11,borderRadius:10,border:`1.5px solid ${T.border}`,background:"none",cursor:"pointer",fontSize:T.f(13),color:T.muted,fontFamily:T.font}}>{T.UI.clearAll}</button>
+          </div>
         )}
+        <div style={{textAlign:"center", marginTop:16, fontSize:T.f(11), color:T.muted}}>
+           💡 לחיצה על ⋮ תפתח אפשרויות קריאה, סיכומי AI והערות.
+        </div>
       </div>
-      <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${T.UI.notes} — ${noteSheet?.label||""}`} T={T}>
+
+      <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
         {noteSheet && getSefariaUrl(cat, item.n, noteSheet.key, tMode) && (
-          <a href={getSefariaUrl(cat, item.n, noteSheet.key, tMode)} target="_blank" rel="noreferrer" style={{display:"flex", alignItems:"center", gap:8, padding:"12px 14px", background:T.dark?"rgba(74,127,192,0.15)":"#E8EFF8", color:T.primary, borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:20, justifyContent:"center", fontSize:T.f(14)}}>
+          <a href={getSefariaUrl(cat, item.n, noteSheet.key, tMode)} target="_blank" rel="noreferrer" style={{display:"flex", alignItems:"center", gap:8, padding:"12px 14px", background:T.dark?"rgba(74,127,192,0.15)":"#E8EFF8", color:T.primary, borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, justifyContent:"center", fontSize:T.f(14)}}>
             <IcoBook /> {getSefariaText(cat, tMode, T.isEn)}
           </a>
         )}
+
+        {noteSheet && (
+          <div style={{display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:20}}>
+             <a href={`https://chatgpt.com/?q=${encodeURIComponent(getAIPrompt("summary", cat, item.n, noteSheet.key, T))}`} target="_blank" rel="noreferrer" style={{display:"flex", flexDirection:"column", alignItems:"center", gap:6, padding:"10px", background:"#10a37f", color:"#fff", borderRadius:10, textDecoration:"none", fontWeight:700, fontSize:T.f(13)}}>
+               <IcoAI /> ✨ סיכום AI
+             </a>
+             <a href={`https://chatgpt.com/?q=${encodeURIComponent(getAIPrompt("quiz", cat, item.n, noteSheet.key, T))}`} target="_blank" rel="noreferrer" style={{display:"flex", flexDirection:"column", alignItems:"center", gap:6, padding:"10px", background:"#ab68ff", color:"#fff", borderRadius:10, textDecoration:"none", fontWeight:700, fontSize:T.f(13)}}>
+               <IcoAI /> 🧠 בחן את עצמך
+             </a>
+          </div>
+        )}
+
         <FL label={T.UI.notes} T={T}><FTA aria-label="Notes input" T={T} value={editNote} onChange={e=>setEditNote(e.target.value)}/></FL>
         <FL label={T.UI.repetitions} T={T}>
           <div style={{display:"flex",alignItems:"center",gap:16,marginTop:4}}>
@@ -642,7 +629,6 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
     mishna:MISHNA.reduce((s,_,i)=>s+calcDone(prog,"mishna",i),0),
     tanach:TANACH.reduce((s,_,i)=>s+calcDone(prog,"tanach",i),0),
     musar:MUSAR.reduce((s,_,i)=>s+calcDone(prog,"musar",i),0)+RAV_KOOK.reduce((s,_,i)=>s+calcDone(prog,"ravKook",i),0)+MACHSHAVA.reduce((s,_,i)=>s+calcDone(prog,"machshava",i),0),
-    gFull:GEMARA.filter((_,i)=>{const d=calcDone(prog,"gemara",i);return d>0&&d>=GEMARA[i].d;}).length,
   }),[prog]);
   const rows=[
     {cat:"gemara",l:T.CAT_L.gemara,v:S.dapim,tot:TOTAL_DAPIM,unit:T.CAT_UNIT.gemara},
@@ -673,7 +659,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
     <div style={{flex:1,overflow:"auto",background:T.bg}}>
       <div style={{background:`linear-gradient(160deg,#0A1E3A 0%,${NAVY} 60%,#173A5A 100%)`,padding:"22px 18px",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:-50,left:-50,width:200,height:200,borderRadius:"50%",border:`1px solid ${GOLD}18`}}/>
-        <div style={{position:"relative"}}>
+        <div style={{position:"relative", maxWidth:800, margin:"0 auto"}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
             <div>
               <div style={{fontSize:T.f(52),fontWeight:800,color:"#fff",lineHeight:1}}>{hh}:{mm2}</div>
@@ -701,7 +687,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
           </div>
         </div>
       </div>
-      <div style={{padding:"14px 16px 80px"}}>
+      <div style={{padding:"14px 16px 80px", maxWidth:800, margin:"0 auto", width:"100%"}}>
 
         {/* Dedication Banner */}
         <div style={{background:T.card,borderRadius:14,padding:"16px",marginBottom:16,border:`1.5px solid ${GOLD}`,boxShadow:T.shadow}}>
@@ -710,7 +696,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
           <a href="mailto:eitanshachor1@gmail.com?subject=%D7%94%D7%A7%D7%93%D7%A9%D7%AA%20%D7%9C%D7%99%D7%9E%D7%95%D7%93" style={{display:"inline-block",padding:"8px 16px",background:T.dark?"rgba(201,168,76,0.15)":"#FBF5E0",color:GOLD,borderRadius:10,textDecoration:"none",fontSize:T.f(12),fontWeight:700}}>{T.UI.submitDedication}</a>
         </div>
 
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(140px, 1fr))",gap:10,marginBottom:16}}>
           {rows.map(r=>{const p2=pct(r.v,r.tot);return (
             <div key={r.cat} onClick={()=>setTab("library")} style={{background:T.card,borderRadius:14,padding:"13px",boxShadow:T.shadow,cursor:"pointer",borderTop:`3px solid ${cc[r.cat]}`}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
@@ -730,17 +716,15 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
 
         {zmanim&&<div style={{background:T.card,borderRadius:14,padding:"13px 14px",marginBottom:14,boxShadow:T.shadow}}>
           <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(11),fontWeight:700,color:T.muted,marginBottom:10}}><IcoClock/> {T.UI.zmanim} ({locName})</div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(130px, 1fr))",gap:8}}>
             {[
               {l:"הנץ החמה",k:"sunrise"},
               {l:"סוף זמ\"ק (מג\"א)",k:"sofZmanShmaMGA"},
               {l:"סוף זמ\"ק (גר\"א)",k:"sofZmanShma"},
               {l:"סוף תפילה (מג\"א)",k:"sofZmanTfillaMGA"},
               {l:"סוף תפילה (גר\"א)",k:"sofZmanTfilla"},
-              {l:"חצות",k:"chatzot"},
-              {l:"שקיעה",k:"sunset"},
-              {l:"צאת הכוכבים",k:"tzeit7083deg"}
-            ].map(z=>{const t=fmtTime(zmanim.times?.[z.k] || (z.k==="tzeit7083deg"?zmanim.times?.tzeit850deg:null));return t?(
+              {l:"חצות",k:"chatzot"}
+            ].map(z=>{const t=fmtTime(zmanim.times?.[z.k]);return t?(
               <div key={z.k} style={{background:T.input,borderRadius:8,padding:"6px 8px"}}>
                 <div style={{fontSize:T.f(10),color:T.muted}}>{z.l}</div>
                 <div style={{fontSize:T.f(13),fontWeight:700,color:T.navy,marginTop:1,direction:"ltr",textAlign:T.isEn?"left":"right"}}>{t}</div>
@@ -750,21 +734,24 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
 
         {goals.length>0&&(<>
           <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:10}}>{T.UI.activeGoals}</div>
-          {goals.slice(0,2).map(g=>{
-            const isO=g.cat==="other",nm=isO?g.otherName:getBkList(g.cat,prog.custom)[g.idx]?.n||"";
-            const cur=isO?0:calcDone(prog,g.cat,g.idx),p2=pct(Math.min(cur,g.target),g.target);
-            const rem=Math.max(0,Math.round((new Date(g.deadline)-new Date())/86400000)),col2=cc[g.cat]||T.primary;
-            return (
-              <div key={g.id} onClick={()=>setTab("goals")} style={{background:T.card,borderRadius:14,padding:"12px 14px",marginBottom:10,cursor:"pointer",boxShadow:T.shadow,borderRight:`3px solid ${col2}`}}>
-                <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                  <div><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted}}>{rem} {T.UI.daysLeft}</div></div>
-                  <div style={{fontSize:T.f(22),fontWeight:900,color:col2}}>{p2}%</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(280px, 1fr))",gap:10,marginBottom:16}}>
+            {goals.slice(0,4).map(g=>{
+              const isO=g.cat==="other",nm=isO?g.otherName:getBkList(g.cat,prog.custom)[g.idx]?.n||"";
+              const cur=isO?0:calcDone(prog,g.cat,g.idx),p2=pct(Math.min(cur,g.target),g.target);
+              const rem=Math.max(0,Math.round((new Date(g.deadline)-new Date())/86400000)),col2=cc[g.cat]||T.primary;
+              return (
+                <div key={g.id} onClick={()=>setTab("goals")} style={{background:T.card,borderRadius:14,padding:"12px 14px",cursor:"pointer",boxShadow:T.shadow,borderRight:`3px solid ${col2}`}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
+                    <div><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted}}>{rem} {T.UI.daysLeft}</div></div>
+                    <div style={{fontSize:T.f(22),fontWeight:900,color:col2}}>{p2}%</div>
+                  </div>
+                  <Bar p={p2} color={col2} h={6} dark={T.dark}/>
                 </div>
-                <Bar p={p2} color={col2} h={6} dark={T.dark}/>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </>)}
+        
         {activity.length>0&&(<>
           <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:10,marginTop:goals.length>0?4:0}}>{T.UI.recentActivity}</div>
           <div style={{background:T.card,borderRadius:14,padding:"4px 14px",boxShadow:T.shadow}}>
@@ -782,6 +769,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
             })}
           </div>
         </>)}
+        
         {empty&&(<div style={{textAlign:"center",padding:"36px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow,marginTop:16}}>
           <div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:12}}><IcoBook/></div>
           <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.welcome}</div>
@@ -804,35 +792,35 @@ function LibraryScreen({prog,T,cc,cl,setProg,setDetail,libCat,setLibCat}){
   function removeCustom(i){setProg(prev=>{const arr=[...prev.custom];arr.splice(i,1);return{...prev,custom:arr};});}
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      <div style={{background:T.card,borderBottom:`1px solid ${T.border}`}}>
+      <div style={{background:T.card,borderBottom:`1px solid ${T.border}`,maxWidth:800, margin:"0 auto", width:"100%"}}>
         <div style={{padding:"14px 16px 0",fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:10}}>{T.UI.library}</div>
         <div style={{padding:"0 16px 10px"}}><FI aria-label="Search" T={T} value={search} onChange={e=>setSearch(e.target.value)} placeholder={T.UI.search}/></div>
         {!search.trim()&&(<div style={{display:"flex",gap:7,overflowX:"auto",paddingBottom:12,paddingRight:16,paddingLeft:16,scrollbarWidth:"none"}}>
           {CATS.map(c=><button key={c} onClick={()=>setLibCat(c)} style={{whiteSpace:"nowrap",padding:"7px 15px",borderRadius:20,fontSize:T.f(13),border:`2px solid ${libCat===c?cc[c]:T.border}`,background:libCat===c?cc[c]:"transparent",cursor:"pointer",color:libCat===c?"#fff":T.muted,fontWeight:libCat===c?800:400,flexShrink:0,fontFamily:T.font}}>{T.CAT_L[c]}</button>)}
         </div>)}
       </div>
-      <div style={{flex:1,overflow:"auto",padding:"12px 16px 80px"}}>
+      <div style={{flex:1,overflow:"auto",padding:"12px 16px 80px", maxWidth:800, margin:"0 auto", width:"100%"}}>
         {search.trim()?(
-          <>
-            {allResults.length===0&&<div style={{textAlign:"center",padding:40,color:T.muted,fontSize:T.f(14)}}>לא נמצאו תוצאות</div>}
-            {allResults.length>0&&<div style={{fontSize:T.f(11),color:T.muted,marginBottom:10}}>{allResults.length} תוצאות</div>}
+          <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:10}}>
+            {allResults.length===0&&<div style={{textAlign:"center",padding:40,color:T.muted,fontSize:T.f(14), gridColumn:"1/-1"}}>לא נמצאו תוצאות</div>}
+            {allResults.length>0&&<div style={{fontSize:T.f(11),color:T.muted,marginBottom:10, gridColumn:"1/-1"}}>{allResults.length} תוצאות</div>}
             {allResults.map(bk=>(
               <div key={`${bk.cat}-${bk.i}`}>
                 <div style={{fontSize:T.f(10),color:cc[bk.cat]||T.muted,fontWeight:700,marginBottom:3,paddingRight:4}}>{T.CAT_L[bk.cat]}</div>
                 <BookCard cat={bk.cat} idx={bk.i} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog.custom}/>
               </div>
             ))}
-          </>
+          </div>
         ):(
-          <>
-            {libCat==="custom"&&<button onClick={()=>setCustSheet(true)} style={{width:"100%",padding:13,borderRadius:14,border:`2px dashed ${T.border}`,background:"transparent",cursor:"pointer",color:T.muted,fontSize:T.f(14),marginBottom:10,fontFamily:T.font}}>{T.UI.addBook}</button>}
+          <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:10}}>
+            {libCat==="custom"&&<button onClick={()=>setCustSheet(true)} style={{width:"100%",padding:13,borderRadius:14,border:`2px dashed ${T.border}`,background:"transparent",cursor:"pointer",color:T.muted,fontSize:T.f(14),marginBottom:10,fontFamily:T.font, gridColumn:"1/-1"}}>{T.UI.addBook}</button>}
             {filtered.map(bk=>(
               <div key={bk.i}>
                 <BookCard cat={libCat} idx={bk.i} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog.custom}/>
                 {libCat==="custom"&&<button onClick={()=>removeCustom(bk.i)} style={{fontSize:T.f(12),color:T.red,background:"none",border:"none",cursor:"pointer",marginTop:-4,marginBottom:8,paddingRight:6,fontFamily:T.font}}>{T.UI.del}</button>}
               </div>
             ))}
-          </>
+          </div>
         )}
       </div>
       <Sheet show={custSheet} onClose={()=>setCustSheet(false)} title={T.UI.addBook} T={T}>
@@ -900,7 +888,7 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
   }
 
   return (
-    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
+    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px", maxWidth:800, margin:"0 auto", width:"100%"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
         <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div>
         <button onClick={()=>setShowSheet(true)} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button>
@@ -913,7 +901,9 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
           <button onClick={()=>setShowSheet(true)} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button>
         </div>
       )}
-      {goals.map(g=><GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onDelete={()=>setGoals(prev=>prev.filter(x=>x.id!==g.id))} custom={prog.custom}/>)}
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:10}}>
+        {goals.map(g=><GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onDelete={()=>setGoals(prev=>prev.filter(x=>x.id!==g.id))} custom={prog.custom}/>)}
+      </div>
       <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={T.UI.newGoal} T={T}>
         <FL label={T.UI.topic} T={T}>
           <FS aria-label="Select Category" T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdx("0");setTarget("");}}>
@@ -936,9 +926,7 @@ function StatsScreen({prog,activity,T,cc}){
   const S=useMemo(()=>({
     dapim:GEMARA.reduce((s,_,i)=>s+calcDone(prog,"gemara",i),0),
     mishna:MISHNA.reduce((s,_,i)=>s+calcDone(prog,"mishna",i),0),
-    tanach:TANACH.reduce((s,_,i)=>s+calcDone(prog,"tanach",i),0),
-    gFull:GEMARA.filter((_,i)=>{const d=calcDone(prog,"gemara",i);return d>0&&d>=GEMARA[i].d;}).length,
-    mFull:MISHNA.filter((_,i)=>{const d=calcDone(prog,"mishna",i);return d>0&&d>=totalMs(i);}).length,
+    tanach:TANACH.reduce((s,_,i)=>s+calcDone(prog,"tanach",i),0)
   }),[prog]);
   
   const A=useMemo(()=>{
@@ -950,13 +938,13 @@ function StatsScreen({prog,activity,T,cc}){
   },[activity]);
 
   const rows=[
-    {cat:"gemara",l:T.CAT_L.gemara,dn:S.dapim,tot:TOTAL_DAPIM,x:`${S.gFull} ${T.UI.fullTractates}`,unit:T.CAT_UNIT.gemara},
-    {cat:"mishna",l:T.CAT_L.mishna,dn:S.mishna,tot:MISHNA.reduce((s,_,i)=>s+totalMs(i),0),x:`${S.mFull} ${T.UI.fullTractates}`,unit:T.CAT_UNIT.mishna},
-    {cat:"tanach",l:T.CAT_L.tanach,dn:S.tanach,tot:TANACH.reduce((s,t)=>s+t.c,0),x:"",unit:T.CAT_UNIT.tanach},
+    {cat:"gemara",l:T.CAT_L.gemara,dn:S.dapim,tot:TOTAL_DAPIM,unit:T.CAT_UNIT.gemara},
+    {cat:"mishna",l:T.CAT_L.mishna,dn:S.mishna,tot:MISHNA.reduce((s,_,i)=>s+totalMs(i),0),unit:T.CAT_UNIT.mishna},
+    {cat:"tanach",l:T.CAT_L.tanach,dn:S.tanach,tot:TANACH.reduce((s,t)=>s+t.c,0),unit:T.CAT_UNIT.tanach},
   ];
 
   return (
-    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
+    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px", maxWidth:800, margin:"0 auto", width:"100%"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
         <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.stats}</div>
       </div>
@@ -974,19 +962,22 @@ function StatsScreen({prog,activity,T,cc}){
       </div>
 
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(100px, 1fr))",gap:10,marginBottom:20}}>
-        {[{l:T.CAT_UNIT.gemara,v:S.dapim,c:cc.gemara},{l:T.UI.fullTractates,v:S.gFull,c:cc.gemara},{l:T.CAT_UNIT.mishna,v:S.mishna,c:cc.mishna},{l:T.CAT_UNIT.tanach,v:S.tanach,c:cc.tanach}].map(s=>(
+        {[{l:T.CAT_UNIT.gemara,v:S.dapim,c:cc.gemara},{l:T.CAT_UNIT.mishna,v:S.mishna,c:cc.mishna},{l:T.CAT_UNIT.tanach,v:S.tanach,c:cc.tanach}].map(s=>(
           <div key={s.l} style={{background:T.card,borderRadius:14,padding:"12px 10px",boxShadow:T.shadow}}><div style={{fontSize:T.f(26),fontWeight:900,color:s.c}}>{s.v}</div><div style={{fontSize:T.f(11),color:T.muted,marginTop:2}}>{s.l}</div></div>
         ))}
       </div>
-      {rows.map(x=>(
-        <div key={x.cat} style={{background:T.card,borderRadius:14,padding:"13px 15px",marginBottom:10,boxShadow:T.shadow}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:8}}>
-            <div><div style={{fontSize:T.f(15),fontWeight:700,color:T.navy}}>{x.l}</div>{x.x&&<div style={{fontSize:T.f(11),color:T.muted,marginTop:1}}>{x.x}</div>}</div>
-            <div style={{textAlign:T.isEn?"right":"left"}}><div style={{fontSize:T.f(18),fontWeight:900,color:cc[x.cat]}}>{pct(x.dn,x.tot)}%</div><div style={{fontSize:T.f(11),color:T.muted}}>{x.dn}/{x.tot} {x.unit}</div></div>
+      
+      <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(300px, 1fr))", gap:10}}>
+        {rows.map(x=>(
+          <div key={x.cat} style={{background:T.card,borderRadius:14,padding:"13px 15px",boxShadow:T.shadow}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:8}}>
+              <div><div style={{fontSize:T.f(15),fontWeight:700,color:T.navy}}>{x.l}</div></div>
+              <div style={{textAlign:T.isEn?"right":"left"}}><div style={{fontSize:T.f(18),fontWeight:900,color:cc[x.cat]}}>{pct(x.dn,x.tot)}%</div><div style={{fontSize:T.f(11),color:T.muted}}>{x.dn}/{x.tot} {x.unit}</div></div>
+            </div>
+            <Bar p={pct(x.dn,x.tot)} color={cc[x.cat]} h={8} dark={T.dark}/>
           </div>
-          <Bar p={pct(x.dn,x.tot)} color={cc[x.cat]} h={8} dark={T.dark}/>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -996,7 +987,7 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
   const[legalType, setLegalType] = useState(null);
 
   return (
-    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
+    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px", maxWidth:800, margin:"0 auto", width:"100%"}}>
       <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:20}}>{T.UI.settings}</div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
         <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>{T.UI.appearance}</div>
@@ -1043,7 +1034,6 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
       </div>
       <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:2,marginTop:24}}>
         <div style={{fontWeight:800,color:T.gold||GOLD,fontSize:T.f(14)}}>Torah Track</div>
-        <div>{T.UI.developedBy}</div>
         <div>{T.UI.allRights}</div>
       </div>
       <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
@@ -1114,6 +1104,7 @@ function AuthScreen({onLogin,T}){
     onLogin({name,email,method:"register", pass});
   }
   function googleLogin(){
+    // We assume Google login implies agreement, or you can force it there too.
     onLogin({method:"google"});
   }
 
@@ -1122,7 +1113,6 @@ function AuthScreen({onLogin,T}){
       <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}><IcoBook/></div>
       <div style={{textAlign:"center"}}>
         <div style={{fontSize:T.f(26),fontWeight:900,color:T.navy,marginBottom:4}}>Torah Track</div>
-        <div style={{fontSize:T.f(12),color:GOLD,fontWeight:600,marginBottom:8}}>{T.UI.developedBy}</div>
       </div>
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
         <button onClick={googleLogin} style={{display:"flex",alignItems:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font}}>
@@ -1210,7 +1200,7 @@ export default function App(){
   }
 
   useEffect(() => {
-    // ניקוי זיכרון מגרסאות ישנות כדי לטעון מהענן כראוי
+    // ניקוי זיכרון מגרסאות ישנות כדי לטעון מהענן כראוי ולמנוע באגים של שדרוג
     ["u11", "u10", "u9", "u8", "u7", "p11", "p12"].forEach(k => localStorage.removeItem(k));
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -1268,7 +1258,10 @@ export default function App(){
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L;
   const cl=sett.dark?CL_D:CL_L;
-  const appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480,margin:"0 auto",minHeight:"100vh",width:"100%",display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box"};
+  
+  // הוספת צבע רקע חיצוני למחשב, ומירכוז האפליקציה
+  const containerSt={minHeight:"100vh", background:"#000", display:"flex", justifyContent:"center"};
+  const appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:1000, width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
 
   async function handleLogin(credentials) {
     try {
@@ -1287,14 +1280,14 @@ export default function App(){
 
   function handleLogout(){signOut(auth);setTab("home");}
 
-  if(!user)return <div style={appSt}><AuthScreen onLogin={handleLogin} T={T}/></div>;
-  if(detail)return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(item)=>{
+  if(!user)return <div style={containerSt}><div style={appSt}><AuthScreen onLogin={handleLogin} T={T}/></div></div>;
+  if(detail)return <div style={containerSt}><div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(item)=>{
     const now=new Date();
     const timeStr=now.toLocaleDateString("he-IL",{day:"numeric",month:"numeric"})+' '+now.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});
     const date=todayKey();
     setActivity(prev=>[{...item,timeStr,date},...prev].slice(0,50));
     setActiveDays(prev=>{if(prev.includes(date))return prev;return [...prev,date].slice(-60);});
-  }}/></div>;
+  }}/></div></div>;
 
   const NAV=[
     {k:"home",l:T.UI.home,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},
@@ -1305,20 +1298,22 @@ export default function App(){
   ];
 
   return (
-    <div style={appSt}>
-      {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} setProg={setProg} streak={streak} activity={activity}/>}
-      {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
-      {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
-      {tab==="stats"&&<StatsScreen prog={prog} activity={activity} T={T} cc={cc}/>}
-      {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={handleLogout} user={user}/>}
-      <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>
-        {NAV.map(it=>(
-          <button aria-label={it.l} key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>
-            {it.ico}{it.l}
-          </button>
-        ))}
+    <div style={containerSt}>
+      <div style={appSt}>
+        {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} setProg={setProg} streak={streak} activity={activity}/>}
+        {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
+        {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
+        {tab==="stats"&&<StatsScreen prog={prog} activity={activity} T={T} cc={cc}/>}
+        {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={handleLogout} user={user}/>}
+        <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>
+          {NAV.map(it=>(
+            <button aria-label={it.l} key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>
+              {it.ico}{it.l}
+            </button>
+          ))}
+        </div>
+        {showInstallPrompt && <InstallGuide T={T} onClose={handleCloseInstallPrompt} />}
       </div>
-      {showInstallPrompt && <InstallGuide T={T} onClose={handleCloseInstallPrompt} />}
     </div>
   );
 }
