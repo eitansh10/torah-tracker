@@ -18,6 +18,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 /* ── ICONS ── */
+const IcoSearch = ()=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
 const IcoBook = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
 const IcoFlame = ()=><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>;
 const IcoStar = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
@@ -55,13 +56,17 @@ const DAF_YOMI_MASECHTOS = [{n:"ברכות",d:64},{n:"שבת",d:157},{n:"עיר�
 const TOTAL_DAPIM = 2711;
 const CYCLE14_START = new Date("2020-01-05");
 function getDafYomi() {
-  const today=new Date(); today.setHours(0,0,0,0);
-  const start=new Date(CYCLE14_START); start.setHours(0,0,0,0);
-  let dayN=Math.floor((today-start)/86400000)%TOTAL_DAPIM;
-  if(dayN<0) dayN+=TOTAL_DAPIM;
-  let rem=dayN; let mas="",daf=2;
-  for(const m of DAF_YOMI_MASECHTOS){if(rem<m.d){mas=m.n;daf=rem+2;break;} rem-=m.d;}
-  return {masechet:mas,daf,dafHeb:toHeb(daf)};
+  const today = new Date();
+  const utcToday = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const utcStart = Date.UTC(2020, 0, 5);
+  let dayN = Math.floor((utcToday - utcStart) / 86400000) % TOTAL_DAPIM;
+  if(dayN < 0) dayN += TOTAL_DAPIM;
+  let rem = dayN; let mas = "", daf = 2;
+  for(const m of DAF_YOMI_MASECHTOS){
+    if(rem < m.d){ mas = m.n; daf = rem + 2; break; }
+    rem -= m.d;
+  }
+  return {masechet:mas, daf, dafHeb:toHeb(daf)};
 }
 
 const PARASHA_CHAPTERS = {"בראשית":[1,2,3,4,5,6],"נח":[6,7,8,9,10,11],"לך לך":[12,13,14,15,16,17],"וירא":[18,19,20,21,22],"חיי שרה":[23,24,25],"תולדות":[25,26,27,28],"ויצא":[28,29,30,31,32],"וישלח":[32,33,34,35,36],"וישב":[37,38,39,40],"מקץ":[41,42,43,44],"ויגש":[44,45,46,47],"ויחי":[47,48,49,50],"שמות":[1,2,3,4,5,6],"וארא":[6,7,8,9],"בא":[10,11,12,13],"בשלח":[13,14,15,16,17],"יתרו":[18,19,20],"משפטים":[21,22,23,24],"תרומה":[25,26,27],"תצוה":[27,28,29,30],"כי תשא":[30,31,32,33,34],"ויקהל":[35,36,37,38],"פקודי":[38,39,40],"ויקרא":[1,2,3,4,5],"צו":[6,7,8],"שמיני":[9,10,11],"תזריע":[12,13],"מצורע":[14,15],"אחרי מות":[16,17,18],"קדושים":[19,20],"אמור":[21,22,23,24],"בהר":[25,26],"בחוקותי":[26,27],"במדבר":[1,2,3,4],"נשא":[4,5,6,7],"בהעלותך":[8,9,10,11,12],"שלח":[13,14,15],"קרח":[16,17,18],"חקת":[19,20,21],"בלק":[22,23,24,25],"פינחס":[25,26,27,28,29,30],"מטות":[30,31,32],"מסעי":[33,34,35,36],"דברים":[1,2,3],"ואתחנן":[3,4,5,6,7],"עקב":[7,8,9,10,11],"ראה":[11,12,13,14,15,16],"שופטים":[16,17,18,19,20,21],"כי תצא":[21,22,23,24,25],"כי תבוא":[26,27,28,29],"נצבים":[29,30],"וילך":[31],"האזינו":[32],"וזאת הברכה":[33,34]};
@@ -160,16 +165,30 @@ function getSefariaUrl(cat, bookName, key, tMode) {
   try {
     const engBook = SEFARIA_MAP[bookName] || encodeURIComponent(bookName.replace(/ /g, "_"));
     let k = String(key);
-    if(cat === "gemara") return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
-    if(cat === "mishna") return `https://www.sefaria.org.il/Mishnah_${engBook}.${k.replace(':', '.')}?lang=he`;
+    if(cat === "gemara") {
+        if(k.startsWith("p")) return ""; // ספריא לא תומך בלינק לפרק שלם בגמרא
+        return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
+    }
+    if(cat === "mishna") {
+        if(k.startsWith("pp")) {
+            const perek = k.replace('pp', '');
+            return `https://www.sefaria.org.il/Mishnah_${engBook}.${perek}?lang=he`;
+        }
+        return `https://www.sefaria.org.il/Mishnah_${engBook}.${k.replace(':', '.')}?lang=he`;
+    }
     if(cat === "tanach") {
       let ch = k;
-      if(tMode === "parshiot") ch = PARASHA_CHAPTERS[key]?.[0] || 1;
+      if(tMode === "parshiot") {
+          const chaps = PARASHA_CHAPTERS[key];
+          if(chaps && chaps.length > 0) ch = chaps[0];
+          else ch = 1;
+      }
       return `https://www.sefaria.org.il/${engBook}.${ch}?lang=he`;
     }
     if(["musar", "ravKook", "machshava"].includes(cat)) {
-      if (bookName === "נפש החיים") return `https://www.sefaria.org.il/${engBook}%2C_Gate_I.${k}?lang=he`;
-      return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
+      let formattedEng = engBook.replace(/,/g, "%2C");
+      if (bookName === "נפש החיים") return `https://www.sefaria.org.il/${formattedEng}%2C_Gate_I.${k}?lang=he`;
+      return `https://www.sefaria.org.il/${formattedEng}.${k}?lang=he`;
     }
     return "";
   } catch(e) { return ""; }
@@ -734,57 +753,67 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
 }
 
 /* ── LIBRARY ── */
-function LibraryScreen({prog,T,cc,cl,setProg,setDetail,libCat,setLibCat}){
-  const[search,setSearch]=useState("");
+function LibraryScreen({prog, T, cc, cl, setProg, setDetail, libCat, setLibCat}) {
+  const [search, setSearch] = useState("");
+  const filteredCustom = useMemo(() => {
+    if (search.trim()) return [];
+    return prog.custom.map((b,i)=>({...b, i})).filter(b => libCat==="custom" ? b.cat==="other" : b.cat===libCat);
+  }, [libCat, search, prog.custom]);
+
+  const allResults=useMemo(()=>{if(!search.trim())return[];return getAllBooks(prog.custom).filter(b=>b.n.includes(search.trim())||b.sub?.includes(search.trim()));},[search,prog.custom]);
+  const filtered=useMemo(()=>{if(search.trim())return[];return getBkList(libCat,[]).map(b=>({...b, isC: false}));},[libCat,search]);
+
   const[custSheet,setCustSheet]=useState(false);
   const[cd,setCd]=useState({name:"",chapters:"",cat:"musar"});
-  const allResults=useMemo(()=>{if(!search.trim())return[];return getAllBooks(prog.custom).filter(b=>b.n.includes(search.trim())||b.sub?.includes(search.trim()));},[search,prog.custom]);
-  const filtered=useMemo(()=>{if(search.trim())return[];return getBkList(libCat,prog.custom);},[libCat,search,prog.custom]);
-  function addCustom(){if(!cd.name||!cd.chapters)return;const lbl={musar:"מוסר",ravKook:"ספרי הראי״ה",machshava:"מחשבה",other:"אישי"}[cd.cat]||"אישי";setProg(prev=>({...prev,custom:[...prev.custom,{name:cd.name,chapters:parseInt(cd.chapters),catLabel:lbl,cat:cd.cat,done:new Set()}]}));setCustSheet(false);setCd({name:"",chapters:"",cat:"musar"});}
+  function addCustom(){if(!cd.name||!cd.chapters)return;const lbl={musar:"מוסר",ravKook:"ספרי הראי״ה",machshava:"מחשבה",other:"ספרים אישיים"}[cd.cat]||"אישי";setProg(prev=>({...prev,custom:[...prev.custom,{name:cd.name,chapters:parseInt(cd.chapters),catLabel:lbl,cat:cd.cat,done:new Set()}]}));setCustSheet(false);setCd({name:"",chapters:"",cat:"musar"});}
   function removeCustom(i){setProg(prev=>{const arr=[...prev.custom];arr.splice(i,1);return{...prev,custom:arr};});}
+
   return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      <div style={{background:T.card,borderBottom:`1px solid ${T.border}`}}>
-        <div style={{padding:"14px 16px 0",fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:10}}>{T.UI.library}</div>
-        <div style={{padding:"0 16px 10px"}}><FI aria-label="Search" T={T} value={search} onChange={e=>setSearch(e.target.value)} placeholder={T.UI.searchPlaceholder}/></div>
-        {!search.trim()&&(<div style={{display:"flex",gap:7,overflowX:"auto",paddingBottom:12,paddingRight:16,paddingLeft:16,scrollbarWidth:"none"}}>
-          {CATS.map(c=><button key={c} onClick={()=>setLibCat(c)} style={{whiteSpace:"nowrap",padding:"7px 15px",borderRadius:20,fontSize:T.f(13),border:`2px solid ${libCat===c?cc[c]:T.border}`,background:libCat===c?cc[c]:"transparent",cursor:"pointer",color:libCat===c?"#fff":T.muted,fontWeight:libCat===c?800:400,flexShrink:0,fontFamily:T.font}}>{T.CAT_L[c]}</button>)}
-        </div>)}
+    <div style={{flex:1, display:"flex", flexDirection:"column"}}>
+      <div style={{padding:"16px 16px 10px", background:T.card, borderBottom:`1px solid ${T.border}`}}>
+        <div style={{fontSize:T.f(18), fontWeight:900, marginBottom:12}}>הספרייה התורנית</div>
+        <div style={{position: "relative", marginBottom: 10}}>
+          <FI aria-label="Search" T={T} value={search} onChange={e=>setSearch(e.target.value)} placeholder="חיפוש ספר..." style={{paddingRight: 36}}/>
+          <div style={{position:"absolute", right:12, top:13, color:T.muted}}><IcoSearch /></div>
+        </div>
+        {!search && <div style={{display:"flex", gap:8, overflowX:"auto", paddingBottom:8, scrollbarWidth:"none"}}>
+          {CATS.map(c => <button key={c} onClick={()=>setLibCat(c)} style={{whiteSpace:"nowrap", padding:"6px 14px", borderRadius:20, border:`2.2px solid ${libCat===c?cc[c]:T.border}`, background:libCat===c?cc[c]:"transparent", color:libCat===c?"#fff":T.muted, fontWeight:700, cursor:"pointer"}}>{T.CAT_L[c]}</button>)}
+        </div>}
       </div>
-      <div style={{flex:1,overflow:"auto",padding:"12px 16px 80px"}}>
-        {search.trim()?(
+      <div style={{flex:1, overflow:"auto", padding:16}}>
+        {search.trim() ? (
           <div>
             {allResults.length===0&&<div style={{textAlign:"center",padding:40,color:T.muted,fontSize:T.f(14)}}>לא נמצאו תוצאות</div>}
-            {allResults.length>0&&<div style={{fontSize:T.f(11),color:T.muted,marginBottom:10}}>{allResults.length} תוצאות</div>}
             {allResults.map(bk=>(
               <div key={`${bk.cat}-${bk.i}`}>
                 <div style={{fontSize:T.f(10),color:cc[bk.cat]||T.muted,fontWeight:700,marginBottom:3,paddingRight:4}}>{T.CAT_L[bk.cat]}</div>
-                <BookCard cat={bk.cat} idx={bk.i} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog.custom}/>
+                <BookCard bkInfo={bk} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog.custom}/>
               </div>
             ))}
           </div>
-        ):(
+        ) : (
           <div>
-            {libCat==="custom"&&<button onClick={()=>setCustSheet(true)} style={{width:"100%",padding:13,borderRadius:14,border:`2px dashed ${T.border}`,background:"transparent",cursor:"pointer",color:T.muted,fontSize:T.f(14),marginBottom:10,fontFamily:T.font}}>{T.UI.addBook}</button>}
-            {filtered.map(bk=>(
-              <div key={bk.i}>
-                <BookCard cat={libCat} idx={bk.i} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog.custom}/>
-                {libCat==="custom"&&<button onClick={()=>removeCustom(bk.i)} style={{fontSize:T.f(12),color:T.red,background:"none",border:"none",cursor:"pointer",marginTop:-4,marginBottom:8,paddingRight:6,fontFamily:T.font}}>{T.UI.del}</button>}
+            {libCat==="custom" && <button onClick={()=>setCustSheet(true)} style={{width:"100%",padding:13,borderRadius:14,border:`2px dashed ${T.border}`,background:"transparent",cursor:"pointer",color:T.muted,fontSize:T.f(14),marginBottom:10,fontFamily:T.font}}>+ הוסף ספר אישי</button>}
+            {filtered.map(bk => <div key={`std-${bk.i}`}><BookCard bkInfo={bk} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog.custom}/></div>)}
+            {filteredCustom.map(bk => (
+              <div key={`cust-${bk.i}`}>
+                <BookCard bkInfo={{...bk, cat: bk.cat, isC: true}} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog.custom}/>
+                <button onClick={()=>removeCustom(bk.i)} style={{fontSize:T.f(12),color:T.red,background:"none",border:"none",cursor:"pointer",marginTop:-4,marginBottom:8,paddingRight:6,fontFamily:T.font}}>מחק ספר אישי</button>
               </div>
             ))}
           </div>
         )}
       </div>
-      <Sheet show={custSheet} onClose={()=>setCustSheet(false)} title={T.UI.addBook} T={T}>
-        <FL label={T.UI.book} T={T}><FI aria-label="Book Name" T={T} value={cd.name} onChange={e=>setCd(f=>({...f,name:e.target.value}))}/></FL>
-        <FL label={T.UI.perakim} T={T}><FI aria-label="Number of chapters" T={T} type="number" value={cd.chapters} onChange={e=>setCd(f=>({...f,chapters:e.target.value}))}/></FL>
-        <FL label={T.UI.topic} T={T}>
-          <FS aria-label="Category" T={T} value={cd.cat} onChange={e=>setCd(f=>({...f,cat:e.target.value}))}>
+      <Sheet show={custSheet} onClose={()=>setCustSheet(false)} title="+ הוסף ספר אישי" T={T}>
+        <FL label="שם הספר" T={T}><FI value={cd.name} onChange={e=>setCd(f=>({...f,name:e.target.value}))}/></FL>
+        <FL label="מספר פרקים/סעיפים" T={T}><FI type="number" value={cd.chapters} onChange={e=>setCd(f=>({...f,chapters:e.target.value}))}/></FL>
+        <FL label="קטגוריה" T={T}>
+          <FS value={cd.cat} onChange={e=>setCd(f=>({...f,cat:e.target.value}))}>
             <option value="musar">מוסר</option><option value="ravKook">ספרי הראי״ה</option>
-            <option value="machshava">מחשבה</option><option value="other">אישי / אחר</option>
+            <option value="machshava">מחשבה</option><option value="other">ספרים אישיים</option>
           </FS>
         </FL>
-        <PB T={T} onClick={addCustom} style={{marginTop:6,background:NAVY}}>{T.UI.save}</PB>
+        <PB T={T} onClick={addCustom} style={{marginTop:6,background:NAVY}}>שמור</PB>
       </Sheet>
     </div>
   );
@@ -966,6 +995,13 @@ function StatsScreen({prog,activity,activeDays,T,cc,streak}){
 
 /* ── SETTINGS ── */
 function SettingsScreen({sett,setSett,T,onLogout,user}){
+  <div style={{background:T.card, borderRadius:16, padding:16, marginBottom:16, boxShadow:T.shadow}}>
+  <div style={{fontSize:12, fontWeight:700, color:T.navy, marginBottom:8}}>תמיכה ויצירת קשר</div>
+  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+    <div style={{fontSize:T.f(14),fontWeight:600,color:T.navy}}>צור קשר עם המפתח</div>
+    <a href="mailto:eitanshachor1@gmail.com?subject=%D7%9E%D7%A2%D7%A7%D7%91%20%D7%9C%D7%9E%D7%99%D7%93%D7%94%20%D7%AA%D7%95%D7%A8%D7%A0%D7%99%D7%AA" style={{padding:"8px 14px",background:T.primary,color:"#fff",borderRadius:10,textDecoration:"none",fontSize:T.f(13),fontWeight:700,fontFamily:T.font}}>שלח מייל</a>
+  </div>
+</div>
   const[legalType, setLegalType] = useState(null);
 
   return (
@@ -1263,7 +1299,6 @@ export default function App(){
     {k:"home",l:T.UI.home,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},
     {k:"library",l:T.UI.library,ico:<IcoBook/>},
     {k:"goals",l:T.UI.goals,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},
-    {k:"stats",l:T.UI.stats,ico:<IcoStats/>},
     {k:"settings",l:T.UI.settings,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>},
   ];
 
