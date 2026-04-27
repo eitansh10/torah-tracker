@@ -18,16 +18,15 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 /* ── ICONS ── */
-const IcoBook = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
-const IcoFlame = ()=><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>;
-const IcoStar = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
-const IcoClock = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
-const IcoScroll = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4c0-1.1.9-2 2-2"/><path d="M20 2c1.1 0 2 .9 2 2"/><path d="M22 8v12c0 1.1-.9 2-2 2"/><path d="M16 22c-1.1 0-2-.9-2-2"/><path d="M14 22c0 1.1-.9 2-2 2"/><path d="M8 24c-1.1 0-2-.9-2-2"/><path d="M2 22V10c0-1.1.9-2 2-2"/><path d="M8 8c1.1 0 2-.9 2-2"/><path d="M10 4c0-1.1-.9-2-2-2"/><path d="M4 2c-1.1 0-2 .9-2 2"/><path d="M4 4h16"/><path d="M4 8h16"/><path d="M4 22h16"/></svg>;
-const IcoHeart = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
-const IcoCalendar = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
-const IcoAI = ()=><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>;
-const IcoStats = ()=><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
-const IcoDots = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
+const IcoBook = ()=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
+const IcoFlame = ()=><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>;
+const IcoStar = ()=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>;
+const IcoClock = ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+const IcoScroll = ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4c0-1.1.9-2 2-2"/><path d="M20 2c1.1 0 2 .9 2 2"/><path d="M22 8v12c0 1.1-.9 2-2 2"/><path d="M16 22c-1.1 0-2-.9-2-2"/><path d="M14 22c0 1.1-.9 2-2 2"/><path d="M8 24c-1.1 0-2-.9-2-2"/><path d="M2 22V10c0-1.1.9-2 2-2"/><path d="M8 8c1.1 0 2-.9 2-2"/><path d="M10 4c0-1.1-.9-2-2-2"/><path d="M4 2c-1.1 0-2 .9-2 2"/><path d="M4 4h16"/><path d="M4 8h16"/><path d="M4 22h16"/></svg>;
+const IcoHeart = ()=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
+const IcoCalendar = ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
+const IcoDots = ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
+const IcoStats = ()=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
 
 /* ── HEBREW DATE ── */
 function toHeb(n) {
@@ -137,10 +136,12 @@ function bkTotal(cat,i,custom) {
   if(cat==="custom") return (custom||[])[i]?.chapters||0;
   return 0;
 }
+
 function calcDone(prog,cat,i) {
   if(cat==="gemara"){const g=prog.gemara?.[i];if(!g)return 0;return Math.round((g.done?.size||0)/2);}
   if(cat==="mishna"){const m=prog.mishna?.[i];if(!m)return 0;return m.done?.size||0;}
   if(cat==="custom") return prog.custom?.[i]?.done?.size||0;
+  if(cat==="tanach") return prog.tanach?.[i]?.size||0;
   return prog[cat]?.[i]?.size||0;
 }
 function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
@@ -151,6 +152,7 @@ function getSefariaUrl(cat, bookName, key, tMode) {
   try {
     const engBook = SEFARIA_MAP[bookName] || encodeURIComponent(bookName.replace(/ /g, "_"));
     let k = String(key);
+    
     if(cat === "gemara") return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
     if(cat === "mishna") return `https://www.sefaria.org.il/Mishnah_${engBook}.${k.replace(':', '.')}?lang=he`;
     if(cat === "tanach") {
@@ -164,6 +166,14 @@ function getSefariaUrl(cat, bookName, key, tMode) {
     }
     return "";
   } catch(e) { return ""; }
+}
+
+function getSefariaText(cat, tMode, isEn) {
+    if(isEn) return "Read this section on Sefaria";
+    if(cat === "gemara") return "למד דף זה בספריא";
+    if(cat === "mishna") return "למד משנה זו בספריא";
+    if(cat === "tanach" && tMode === "parshiot") return "למד פרשה זו בספריא";
+    return "למד פרק זה בספריא";
 }
 
 /* ── STORAGE ── */
@@ -203,7 +213,7 @@ function mkT(dark,sz,lang) {
     :{gemara:"דפים",mishna:"משניות",tanach:"פרקים",musar:"פרקים",ravKook:"פרקים",machshava:"פרקים",custom:"פרקים"};
   
   const UI = isEn ? {
-    home: "Home", library: "Library", goals: "Goals", stats: "Stats", settings: "Settings", ai: "AI Study",
+    home: "Home", library: "Library", goals: "Goals", stats: "Stats", settings: "Settings",
     welcome: "Welcome!", startTracking: "Go to library and start tracking", openLib: "Open Library",
     activeGoals: "Active Goals", recentActivity: "Recent Activity", daysLeft: "days left",
     dafYomi: "Daf Yomi", parasha: "Weekly Parasha", halacha: "Daily Halacha", zmanim: "Zmanim",
@@ -222,7 +232,7 @@ function mkT(dark,sz,lang) {
     continueSefaria: "Continue reading where you left off", legal: "Legal & Privacy", terms: "Terms of Service", privacy: "Privacy Policy",
     agreeTerms: "I agree to the Terms of Service and Privacy Policy", mustAgree: "You must agree to the Terms to continue"
   } : {
-    home: "בית", library: "ספרייה", goals: "יעדים", stats: "נתונים", settings: "הגדרות", ai: "AI אישי",
+    home: "בית", library: "ספרייה", goals: "יעדים", stats: "נתונים", settings: "הגדרות",
     welcome: "ברוך הבא!", startTracking: "לך לספרייה והתחל לסמן", openLib: "פתח ספרייה",
     activeGoals: "יעדים פעילים", recentActivity: "פעילות אחרונה", daysLeft: "ימים שנותרו",
     dafYomi: "דף יומי", parasha: "פרשת השבוע", halacha: "הלכה יומית", zmanim: "זמני היום",
@@ -481,6 +491,15 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
             );
           })}
         </div>
+        {items.length>0&&(
+          <div style={{display:"flex",gap:10,marginTop:16}}>
+            <button onClick={()=>items.forEach(it=>!isOn(it.key)&&toggle(it.key))} style={{flex:1,padding:11,borderRadius:10,border:`1.5px solid ${T.border}`,background:"none",cursor:"pointer",fontSize:T.f(13),color:T.navy,fontFamily:T.font}}>{T.UI.markAll}</button>
+            <button onClick={()=>items.forEach(it=>(isOn(it.key)||isPartial(it.key))&&toggle(it.key))} style={{flex:1,padding:11,borderRadius:10,border:`1.5px solid ${T.border}`,background:"none",cursor:"pointer",fontSize:T.f(13),color:T.muted,fontFamily:T.font}}>{T.UI.clearAll}</button>
+          </div>
+        )}
+        <div style={{textAlign:"center", marginTop:16, fontSize:T.f(11), color:T.muted}}>
+           💡 לחיצה על ⋮ תפתח אפשרויות קריאה והערות.
+        </div>
       </div>
 
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
@@ -500,135 +519,6 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
         </FL>
         <PB T={T} onClick={saveNote} style={{marginTop:12,background:col}}>{T.UI.save}</PB>
       </Sheet>
-    </div>
-  );
-}
-
-/* ── AI STUDY SCREEN ── */
-function AiScreen({activity, T, sett}) {
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [response, setResponse] = useState("");
-  const [loading, setLoading] = useState(false);
-  
-  const recentLearned = useMemo(() => {
-    const unique = [];
-    const seen = new Set();
-    for (const item of activity) {
-      const key = `${item.cat}-${item.bk}-${item.label}`;
-      if (!seen.has(key)) {
-        seen.add(key);
-        unique.push(item);
-      }
-      if (unique.length >= 15) break; 
-    }
-    return unique;
-  }, [activity]);
-
-  const toggleItem = (key) => {
-    if (selectedItems.includes(key)) setSelectedItems(selectedItems.filter(i => i !== key));
-    else setSelectedItems([...selectedItems, key]);
-  };
-
-  const getPrompt = (type) => {
-    if(selectedItems.length === 0) return "";
-    const itemsText = selectedItems.join(", ");
-    if(type === "summary") return `למדתי לאחרונה את החומרים הבאים: ${itemsText}. אנא כתוב לי סיכום תמציתי, ברור ומחולק לנקודות של העניינים המרכזיים ביותר שנלמדו שם.`;
-    if(type === "quiz") return `למדתי לאחרונה את החומרים הבאים: ${itemsText}. תכין לי חידון אמריקאי של 5 שאלות קשות לבחון את עצמי על החומר, עם 4 אפשרויות לכל שאלה. בסוף תכתוב את התשובות הנכונות עם הסבר קצר.`;
-    return "";
-  };
-
-  async function handleAI(type) {
-    if (selectedItems.length === 0) return alert(T.isEn ? "Select items first" : "יש לבחור לפחות פריט אחד");
-    
-    const prompt = getPrompt(type);
-
-    if (sett.openAiKey) {
-      setLoading(true);
-      setResponse("");
-      try {
-        const res = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${sett.openAiKey}` },
-          body: JSON.stringify({
-            model: "gpt-3.5-turbo",
-            messages: [{role: "user", content: prompt}]
-          })
-        });
-        const data = await res.json();
-        if (data.choices && data.choices[0]) {
-          setResponse(data.choices[0].message.content);
-        } else {
-          setResponse("Error: " + (data.error?.message || "Unknown"));
-        }
-      } catch(e) {
-        setResponse("Error connecting to AI.");
-      }
-      setLoading(false);
-    } else {
-      window.open(`https://chatgpt.com/?q=${encodeURIComponent(prompt)}`, '_blank');
-    }
-  }
-
-  return (
-    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
-      <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:12, display:"flex", alignItems:"center", gap:8}}>
-        <IcoAI /> {T.isEn ? "AI Study Assistant" : "עוזר למידה AI"}
-      </div>
-      
-      {!sett.openAiKey && (
-         <div style={{background:"#FEF3C7", color:"#92400E", padding:"12px 16px", borderRadius:12, fontSize:T.f(12), marginBottom:20, lineHeight:1.5}}>
-           💡 <strong>{T.isEn ? "Tip:" : "טיפ:"}</strong> {T.isEn ? "Add an OpenAI key in settings to get answers here. Otherwise, we will open ChatGPT for you." : "ניתן להוסיף מפתח OpenAI בהגדרות כדי לראות את התשובות כאן. אחרת, נייצר עבורך את השאלה ונפתח את ChatGPT."}
-         </div>
-      )}
-
-      <div style={{background:T.card,borderRadius:16,padding:"16px",boxShadow:T.shadow, marginBottom:20}}>
-        <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:16}}>{T.isEn ? "Select material:" : "בחר על מה תרצה להיבחן/לסכם:"}</div>
-        
-        {recentLearned.length === 0 ? (
-          <div style={{color:T.muted, fontSize:T.f(13)}}>{T.isEn ? "No recent activity." : "אין היסטוריית למידה זמינה."}</div>
-        ) : (
-          <div style={{display:"grid", gap:10}}>
-            {recentLearned.map(item => {
-              const label = `${item.bk} ${item.label ? item.label : ''}`;
-              const isSel = selectedItems.includes(label);
-              return (
-                <button 
-                  key={label} 
-                  onClick={() => toggleItem(label)}
-                  style={{display:"flex", alignItems:"center", justifyContent:"space-between", padding:"12px 14px", background:isSel?(T.dark?"rgba(74,127,192,0.15)":"#E8EFF8"):T.input, border:`2px solid ${isSel?T.primary:"transparent"}`, borderRadius:10, cursor:"pointer", textAlign:T.isEn?"left":"right", fontFamily:T.font}}
-                >
-                  <div>
-                    <div style={{fontSize:T.f(14), fontWeight:isSel?700:500, color:T.navy}}>{label}</div>
-                    <div style={{fontSize:T.f(11), color:T.muted}}>{T.CAT_L[item.cat] || item.cat}</div>
-                  </div>
-                  <div style={{width:20, height:20, borderRadius:"50%", border:`2px solid ${isSel?T.primary:T.muted}`, background:isSel?T.primary:"transparent", display:"flex", alignItems:"center", justifyContent:"center"}}>
-                    {isSel && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        )}
-      </div>
-
-      <div style={{display:"flex", gap:12}}>
-        <button disabled={loading} onClick={() => handleAI("summary")} style={{flex:1, opacity:loading?0.5:1, background:"#10a37f", color:"#fff", border:"none", padding:"14px", borderRadius:12, fontSize:T.f(14), fontWeight:700, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:6, fontFamily:T.font}}>
-          <IcoBook /> {T.isEn ? "Generate Summary" : "הכן לי סיכום"}
-        </button>
-        <button disabled={loading} onClick={() => handleAI("quiz")} style={{flex:1, opacity:loading?0.5:1, background:"#ab68ff", color:"#fff", border:"none", padding:"14px", borderRadius:12, fontSize:T.f(14), fontWeight:700, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", gap:6, fontFamily:T.font}}>
-          <IcoStar /> {T.isEn ? "Generate Quiz" : "בחן אותי עכשיו"}
-        </button>
-      </div>
-
-      {loading && <div style={{textAlign:"center", marginTop:20, color:T.muted}}>{T.isEn ? "Thinking..." : "ה-AI חושב..."}</div>}
-      
-      {response && (
-        <div style={{background:T.card,borderRadius:16,padding:"20px",boxShadow:T.shadow, marginTop:20, border:`1px solid ${T.primary}`}}>
-          <div style={{fontSize:T.f(14), color:T.navy, whiteSpace:"pre-wrap", lineHeight:1.6}}>
-            {response}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -737,6 +627,13 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
       </div>
       <div style={{padding:"14px 16px 80px"}}>
 
+        {/* Dedication Banner */}
+        <div style={{background:T.card,borderRadius:14,padding:"16px",marginBottom:16,border:`1.5px solid ${GOLD}`,boxShadow:T.shadow}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,color:GOLD,marginBottom:8}}><IcoHeart/><div style={{fontWeight:800,fontSize:T.f(14)}}>{T.UI.dedicate}</div></div>
+          <div style={{fontSize:T.f(12),color:T.muted,lineHeight:1.6,marginBottom:12}}>{T.UI.dedicateDesc}</div>
+          <a href="mailto:eitanshachor1@gmail.com?subject=%D7%94%D7%A7%D7%93%D7%A9%D7%AA%20%D7%9C%D7%99%D7%9E%D7%95%D7%93" style={{display:"inline-block",padding:"8px 16px",background:T.dark?"rgba(201,168,76,0.15)":"#FBF5E0",color:GOLD,borderRadius:10,textDecoration:"none",fontSize:T.f(12),fontWeight:700}}>{T.UI.submitDedication}</a>
+        </div>
+
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>
           {rows.map(r=>{const p2=pct(r.v,r.tot);return (
             <div key={r.cat} onClick={()=>setTab("library")} style={{background:T.card,borderRadius:14,padding:"13px",boxShadow:T.shadow,cursor:"pointer",borderTop:`3px solid ${cc[r.cat]}`}}>
@@ -747,13 +644,6 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
               <Bar p={p2} color={cc[r.cat]} h={4} dark={T.dark}/>
             </div>
           );})}
-        </div>
-
-        {/* Dedication Banner */}
-        <div style={{background:T.card,borderRadius:14,padding:"16px",marginBottom:16,border:`1.5px solid ${GOLD}`,boxShadow:T.shadow}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,color:GOLD,marginBottom:8}}><IcoHeart/><div style={{fontWeight:800,fontSize:T.f(14)}}>{T.UI.dedicate}</div></div>
-          <div style={{fontSize:T.f(12),color:T.muted,lineHeight:1.6,marginBottom:12}}>{T.UI.dedicateDesc}</div>
-          <a href="mailto:eitanshachor1@gmail.com?subject=%D7%94%D7%A7%D7%93%D7%A9%D7%AA%20%D7%9C%D7%99%D7%9E%D7%95%D7%93" style={{display:"inline-block",padding:"8px 16px",background:T.dark?"rgba(201,168,76,0.15)":"#FBF5E0",color:GOLD,borderRadius:10,textDecoration:"none",fontSize:T.f(12),fontWeight:700}}>{T.UI.submitDedication}</a>
         </div>
 
         <div style={{background:T.card,borderRadius:14,padding:"13px 14px",marginBottom:14,boxShadow:T.shadow,borderRight:`3px solid ${GOLD}`}}>
@@ -817,6 +707,12 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,setProg,streak,activity}){
             })}
           </div>
         </>)}
+        {empty&&(<div style={{textAlign:"center",padding:"36px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow,marginTop:16}}>
+          <div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:12}}><IcoBook/></div>
+          <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.welcome}</div>
+          <div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.startTracking}</div>
+          <button onClick={()=>setTab("library")} style={{marginTop:18,padding:"12px 28px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(15),fontWeight:700,fontFamily:T.font}}>{T.UI.openLib}</button>
+        </div>)}
       </div>
     </div>
   );
@@ -1075,16 +971,6 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
           <div style={{display:"flex",gap:8}}>{[{v:"he",l:"עברית"},{v:"en",l:"English"}].map(o=><button aria-pressed={sett.lang===o.v} key={o.v} onClick={()=>setSett(s=>({...s,lang:o.v}))} style={{flex:1,padding:9,borderRadius:10,border:`2px solid ${sett.lang===o.v?T.primary:T.border}`,background:sett.lang===o.v?T.primary:"transparent",color:sett.lang===o.v?"#fff":T.muted,fontSize:T.f(13),cursor:"pointer",fontWeight:sett.lang===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div>
         </div>
       </div>
-
-      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
-        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>AI INTEGRATION (ChatGPT)</div>
-        <div style={{padding:"14px 16px"}}>
-           <div style={{fontSize:T.f(12), color:T.muted, marginBottom:8, lineHeight:1.5}}>
-             {T.isEn ? "Enter your OpenAI API key to get summaries and quizzes directly inside the app. If left blank, we will generate the prompt and open ChatGPT for you." : "הכנס מפתח API של OpenAI כדי לקבל סיכומים וחידונים ישירות בתוך האפליקציה. אם תשאיר ריק, נייצר עבורך את השאלה המושלמת ונפתח את ChatGPT."}
-           </div>
-           <FI type="password" placeholder="sk-..." value={sett.openAiKey || ""} onChange={e=>setSett(s=>({...s, openAiKey:e.target.value}))} style={{direction:"ltr", fontSize:T.f(12)}} />
-        </div>
-      </div>
       
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
         <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>{T.UI.legal}</div>
@@ -1106,17 +992,134 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
           <button onClick={onLogout} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(14),fontWeight:700,fontFamily:T.font,padding:0}}>{T.UI.signOut}</button>
         </div>
       </div>
-      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
-        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>{T.UI.support}</div>
-        <div style={{padding:"14px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy}}>{T.UI.contactDev}</div></div>
-          <a href="mailto:eitanshachor1@gmail.com?subject=%D7%9E%D7%A2%D7%A7%D7%91%20%D7%9C%D7%9E%D7%99%D7%93%D7%94%20%D7%AA%D7%95%D7%A8%D7%A0%D7%99%D7%AA" style={{padding:"8px 14px",background:T.primary,color:"#fff",borderRadius:10,textDecoration:"none",fontSize:T.f(13),fontWeight:700,fontFamily:T.font,flexShrink:0}}>{T.UI.sendEmail}</a>
-        </div>
-      </div>
       <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:2,marginTop:24}}>
         <div style={{fontWeight:800,color:T.gold||GOLD,fontSize:T.f(14)}}>Torah Track</div>
-        <div>{T.UI.allRights}</div>
       </div>
+      <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
+    </div>
+  );
+}
+
+/* ── INSTALL GUIDE COMPONENT ── */
+function InstallGuide({ T, onClose }) {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isAndroid = /android/i.test(navigator.userAgent);
+
+  return (
+    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", display:"flex", alignItems:"flex-end", zIndex:9999}}>
+      <div style={{background:T.card, width:"100%", padding:"24px 20px 40px", borderRadius:"24px 24px 0 0", boxSizing:"border-box", textAlign:"center", animation:"slideUp 0.3s ease-out"}}>
+        <div style={{width:40, height:5, background:T.border, borderRadius:10, margin:"0 auto 20px"}}/>
+        <div style={{display:"flex", justifyContent:"center", color:T.gold||GOLD, marginBottom:16}}><IcoStar /></div>
+        <h2 style={{margin:"0 0 12px 0", fontSize:T.f(20), color:T.navy}}>התקן כאפליקציה</h2>
+        <p style={{margin:"0 0 24px 0", fontSize:T.f(14), color:T.muted, lineHeight:1.5}}>
+          הוסף את Torah Track למסך הבית שלך לחוויה מהירה וחלקה יותר, בדיוק כמו אפליקציה רגילה.
+        </p>
+        
+        <div style={{background:T.input, padding:"16px", borderRadius:12, marginBottom:24, textAlign:T.isEn?"left":"right"}}>
+          {isIOS ? (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. בתחתית המסך, לחץ על סמל השיתוף ⍐</div>
+              <div>2. גלול למטה ובחר <strong>"הוסף למסך הבית"</strong> ➕</div>
+            </div>
+          ) : isAndroid ? (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. למעלה בדפדפן, לחץ על תפריט הנקודות ⋮</div>
+              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
+            </div>
+          ) : (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. לחץ על תפריט הדפדפן ⋮</div>
+              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
+            </div>
+          )}
+        </div>
+        
+        <button onClick={onClose} style={{background:T.primary, color:"white", border:"none", padding:"14px", width:"100%", borderRadius:12, fontSize:T.f(15), fontWeight:700, cursor:"pointer"}}>
+          הבנתי, תודה
+        </button>
+      </div>
+      <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
+    </div>
+  );
+}
+
+/* ── AUTH SCREEN ── */
+function AuthScreen({onLogin,T}){
+  const[mode,setMode]=useState("choose"); 
+  const[name,setName]=useState("");
+  const[email,setEmail]=useState("");
+  const[pass,setPass]=useState("");
+  const[err,setErr]=useState("");
+  const[agree,setAgree]=useState(false);
+  const[legalType,setLegalType]=useState(null);
+
+  function loginEmail(){
+    if(!email.trim()||!pass.trim()){setErr(T.isEn?"Please fill all fields":"נא למלא אימייל וסיסמה");return;}
+    onLogin({name:email.split("@")[0],email,method:"email", pass});
+  }
+  function register(){
+    if(!name.trim()||!email.trim()||!pass.trim()){setErr(T.isEn?"Please fill all fields":"נא למלא את כל השדות");return;}
+    if(!agree){setErr(T.UI.mustAgree);return;}
+    onLogin({name,email,method:"register", pass});
+  }
+  function googleLogin(){
+    onLogin({method:"google"});
+  }
+
+  if(mode==="choose") return (
+    <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,gap:20,background:T.bg}}>
+      <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}><IcoBook/></div>
+      <div style={{textAlign:"center", marginBottom:20}}>
+        <div style={{fontSize:T.f(32),fontWeight:900,color:T.navy,marginBottom:4}}>Torah Track</div>
+      </div>
+      <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
+        <button onClick={googleLogin} style={{display:"flex",alignItems:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font}}>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          {T.UI.continueWith} Google
+        </button>
+        <div style={{display:"flex",alignItems:"center",gap:10,margin:"4px 0"}}><div style={{flex:1,height:1,background:T.border}}/><span style={{fontSize:T.f(12),color:T.muted}}>{T.UI.or}</span><div style={{flex:1,height:1,background:T.border}}/></div>
+        <button onClick={()=>setMode("email")} style={{padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:600,color:T.navy,fontFamily:T.font}}>
+          📧 {T.UI.login}
+        </button>
+        <button onClick={()=>setMode("register")} style={{padding:"11px",borderRadius:14,border:"none",background:"transparent",cursor:"pointer",fontSize:T.f(13),color:T.muted,fontFamily:T.font}}>
+          {T.UI.newAccount}
+        </button>
+      </div>
+      {err&&<div style={{color:T.red,fontSize:T.f(13),marginTop:12,textAlign:"center"}}>{err}</div>}
+      
+      <div style={{marginTop:24, textAlign:"center", fontSize:T.f(11), color:T.muted, display:"flex", gap:12}}>
+        <button onClick={()=>setLegalType('terms')} style={{background:"none", border:"none", textDecoration:"underline", color:T.muted, cursor:"pointer", fontFamily:T.font}}>{T.UI.terms}</button>
+        <button onClick={()=>setLegalType('privacy')} style={{background:"none", border:"none", textDecoration:"underline", color:T.muted, cursor:"pointer", fontFamily:T.font}}>{T.UI.privacy}</button>
+      </div>
+      <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
+    </div>
+  );
+
+  return (
+    <div style={{flex:1,display:"flex",flexDirection:"column",padding:28,background:T.bg}}>
+      <button aria-label="Go Back" onClick={()=>{setMode("choose");setErr("");}} style={{alignSelf:"flex-start",background:"none",border:"none",cursor:"pointer",color:T.muted,fontSize:T.f(13),marginBottom:20,fontFamily:T.font,display:"flex",alignItems:"center",gap:4}}>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points={T.isEn?"15 18 9 12 15 6":"9 18 15 12 9 6"}/></svg> {T.isEn?"Back":"חזרה"}
+      </button>
+      <div style={{fontSize:T.f(22),fontWeight:900,color:T.navy,marginBottom:6}}>{mode==="email"?T.UI.login:T.UI.register}</div>
+      <FL label={T.UI.email} T={T}><FI aria-label="Email" T={T} type="email" value={email} onChange={e=>setEmail(e.target.value)} style={{direction:"ltr"}}/></FL>
+      <FL label={T.UI.password} T={T}><FI aria-label="Password" T={T} type="password" value={pass} onChange={e=>setPass(e.target.value)} style={{direction:"ltr"}}/></FL>
+      
+      {mode==="register"&&(
+        <>
+          <FL label={T.UI.name} T={T}><FI aria-label="Full Name" T={T} value={name} onChange={e=>setName(e.target.value)}/></FL>
+          <label style={{display:"flex", alignItems:"flex-start", gap:8, marginBottom:16, cursor:"pointer"}}>
+            <input type="checkbox" checked={agree} onChange={e=>setAgree(e.target.checked)} style={{marginTop:4}} />
+            <span style={{fontSize:T.f(12), color:T.muted, lineHeight:1.4}}>
+              {T.UI.agreeTerms} 
+              <span onClick={(e)=>{e.preventDefault(); setLegalType('terms');}} style={{color:T.primary, textDecoration:"underline", margin:"0 4px"}}>{T.UI.terms}</span>
+              ו-<span onClick={(e)=>{e.preventDefault(); setLegalType('privacy');}} style={{color:T.primary, textDecoration:"underline", margin:"0 4px"}}>{T.UI.privacy}</span>.
+            </span>
+          </label>
+        </>
+      )}
+      
+      {err&&<div style={{color:T.red,fontSize:T.f(13),marginBottom:12,textAlign:"center", fontWeight:600}}>{err}</div>}
+      <PB T={T} onClick={mode==="email"?loginEmail:register}>{mode==="email"?T.UI.login:T.UI.register}</PB>
       <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
     </div>
   );
@@ -1155,7 +1158,7 @@ export default function App(){
   }
 
   useEffect(() => {
-    ["u11", "u10", "u9", "u8", "u7", "p11", "p12", "p13"].forEach(k => localStorage.removeItem(k));
+    ["u11", "u10", "u9", "u8", "u7", "p11", "p12", "p13", "p14"].forEach(k => localStorage.removeItem(k));
 
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -1213,7 +1216,6 @@ export default function App(){
   const cc=sett.dark?CC_D:CC_L;
   const cl=sett.dark?CL_D:CL_L;
   
-  // Mobile First Layout
   const appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
 
   async function handleLogin(credentials) {
@@ -1245,7 +1247,6 @@ export default function App(){
   const NAV=[
     {k:"home",l:T.UI.home,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},
     {k:"library",l:T.UI.library,ico:<IcoBook/>},
-    {k:"ai",l:T.UI.ai,ico:<IcoAI/>},
     {k:"goals",l:T.UI.goals,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},
     {k:"stats",l:T.UI.stats,ico:<IcoStats/>},
     {k:"settings",l:T.UI.settings,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>},
@@ -1255,7 +1256,6 @@ export default function App(){
     <div style={appSt}>
       {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} setProg={setProg} streak={streak} activity={activity}/>}
       {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
-      {tab==="ai"&&<AiScreen activity={activity} T={T} sett={sett} />}
       {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
       {tab==="stats"&&<StatsScreen prog={prog} activity={activity} activeDays={activeDays} T={T} cc={cc} streak={streak}/>}
       {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={handleLogout} user={user}/>}
