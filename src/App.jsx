@@ -50,7 +50,6 @@ function hebStr(s) { return s ? hebDateFull(new Date(s+"T12:00:00")) : ""; }
 function todayKey() { return new Date().toISOString().slice(0,10); }
 
 /* ── DATA & STRUCTURES ── */
-// הערכים תוקנו כדי לייצג את מספר הדפים הפיזי בכל מסכת (אורך ולא דף אחרון) למניעת סטיות בחישוב.
 const DAF_YOMI_MASECHTOS = [{n:"ברכות",d:63},{n:"שבת",d:156},{n:"עירובין",d:104},{n:"פסחים",d:120},{n:"שקלים",d:21},{n:"יומא",d:87},{n:"סוכה",d:55},{n:"ביצה",d:39},{n:"ראש השנה",d:34},{n:"תענית",d:30},{n:"מגילה",d:31},{n:"מועד קטן",d:28},{n:"חגיגה",d:26},{n:"יבמות",d:121},{n:"כתובות",d:111},{n:"נדרים",d:90},{n:"נזיר",d:65},{n:"סוטה",d:48},{n:"גיטין",d:89},{n:"קידושין",d:81},{n:"בבא קמא",d:118},{n:"בבא מציעא",d:118},{n:"בבא בתרא",d:175},{n:"סנהדרין",d:112},{n:"מכות",d:23},{n:"שבועות",d:48},{n:"עבודה זרה",d:75},{n:"הוריות",d:13},{n:"זבחים",d:119},{n:"מנחות",d:109},{n:"חולין",d:141},{n:"בכורות",d:60},{n:"ערכין",d:33},{n:"תמורה",d:33},{n:"כריתות",d:27},{n:"מעילה",d:37},{n:"נידה",d:72}];
 const TOTAL_DAPIM = 2711;
 
@@ -122,7 +121,6 @@ function getBkList(cat, custom) {
   if(cat === "custom") {
     return customsInCat;
   } else {
-    // מציג ספרים אישיים בתחילת הרשימה
     return [...customsInCat.filter(c => c.cat === cat), ...base];
   }
 }
@@ -157,12 +155,12 @@ function calcDone(prog, cat, i) {
 }
 function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 
-/* ── SEFARIA LINK GENERATOR ── */
-function getSefariaUrl(cat, bookName, key, tMode, isC, masIdx) {
+/* ── SEFARIA API LINK GENERATOR ── */
+function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
   if(!bookName || !key || isC) return ""; 
   try {
     const engBook = SEFARIA_MAP[bookName];
-    if (!engBook) return ""; // מחזיר ריק אם הספר לא מוגדר במפה (מונע הופעת כפתור ספריא)
+    if (!engBook) return ""; 
 
     let kStr = String(key);
     
@@ -171,26 +169,26 @@ function getSefariaUrl(cat, bookName, key, tMode, isC, masIdx) {
             const pn = parseInt(kStr.slice(1));
             kStr = perekAmudKeys(masIdx, pn)[0] || "2a";
         }
-        return `https://www.sefaria.org.il/${engBook}.${kStr}?lang=he`;
+        return `${engBook}.${kStr}`;
     }
     
     if(cat === "mishna") {
         if(kStr.startsWith("pp")) {
             const pn = kStr.slice(2);
-            return `https://www.sefaria.org.il/Mishnah_${engBook}.${pn}?lang=he`;
+            return `Mishnah_${engBook}.${pn}`;
         }
-        return `https://www.sefaria.org.il/Mishnah_${engBook}.${kStr.replace(':', '.')}?lang=he`;
+        return `Mishnah_${engBook}.${kStr.replace(':', '.')}`;
     }
     
     if(cat === "tanach") {
       let ch = kStr;
       if(tMode === "parshiot") ch = PARASHA_CHAPTERS[key]?.[0] || 1;
-      return `https://www.sefaria.org.il/${engBook}.${ch}?lang=he`;
+      return `${engBook}.${ch}`;
     }
     
     if(["musar", "ravKook", "machshava"].includes(cat)) {
-      if (bookName === "נפש החיים") return `https://www.sefaria.org.il/${engBook}%2C_Gate_I.${kStr}?lang=he`;
-      return `https://www.sefaria.org.il/${engBook}.${kStr}?lang=he`;
+      if (bookName === "נפש החיים") return `${engBook},_Gate_I.${kStr}`;
+      return `${engBook}.${kStr}`;
     }
     return "";
   } catch(e) { return ""; }
@@ -324,6 +322,62 @@ function LegalSheet({show, onClose, type, T}) {
   );
 }
 
+/* ── SEFARIA READER SHEET ── */
+function SefariaReaderSheet({ show, onClose, title, sefariaRef, T }) {
+  const [loading, setLoading] = useState(false);
+  const [textArr, setTextArr] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (!show || !sefariaRef) return;
+    setLoading(true);
+    setError(null);
+    setTextArr([]);
+
+    fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(sefariaRef)}?context=0`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) {
+          setError(data.error);
+        } else {
+          // מנגנון שיטוח מערכים מרובים שמגיעים מספריא לעיתים קרובות
+          const flattenText = (arr) => {
+            if (typeof arr === 'string') return [arr];
+            if (Array.isArray(arr)) return arr.flatMap(flattenText);
+            return [];
+          };
+          const hebrewText = flattenText(data.he || []);
+          setTextArr(hebrewText);
+        }
+        setLoading(false);
+      })
+      .catch(e => {
+        setError("אירעה שגיאה בטעינת הטקסט מספריא.");
+        setLoading(false);
+      });
+  }, [show, sefariaRef]);
+
+  return (
+    <Sheet show={show} onClose={onClose} title={title} T={T}>
+      <div style={{minHeight: 200, maxHeight: '65vh', overflowY: 'auto', paddingRight: 8, direction: 'rtl'}}>
+         {loading && <div style={{textAlign:'center', color: T.muted, padding:40, fontSize: T.f(15)}}>טוען טקסט מספריא... ⏳</div>}
+         {error && <div style={{textAlign:'center', color: T.red, padding:20, fontWeight:600}}>{error}</div>}
+         {!loading && !error && textArr.length === 0 && <div style={{textAlign:'center', color: T.muted, padding:20}}>לא נמצא טקסט עברי זמין לקטע זה.</div>}
+         
+         {!loading && !error && textArr.map((t, i) => (
+            <p key={i} style={{fontSize: T.f(19), lineHeight: 1.8, marginBottom: 14, color: T.navy, fontFamily: "'Frank Ruhl Libre', 'David', serif", textAlign: 'justify'}} dangerouslySetInnerHTML={{__html: t}} />
+         ))}
+         
+         {!loading && !error && textArr.length > 0 && (
+            <div style={{marginTop: 20, paddingTop: 14, borderTop: `1px solid ${T.border}`, fontSize: T.f(12), color: T.muted, textAlign: 'center'}}>
+              טקסט זה סופק באדיבות מנוע הקוד הפתוח של <a href={`https://www.sefaria.org.il/${encodeURIComponent(sefariaRef)}`} target="_blank" rel="noreferrer" style={{color: T.primary, fontWeight:700, textDecoration:'none'}}>Sefaria.org</a>
+            </div>
+         )}
+      </div>
+    </Sheet>
+  );
+}
+
 /* ── BOOK CARD ── */
 function BookCard({cat, item, prog, T, cc, cl, onPress, custom}){
   if(!item) return null;
@@ -356,6 +410,10 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   const[noteSheet,setNoteSheet]=useState(null);
   const[editNote,setEditNote]=useState("");
   const[editChz,setEditChz]=useState(0);
+  
+  const[readerRef, setReaderRef]=useState(null);
+  const[readerTitle, setReaderTitle]=useState("");
+
   const tMode=prog.tmode?.[idx]||"perakim";
   const isTorah=cat==="tanach"&&idx<5&&!isC;
 
@@ -446,8 +504,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   const isParsh=cat==="tanach"&&tMode==="parshiot"&&isTorah;
 
   const nextUnlearned = useMemo(() => { try { return items.find(it => !isOn(it.key)); } catch(e){ return null; } }, [items, prog, isOn]);
-  const nextSefariaUrl = nextUnlearned ? getSefariaUrl(cat, item?.n, nextUnlearned.key, tMode, isC, idx) : null;
-  const sefariaUrlForNote = noteSheet ? getSefariaUrl(cat, item?.n, noteSheet.key, tMode, isC, idx) : null;
+  const nextSefariaRef = nextUnlearned ? getSefariaRefString(cat, item?.n, nextUnlearned.key, tMode, isC, idx) : null;
+  const sefariaRefForNote = noteSheet ? getSefariaRefString(cat, item?.n, noteSheet.key, tMode, isC, idx) : null;
 
   function openNote(key,label){const k=`${isC?'c'+origIdx:cat+':'+idx}:${key}`;setEditNote(prog.notes?.[k]||"");setEditChz(prog.chazara?.[k]||0);setNoteSheet({key,label});}
   function saveNote(){const k=`${isC?'c'+origIdx:cat+':'+idx}:${noteSheet.key}`;setProg(prev=>({...prev,notes:{...prev.notes,[k]:editNote},chazara:{...prev.chazara,[k]:editChz}}));setNoteSheet(null);}
@@ -467,10 +525,10 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
         </div>
         <div style={{marginTop:12}}><Bar p={p} color={col} h={8} dark={T.dark}/></div>
         
-        {nextSefariaUrl && !isC && (
-          <a href={nextSefariaUrl} target="_blank" rel="noreferrer" style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px 14px", background:col, color:"#fff", borderRadius:12, textDecoration:"none", fontWeight:700, marginTop:14, fontSize:T.f(14)}}>
+        {nextSefariaRef && !isC && (
+          <button onClick={() => { setReaderRef(nextSefariaRef); setReaderTitle(`${item.n} ${nextUnlearned.label}`); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px 14px", background:col, color:"#fff", border:"none", borderRadius:12, textDecoration:"none", fontWeight:700, marginTop:14, fontSize:T.f(14), width:"100%", cursor:"pointer", fontFamily:T.font}}>
             <IcoBook /> {T.UI.continueSefaria}
-          </a>
+          </button>
         )}
       </div>
       <div style={{flex:1,overflow:"auto",padding:"14px 16px 32px"}}>
@@ -523,10 +581,10 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       </div>
 
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
-        {sefariaUrlForNote && !isC && (
-          <a href={sefariaUrlForNote} target="_blank" rel="noreferrer" style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font}}>
+        {sefariaRefForNote && !isC && (
+          <button onClick={() => { setReaderRef(sefariaRefForNote); setReaderTitle(`${item.n} ${noteSheet.label}`); setNoteSheet(null); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", border:"none", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font, width:"100%", cursor:"pointer"}}>
             <IcoBook /> פתח קטע זה
-          </a>
+          </button>
         )}
 
         <FL label={T.UI.notes} T={T}><FTA aria-label="Notes input" T={T} value={editNote} onChange={e=>setEditNote(e.target.value)}/></FL>
@@ -539,6 +597,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
         </FL>
         <PB T={T} onClick={saveNote} style={{marginTop:12,background:col}}>{T.UI.save}</PB>
       </Sheet>
+
+      <SefariaReaderSheet show={!!readerRef} onClose={() => setReaderRef(null)} sefariaRef={readerRef} title={readerTitle} T={T} />
     </div>
   );
 }
@@ -1081,7 +1141,15 @@ function AuthScreen({onLogin,T}){
 
 /* ── ROOT ── */
 export default function App(){
-  useEffect(()=>{if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf";l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);}},[]);
+  useEffect(()=>{
+    if(!document.getElementById("hf")){
+      const l=document.createElement("link");
+      l.id="hf";
+      l.rel="stylesheet";
+      l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";
+      document.head.appendChild(l);
+    }
+  },[]);
 
   const[user,setUser]=useState(null);
   const[tab,setTab]=useState("home");
