@@ -57,7 +57,7 @@ function getDafYomi() {
   const now = new Date();
   const nowIL = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' }));
   const today = Date.UTC(nowIL.getFullYear(), nowIL.getMonth(), nowIL.getDate());
-  const start = Date.UTC(2020, 0, 5);
+  const start = Date.UTC(2020, 0, 5); 
   
   let dayN = Math.floor((today - start) / 86400000) % TOTAL_DAPIM;
   if(dayN < 0) dayN += TOTAL_DAPIM;
@@ -117,11 +117,8 @@ function getBkList(cat, custom) {
   base = base.map(b => ({...b, isC: false, idKey: 's'+b.i}));
   const customsInCat = custom.map((c, i) => ({ i, n: c.name, sub: c.catLabel||"", cat: c.cat, isC: true, origIdx: i, idKey: 'c'+i }));
 
-  if(cat === "custom") {
-    return customsInCat;
-  } else {
-    return [...customsInCat.filter(c => c.cat === cat), ...base];
-  }
+  if(cat === "custom") return customsInCat;
+  return [...customsInCat.filter(c => c.cat === cat), ...base];
 }
 
 function getAllBooks(custom) { return CATS.flatMap(c=>getBkList(c,custom)); }
@@ -158,9 +155,8 @@ function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
   if(!bookName || !key || isC) return ""; 
   try {
-    const engBook = SEFARIA_MAP[bookName];
-    if (!engBook) return ""; 
-
+    const cleanName = bookName.trim();
+    const engBook = SEFARIA_MAP[cleanName] || encodeURIComponent(cleanName.replace(/ /g, "_"));
     let kStr = String(key);
     
     if(cat === "gemara") {
@@ -172,11 +168,11 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     }
     
     if(cat === "mishna") {
+        const prefix = engBook === "Pirkei_Avot" ? "" : "Mishnah_";
         if(kStr.startsWith("pp")) {
-            const pn = kStr.slice(2);
-            return `Mishnah_${engBook}.${pn}`;
+            return `${prefix}${engBook}.${kStr.slice(2)}`;
         }
-        return `Mishnah_${engBook}.${kStr.replace(':', '.')}`;
+        return `${prefix}${engBook}.${kStr.replace(':', '.')}`;
     }
     
     if(cat === "tanach") {
@@ -186,7 +182,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     }
     
     if(["musar", "ravKook", "machshava"].includes(cat)) {
-      if (bookName === "נפש החיים") return `${engBook},_Gate_I.${kStr}`;
+      if (cleanName === "נפש החיים") return `${engBook},_Gate_I.${kStr}`;
       return `${engBook}.${kStr}`;
     }
     return "";
@@ -354,9 +350,11 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, T }) {
          {loading && <div style={{textAlign:'center', color: T.muted, padding:40, fontSize: T.f(15)}}>טוען טקסט מספריא... ⏳</div>}
          {error && <div style={{textAlign:'center', color: T.red, padding:20, fontWeight:600}}>{error}</div>}
          {!loading && !error && textArr.length === 0 && <div style={{textAlign:'center', color: T.muted, padding:20}}>לא נמצא טקסט עברי זמין לקטע זה.</div>}
+         
          {!loading && !error && textArr.map((t, i) => (
-            <p key={i} style={{fontSize: T.f(18), lineHeight: 1.6, marginBottom: 14, color: T.navy, fontFamily: T.font, fontWeight: 500, textAlign: 'justify'}} dangerouslySetInnerHTML={{__html: t}} />
+            <p key={i} style={{fontSize: T.f(24), lineHeight: 1.6, marginBottom: 18, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: 700, textAlign: 'justify'}} dangerouslySetInnerHTML={{__html: t}} />
          ))}
+         
          {!loading && !error && textArr.length > 0 && (
             <div style={{marginTop: 20, paddingTop: 14, borderTop: `1px solid ${T.border}`, fontSize: T.f(12), color: T.muted, textAlign: 'center'}}>
               טקסט זה סופק באדיבות מנוע הקוד הפתוח של <a href={`https://www.sefaria.org.il/${encodeURIComponent(sefariaRef)}`} target="_blank" rel="noreferrer" style={{color: T.primary, fontWeight:700, textDecoration:'none'}}>Sefaria.org</a>
@@ -516,7 +514,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
         
         {nextSefariaRef && !isC && (
           <button onClick={() => { setReaderRef(nextSefariaRef); setReaderTitle(`${item.n} ${nextUnlearned.label}`); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px 14px", background:col, color:"#fff", border:"none", borderRadius:12, textDecoration:"none", fontWeight:700, marginTop:14, fontSize:T.f(14), width:"100%", cursor:"pointer", fontFamily:T.font}}>
-            <IcoBook /> {T.UI.continueSefaria}
+            <IcoBook /> קרא קטע זה בספריא
           </button>
         )}
       </div>
@@ -732,10 +730,10 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
               {l:"סוף תפילה (מג\"א)",k:"sofZmanTfillaMGA"},
               {l:"סוף תפילה (גר\"א)",k:"sofZmanTfilla"},
               {l:"חצות",k:"chatzot"},
-              {l:"שקיעה",k:"sunset"},
-              {l:"צאת הכוכבים",k:"tzeit7083deg",fallback:"tzeit"}
-            ].map(z=>{const t=fmtTime(zmanim.times?.[z.k] || zmanim.times?.[z.fallback]);return t?(
-              <div key={z.k} style={{background:T.input,borderRadius:8,padding:"6px 8px"}}>
+              {l:"שקיעה",k:Object.keys(zmanim?.times||{}).find(k=>k.toLowerCase().includes('sunset'))},
+              {l:"צאת הכוכבים",k:Object.keys(zmanim?.times||{}).find(k=>k.toLowerCase().includes('tzeit'))}
+            ].map(z=>{const t=z.k?fmtTime(zmanim.times[z.k]):"";return t?(
+              <div key={z.l} style={{background:T.input,borderRadius:8,padding:"6px 8px"}}>
                 <div style={{fontSize:T.f(10),color:T.muted}}>{z.l}</div>
                 <div style={{fontSize:T.f(13),fontWeight:700,color:T.navy,marginTop:1,direction:"ltr",textAlign:T.isEn?"left":"right"}}>{t}</div>
               </div>):null;})}
@@ -1130,7 +1128,15 @@ function AuthScreen({onLogin,T}){
 
 /* ── ROOT ── */
 export default function App(){
-  useEffect(()=>{if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf";l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);}},[]);
+  useEffect(()=>{
+    if(!document.getElementById("hf")){
+      const l=document.createElement("link");
+      l.id="hf";
+      l.rel="stylesheet";
+      l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";
+      document.head.appendChild(l);
+    }
+  },[]);
 
   const[user,setUser]=useState(null);
   const[tab,setTab]=useState("home");
