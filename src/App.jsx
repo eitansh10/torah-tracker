@@ -57,7 +57,7 @@ function getDafYomi() {
   const now = new Date();
   const nowIL = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' }));
   const today = Date.UTC(nowIL.getFullYear(), nowIL.getMonth(), nowIL.getDate());
-  const start = Date.UTC(2020, 0, 5); // Jan 5 2020
+  const start = Date.UTC(2020, 0, 5);
   
   let dayN = Math.floor((today - start) / 86400000) % TOTAL_DAPIM;
   if(dayN < 0) dayN += TOTAL_DAPIM;
@@ -88,12 +88,11 @@ const CL_L={gemara:"#E8EFF8",mishna:"#E3F6F6",tanach:"#FDF3E3",musar:"#E3F5EC",r
 const CC_D={gemara:"#93C5FD",mishna:"#5EEAD4",tanach:"#FCD34D",musar:"#6EE7B7",ravKook:"#A5B4FC",machshava:"#F9A8D4",custom:"#D1D5DB"};
 const CL_D={gemara:"#1E3A5F",mishna:"#1A3A38",tanach:"#3D2800",musar:"#1A3A28",ravKook:"#1A2A5F",machshava:"#3A1A48",custom:"#374151"};
 
-const QUOTES = [
-  "לא עליך המלאכה לגמור, ולא אתה בן חורין ליבטל ממנה"
-];
+const QUOTES = ["לא עליך המלאכה לגמור, ולא אתה בן חורין ליבטל ממנה"];
 
 const SEFARIA_MAP = {
   "ברכות": "Berakhot", "שבת": "Shabbat", "עירובין": "Eruvin", "פסחים": "Pesachim", "שקלים": "Shekalim", "יומא": "Yoma", "סוכה": "Sukkah", "ביצה": "Beitzah", "ראש השנה": "Rosh_Hashanah", "תענית": "Taanit", "מגילה": "Megillah", "מועד קטן": "Moed_Katan", "חגיגה": "Chagigah", "יבמות": "Yevamot", "כתובות": "Ketubot", "נדרים": "Nedarim", "נזיר": "Nazir", "סוטה": "Sotah", "גיטין": "Gittin", "קידושין": "Kiddushin", "בבא קמא": "Bava_Kamma", "בבא מציעא": "Bava_Metzia", "בבא בתרא": "Bava_Batra", "סנהדרין": "Sanhedrin", "מכות": "Makkot", "שבועות": "Shevuot", "עבודה זרה": "Avodah_Zarah", "הוריות": "Horayot", "זבחים": "Zevachim", "מנחות": "Menachot", "חולין": "Chullin", "בכורות": "Bekhorot", "ערכין": "Arakhin", "תמורה": "Temurah", "כריתות": "Keritot", "מעילה": "Meilah", "נידה": "Niddah",
+  "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
   "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles",
   "מסילת ישרים": "Mesillat_Yesharim", "חובת הלבבות": "Duties_of_the_Heart", "שערי תשובה": "Shaarei_Teshuvah", "אורחות צדיקים": "Orchot_Tzadikim", "תומר דבורה": "Tomer_Devorah", "חפץ חיים": "Chafetz_Chaim", "שמירת הלשון": "Shmirat_HaLashon", "נפש החיים": "Nefesh_HaChayim", "כוזרי": "Kuzari", "מורה נבוכים": "Guide_for_the_Perplexed", "דרך ה'": "Derekh_Hashem", "דעת תבונות": "Da'at_Tevunot", "תניא": "Tanya"
 };
@@ -330,31 +329,23 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, T }) {
 
   useEffect(() => {
     if (!show || !sefariaRef) return;
-    setLoading(true);
-    setError(null);
-    setTextArr([]);
+    setLoading(true); setError(null); setTextArr([]);
 
     fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(sefariaRef)}?context=0`)
       .then(r => r.json())
       .then(data => {
-        if (data.error) {
-          setError(data.error);
-        } else {
-          // מנגנון שיטוח מערכים מרובים שמגיעים מספריא לעיתים קרובות
+        if (data.error) setError(data.error);
+        else {
           const flattenText = (arr) => {
             if (typeof arr === 'string') return [arr];
             if (Array.isArray(arr)) return arr.flatMap(flattenText);
             return [];
           };
-          const hebrewText = flattenText(data.he || []);
-          setTextArr(hebrewText);
+          setTextArr(flattenText(data.he || []));
         }
         setLoading(false);
       })
-      .catch(e => {
-        setError("אירעה שגיאה בטעינת הטקסט מספריא.");
-        setLoading(false);
-      });
+      .catch(e => { setError("אירעה שגיאה בטעינת הטקסט מספריא."); setLoading(false); });
   }, [show, sefariaRef]);
 
   return (
@@ -363,11 +354,9 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, T }) {
          {loading && <div style={{textAlign:'center', color: T.muted, padding:40, fontSize: T.f(15)}}>טוען טקסט מספריא... ⏳</div>}
          {error && <div style={{textAlign:'center', color: T.red, padding:20, fontWeight:600}}>{error}</div>}
          {!loading && !error && textArr.length === 0 && <div style={{textAlign:'center', color: T.muted, padding:20}}>לא נמצא טקסט עברי זמין לקטע זה.</div>}
-         
          {!loading && !error && textArr.map((t, i) => (
-            <p key={i} style={{fontSize: T.f(19), lineHeight: 1.8, marginBottom: 14, color: T.navy, fontFamily: "'Frank Ruhl Libre', 'David', serif", textAlign: 'justify'}} dangerouslySetInnerHTML={{__html: t}} />
+            <p key={i} style={{fontSize: T.f(18), lineHeight: 1.6, marginBottom: 14, color: T.navy, fontFamily: T.font, fontWeight: 500, textAlign: 'justify'}} dangerouslySetInnerHTML={{__html: t}} />
          ))}
-         
          {!loading && !error && textArr.length > 0 && (
             <div style={{marginTop: 20, paddingTop: 14, borderTop: `1px solid ${T.border}`, fontSize: T.f(12), color: T.muted, textAlign: 'center'}}>
               טקסט זה סופק באדיבות מנוע הקוד הפתוח של <a href={`https://www.sefaria.org.il/${encodeURIComponent(sefariaRef)}`} target="_blank" rel="noreferrer" style={{color: T.primary, fontWeight:700, textDecoration:'none'}}>Sefaria.org</a>
@@ -744,8 +733,8 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
               {l:"סוף תפילה (גר\"א)",k:"sofZmanTfilla"},
               {l:"חצות",k:"chatzot"},
               {l:"שקיעה",k:"sunset"},
-              {l:"צאת הכוכבים",k:"tzeit"}
-            ].map(z=>{const t=fmtTime(zmanim.times?.[z.k]);return t?(
+              {l:"צאת הכוכבים",k:"tzeit7083deg",fallback:"tzeit"}
+            ].map(z=>{const t=fmtTime(zmanim.times?.[z.k] || zmanim.times?.[z.fallback]);return t?(
               <div key={z.k} style={{background:T.input,borderRadius:8,padding:"6px 8px"}}>
                 <div style={{fontSize:T.f(10),color:T.muted}}>{z.l}</div>
                 <div style={{fontSize:T.f(13),fontWeight:700,color:T.navy,marginTop:1,direction:"ltr",textAlign:T.isEn?"left":"right"}}>{t}</div>
@@ -779,9 +768,9 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
         {activity.length>0&&(<>
           <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:10,marginTop:goals.length>0?4:0}}>{T.UI.recentActivity}</div>
           <div style={{background:T.card,borderRadius:14,padding:"4px 14px",boxShadow:T.shadow}}>
-            {activity.slice(0,5).map((a,i)=>{
+            {activity.slice(0,3).map((a,i)=>{
               return (
-                <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:i<Math.min(activity.length,5)-1?`1px solid ${T.border}`:"none"}}>
+                <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:i<Math.min(activity.length,3)-1?`1px solid ${T.border}`:"none"}}>
                   <div style={{color:cc[a.cat]||T.primary}}><IcoBook/></div>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontSize:T.f(13),fontWeight:600,color:T.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.bk} {a.label ? `- ${a.label}` : ''}</div>
@@ -1141,15 +1130,7 @@ function AuthScreen({onLogin,T}){
 
 /* ── ROOT ── */
 export default function App(){
-  useEffect(()=>{
-    if(!document.getElementById("hf")){
-      const l=document.createElement("link");
-      l.id="hf";
-      l.rel="stylesheet";
-      l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";
-      document.head.appendChild(l);
-    }
-  },[]);
+  useEffect(()=>{if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf";l.rel="stylesheet";l.href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);}},[]);
 
   const[user,setUser]=useState(null);
   const[tab,setTab]=useState("home");
