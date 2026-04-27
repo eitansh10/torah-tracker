@@ -50,17 +50,20 @@ function hebStr(s) { return s ? hebDateFull(new Date(s+"T12:00:00")) : ""; }
 function todayKey() { return new Date().toISOString().slice(0,10); }
 
 /* ── DATA & STRUCTURES ── */
-const DAF_YOMI_MASECHTOS = [{n:"ברכות",d:64},{n:"שבת",d:157},{n:"עירובין",d:105},{n:"פסחים",d:121},{n:"שקלים",d:22},{n:"יומא",d:88},{n:"סוכה",d:56},{n:"ביצה",d:40},{n:"ראש השנה",d:35},{n:"תענית",d:31},{n:"מגילה",d:32},{n:"מועד קטן",d:29},{n:"חגיגה",d:27},{n:"יבמות",d:122},{n:"כתובות",d:112},{n:"נדרים",d:91},{n:"נזיר",d:66},{n:"סוטה",d:49},{n:"גיטין",d:90},{n:"קידושין",d:82},{n:"בבא קמא",d:119},{n:"בבא מציעא",d:119},{n:"בבא בתרא",d:176},{n:"סנהדרין",d:113},{n:"מכות",d:24},{n:"שבועות",d:49},{n:"עבודה זרה",d:76},{n:"הוריות",d:14},{n:"זבחים",d:120},{n:"מנחות",d:110},{n:"חולין",d:142},{n:"בכורות",d:61},{n:"ערכין",d:34},{n:"תמורה",d:34},{n:"כריתות",d:28},{n:"מעילה",d:22},{n:"נידה",d:73}];
+// הערכים תוקנו כדי לייצג את מספר הדפים הפיזי בכל מסכת (אורך ולא דף אחרון) למניעת סטיות בחישוב.
+const DAF_YOMI_MASECHTOS = [{n:"ברכות",d:63},{n:"שבת",d:156},{n:"עירובין",d:104},{n:"פסחים",d:120},{n:"שקלים",d:21},{n:"יומא",d:87},{n:"סוכה",d:55},{n:"ביצה",d:39},{n:"ראש השנה",d:34},{n:"תענית",d:30},{n:"מגילה",d:31},{n:"מועד קטן",d:28},{n:"חגיגה",d:26},{n:"יבמות",d:121},{n:"כתובות",d:111},{n:"נדרים",d:90},{n:"נזיר",d:65},{n:"סוטה",d:48},{n:"גיטין",d:89},{n:"קידושין",d:81},{n:"בבא קמא",d:118},{n:"בבא מציעא",d:118},{n:"בבא בתרא",d:175},{n:"סנהדרין",d:112},{n:"מכות",d:23},{n:"שבועות",d:48},{n:"עבודה זרה",d:75},{n:"הוריות",d:13},{n:"זבחים",d:119},{n:"מנחות",d:109},{n:"חולין",d:141},{n:"בכורות",d:60},{n:"ערכין",d:33},{n:"תמורה",d:33},{n:"כריתות",d:27},{n:"מעילה",d:37},{n:"נידה",d:72}];
 const TOTAL_DAPIM = 2711;
-const CYCLE14_START = new Date("2020-01-05");
 
 function getDafYomi() {
   const now = new Date();
-  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  const nowIL = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jerusalem' }));
+  const today = Date.UTC(nowIL.getFullYear(), nowIL.getMonth(), nowIL.getDate());
   const start = Date.UTC(2020, 0, 5); // Jan 5 2020
+  
   let dayN = Math.floor((today - start) / 86400000) % TOTAL_DAPIM;
   if(dayN < 0) dayN += TOTAL_DAPIM;
   let rem = dayN; let mas = "", daf = 2;
+  
   for(const m of DAF_YOMI_MASECHTOS) {
     if(rem < m.d) { mas = m.n; daf = rem + 2; break; }
     rem -= m.d;
@@ -92,7 +95,8 @@ const QUOTES = [
 
 const SEFARIA_MAP = {
   "ברכות": "Berakhot", "שבת": "Shabbat", "עירובין": "Eruvin", "פסחים": "Pesachim", "שקלים": "Shekalim", "יומא": "Yoma", "סוכה": "Sukkah", "ביצה": "Beitzah", "ראש השנה": "Rosh_Hashanah", "תענית": "Taanit", "מגילה": "Megillah", "מועד קטן": "Moed_Katan", "חגיגה": "Chagigah", "יבמות": "Yevamot", "כתובות": "Ketubot", "נדרים": "Nedarim", "נזיר": "Nazir", "סוטה": "Sotah", "גיטין": "Gittin", "קידושין": "Kiddushin", "בבא קמא": "Bava_Kamma", "בבא מציעא": "Bava_Metzia", "בבא בתרא": "Bava_Batra", "סנהדרין": "Sanhedrin", "מכות": "Makkot", "שבועות": "Shevuot", "עבודה זרה": "Avodah_Zarah", "הוריות": "Horayot", "זבחים": "Zevachim", "מנחות": "Menachot", "חולין": "Chullin", "בכורות": "Bekhorot", "ערכין": "Arakhin", "תמורה": "Temurah", "כריתות": "Keritot", "מעילה": "Meilah", "נידה": "Niddah",
-  "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles"
+  "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles",
+  "מסילת ישרים": "Mesillat_Yesharim", "חובת הלבבות": "Duties_of_the_Heart", "שערי תשובה": "Shaarei_Teshuvah", "אורחות צדיקים": "Orchot_Tzadikim", "תומר דבורה": "Tomer_Devorah", "חפץ חיים": "Chafetz_Chaim", "שמירת הלשון": "Shmirat_HaLashon", "נפש החיים": "Nefesh_HaChayim", "כוזרי": "Kuzari", "מורה נבוכים": "Guide_for_the_Perplexed", "דרך ה'": "Derekh_Hashem", "דעת תבונות": "Da'at_Tevunot", "תניא": "Tanya"
 };
 
 function safeHas(setOrObj, val) {
@@ -118,7 +122,8 @@ function getBkList(cat, custom) {
   if(cat === "custom") {
     return customsInCat;
   } else {
-    return [...base, ...customsInCat.filter(c => c.cat === cat)];
+    // מציג ספרים אישיים בתחילת הרשימה
+    return [...customsInCat.filter(c => c.cat === cat), ...base];
   }
 }
 
@@ -156,7 +161,9 @@ function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 function getSefariaUrl(cat, bookName, key, tMode, isC, masIdx) {
   if(!bookName || !key || isC) return ""; 
   try {
-    const engBook = SEFARIA_MAP[bookName] || encodeURIComponent(bookName.replace(/ /g, "_"));
+    const engBook = SEFARIA_MAP[bookName];
+    if (!engBook) return ""; // מחזיר ריק אם הספר לא מוגדר במפה (מונע הופעת כפתור ספריא)
+
     let kStr = String(key);
     
     if(cat === "gemara") {
@@ -518,7 +525,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
         {sefariaUrlForNote && !isC && (
           <a href={sefariaUrlForNote} target="_blank" rel="noreferrer" style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font}}>
-            <IcoBook /> פתח בספריא
+            <IcoBook /> פתח קטע זה
           </a>
         )}
 
@@ -675,7 +682,9 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
               {l:"סוף זמ\"ק (גר\"א)",k:"sofZmanShma"},
               {l:"סוף תפילה (מג\"א)",k:"sofZmanTfillaMGA"},
               {l:"סוף תפילה (גר\"א)",k:"sofZmanTfilla"},
-              {l:"חצות",k:"chatzot"}
+              {l:"חצות",k:"chatzot"},
+              {l:"שקיעה",k:"sunset"},
+              {l:"צאת הכוכבים",k:"tzeit"}
             ].map(z=>{const t=fmtTime(zmanim.times?.[z.k]);return t?(
               <div key={z.k} style={{background:T.input,borderRadius:8,padding:"6px 8px"}}>
                 <div style={{fontSize:T.f(10),color:T.muted}}>{z.l}</div>
