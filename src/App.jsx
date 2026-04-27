@@ -27,6 +27,7 @@ const IcoHeart = ()=><svg width="18" height="18" viewBox="0 0 24 24" fill="none"
 const IcoCalendar = ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
 const IcoDots = ()=><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
 const IcoStats = ()=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>;
+const IcoAI = ()=><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/><path d="M16 13h.01"/><path d="M12 13h.01"/><path d="M8 13h.01"/></svg>;
 
 /* ── HEBREW DATE ── */
 function toHeb(n) {
@@ -152,7 +153,6 @@ function getSefariaUrl(cat, bookName, key, tMode) {
   try {
     const engBook = SEFARIA_MAP[bookName] || encodeURIComponent(bookName.replace(/ /g, "_"));
     let k = String(key);
-    
     if(cat === "gemara") return `https://www.sefaria.org.il/${engBook}.${k}?lang=he`;
     if(cat === "mishna") return `https://www.sefaria.org.il/Mishnah_${engBook}.${k.replace(':', '.')}?lang=he`;
     if(cat === "tanach") {
@@ -166,14 +166,6 @@ function getSefariaUrl(cat, bookName, key, tMode) {
     }
     return "";
   } catch(e) { return ""; }
-}
-
-function getSefariaText(cat, tMode, isEn) {
-    if(isEn) return "Read this section on Sefaria";
-    if(cat === "gemara") return "למד דף זה בספריא";
-    if(cat === "mishna") return "למד משנה זו בספריא";
-    if(cat === "tanach" && tMode === "parshiot") return "למד פרשה זו בספריא";
-    return "למד פרק זה בספריא";
 }
 
 /* ── STORAGE ── */
@@ -213,7 +205,7 @@ function mkT(dark,sz,lang) {
     :{gemara:"דפים",mishna:"משניות",tanach:"פרקים",musar:"פרקים",ravKook:"פרקים",machshava:"פרקים",custom:"פרקים"};
   
   const UI = isEn ? {
-    home: "Home", library: "Library", goals: "Goals", stats: "Stats", settings: "Settings",
+    home: "Home", library: "Library", goals: "Goals", stats: "Stats", settings: "Settings", ai: "AI",
     welcome: "Welcome!", startTracking: "Go to library and start tracking", openLib: "Open Library",
     activeGoals: "Active Goals", recentActivity: "Recent Activity", daysLeft: "days left",
     dafYomi: "Daf Yomi", parasha: "Weekly Parasha", halacha: "Daily Halacha", zmanim: "Zmanim",
@@ -232,7 +224,7 @@ function mkT(dark,sz,lang) {
     continueSefaria: "Continue reading where you left off", legal: "Legal & Privacy", terms: "Terms of Service", privacy: "Privacy Policy",
     agreeTerms: "I agree to the Terms of Service and Privacy Policy", mustAgree: "You must agree to the Terms to continue"
   } : {
-    home: "בית", library: "ספרייה", goals: "יעדים", stats: "נתונים", settings: "הגדרות",
+    home: "בית", library: "ספרייה", goals: "יעדים", stats: "נתונים", settings: "הגדרות", ai: "AI אישי",
     welcome: "ברוך הבא!", startTracking: "לך לספרייה והתחל לסמן", openLib: "פתח ספרייה",
     activeGoals: "יעדים פעילים", recentActivity: "פעילות אחרונה", daysLeft: "ימים שנותרו",
     dafYomi: "דף יומי", parasha: "פרשת השבוע", halacha: "הלכה יומית", zmanim: "זמני היום",
@@ -497,15 +489,12 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
             <button onClick={()=>items.forEach(it=>(isOn(it.key)||isPartial(it.key))&&toggle(it.key))} style={{flex:1,padding:11,borderRadius:10,border:`1.5px solid ${T.border}`,background:"none",cursor:"pointer",fontSize:T.f(13),color:T.muted,fontFamily:T.font}}>{T.UI.clearAll}</button>
           </div>
         )}
-        <div style={{textAlign:"center", marginTop:16, fontSize:T.f(11), color:T.muted}}>
-           💡 לחיצה על ⋮ תפתח אפשרויות קריאה והערות.
-        </div>
       </div>
 
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
         {noteSheet && getSefariaUrl(cat, item.n, noteSheet.key, tMode) && (
           <a href={getSefariaUrl(cat, item.n, noteSheet.key, tMode)} target="_blank" rel="noreferrer" style={{display:"flex", alignItems:"center", gap:8, padding:"12px 14px", background:T.dark?"rgba(74,127,192,0.15)":"#E8EFF8", color:T.primary, borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, justifyContent:"center", fontSize:T.f(14)}}>
-            <IcoBook /> {getSefariaText(cat, tMode, T.isEn)}
+            <IcoBook /> {T.isEn ? "Read on Sefaria" : "למד באתר ספריא"}
           </a>
         )}
 
@@ -519,6 +508,112 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
         </FL>
         <PB T={T} onClick={saveNote} style={{marginTop:12,background:col}}>{T.UI.save}</PB>
       </Sheet>
+    </div>
+  );
+}
+
+/* ── AI STUDY SCREEN ── */
+function AiScreen({activity, T, sett}) {
+  const [selected, setSelected] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState("");
+
+  const recentItems = useMemo(() => {
+    const unique = [];
+    const seen = new Set();
+    for (const item of activity) {
+      const name = `${item.bk} ${item.label ? item.label : ''}`.trim();
+      if (!seen.has(name) && name) {
+        seen.add(name);
+        unique.push({ id: name, cat: item.cat });
+      }
+      if(unique.length >= 15) break;
+    }
+    return unique;
+  }, [activity]);
+
+  const toggleSel = (id) => {
+    setSelected(prev => prev.includes(id) ? prev.filter(x=>x!==id) : [...prev, id]);
+  };
+
+  const askAI = async (type) => {
+    if(selected.length === 0) return alert(T.isEn ? "Select at least one item" : "בחר לפחות פריט אחד");
+
+    const itemsList = selected.join(", ");
+    let prompt = "";
+    if(type === "quiz") {
+       prompt = `אני לומד תורה. למדתי לאחרונה את: ${itemsList}. תכין לי חידון אמריקאי של 5 שאלות לבחון את עצמי, עם 4 תשובות לכל שאלה. בסוף תציג את התשובות הנכונות עם הסבר קצר. כתוב בעברית בלבד.`;
+    } else {
+       prompt = `אני לומד תורה. למדתי לאחרונה את: ${itemsList}. תכין לי סיכום קצר, מדויק ומחולק לנקודות של העניינים המרכזיים. כתוב בעברית בלבד.`;
+    }
+
+    if(!sett.openAiKey) {
+        window.open(`https://chatgpt.com/?q=${encodeURIComponent(prompt)}`, '_blank');
+        return;
+    }
+
+    setLoading(true);
+    setResult("");
+
+    try {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${sett.openAiKey}`
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{role: "user", content: prompt}]
+        })
+      });
+      const data = await res.json();
+      if(data.error) setResult("שגיאה: " + data.error.message);
+      else setResult(data.choices[0].message.content);
+    } catch(err) {
+      setResult("שגיאה בחיבור לשרת.");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
+      <div style={{fontSize:T.f(22),fontWeight:900,color:T.navy,marginBottom:16}}>עוזר למידה אישי (AI)</div>
+      
+      {!sett.openAiKey && (
+        <div style={{background:"#FEF2F2",border:"1px solid #FCA5A5",borderRadius:12,padding:12,marginBottom:16,color:"#991B1B",fontSize:T.f(13)}}>
+          <strong>שים לב:</strong> כדי להשתמש בפיצ'ר זה בתוך האפליקציה, עליך להזין מפתח API של OpenAI במסך ההגדרות. ללא מפתח, המערכת תפתח עבורך את ChatGPT עם השאלה מוכנה.
+        </div>
+      )}
+
+      <div style={{background:T.card,borderRadius:16,padding:16,boxShadow:T.shadow,marginBottom:16}}>
+        <div style={{fontSize:T.f(14),fontWeight:700,color:T.navy,marginBottom:12}}>בחר חומרים מתוך הלמידה האחרונה שלך:</div>
+        {recentItems.length===0 && <div style={{fontSize:T.f(13),color:T.muted}}>אין מספיק נתונים. חזור אחרי שתסמן לימוד.</div>}
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {recentItems.map(it => {
+            const sel = selected.includes(it.id);
+            return (
+              <button key={it.id} onClick={()=>toggleSel(it.id)} style={{textAlign:T.isEn?"left":"right",padding:"10px 12px",borderRadius:10,border:`2px solid ${sel?T.primary:T.border}`,background:sel?T.primary+"11":"transparent",color:T.navy,fontFamily:T.font,fontSize:T.f(14),display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <span>{it.id}</span>
+                {sel && <span style={{color:T.primary, fontWeight:900}}>✓</span>}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div style={{display:"flex",gap:10,marginBottom:20}}>
+        <button disabled={loading} onClick={()=>askAI("summary")} style={{flex:1,padding:14,borderRadius:12,border:"none",background:"#10a37f",color:"#fff",fontSize:T.f(14),fontWeight:700,fontFamily:T.font,cursor:"pointer",opacity:loading?0.5:1}}>✨ סכם לי</button>
+        <button disabled={loading} onClick={()=>askAI("quiz")} style={{flex:1,padding:14,borderRadius:12,border:"none",background:"#ab68ff",color:"#fff",fontSize:T.f(14),fontWeight:700,fontFamily:T.font,cursor:"pointer",opacity:loading?0.5:1}}>🧠 בחן אותי</button>
+      </div>
+
+      {loading && <div style={{textAlign:"center",color:T.muted,fontSize:T.f(14)}}>הבינה המלאכותית מכינה את התשובה... ⏳</div>}
+
+      {result && (
+        <div style={{background:T.card,borderRadius:16,padding:16,boxShadow:T.shadow,whiteSpace:"pre-wrap",fontSize:T.f(14),lineHeight:1.6,color:T.navy,border:`1px solid ${T.primary}`}}>
+          {result}
+        </div>
+      )}
     </div>
   );
 }
@@ -793,7 +888,7 @@ function GoalRow({g,prog,T,cc,onDelete,custom}){
       </div>
       <Bar p={p} color={col} h={8} dark={T.dark}/>
       <div style={{display:"flex",justifyContent:"space-between",fontSize:T.f(12),color:T.muted,margin:"6px 0 12px"}}><span>{cur}/{g.target} {isO?"":T.CAT_UNIT[g.cat]}</span><span style={{color:col,fontWeight:800}}>{p}%</span></div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:12}}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(80px, 1fr))",gap:8,marginBottom:12}}>
         {[{l:T.UI.daysLeft,v:rem},{l:T.UI.perDay,v:(!isO&&needed>0)?needed:"-"},{l:T.UI.currPace,v:isO?"-":`${exp}%`}].map(s=>(
           <div key={s.l} style={{background:T.input,borderRadius:10,padding:"9px 10px"}}><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy}}>{s.v}</div><div style={{fontSize:T.f(10),color:T.muted,marginTop:1}}>{s.l}</div></div>
         ))}
@@ -914,7 +1009,7 @@ function StatsScreen({prog,activity,activeDays,T,cc,streak}){
       </div>
 
       <div style={{background:T.card,borderRadius:16,padding:"16px",marginBottom:20,boxShadow:T.shadow}}>
-        <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:12}}>קצב למידה (סעיפים שסומנו)</div>
+        <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:12}}>מד מהירות למידה (סעיפים)</div>
         <div style={{display:"flex",gap:10}}>
           {[{l:"השבוע",v:A.w},{l:"החודש",v:A.m},{l:"השנה",v:A.y}].map(s=>(
             <div key={s.l} style={{flex:1,background:T.input,borderRadius:12,padding:"10px 8px",textAlign:"center"}}>
@@ -969,6 +1064,16 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
         <div style={{padding:"14px 16px"}}>
           <div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10}}>{T.UI.language}</div>
           <div style={{display:"flex",gap:8}}>{[{v:"he",l:"עברית"},{v:"en",l:"English"}].map(o=><button aria-pressed={sett.lang===o.v} key={o.v} onClick={()=>setSett(s=>({...s,lang:o.v}))} style={{flex:1,padding:9,borderRadius:10,border:`2px solid ${sett.lang===o.v?T.primary:T.border}`,background:sett.lang===o.v?T.primary:"transparent",color:sett.lang===o.v?"#fff":T.muted,fontSize:T.f(13),cursor:"pointer",fontWeight:sett.lang===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div>
+        </div>
+      </div>
+
+      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
+        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>AI INTEGRATION (ChatGPT)</div>
+        <div style={{padding:"14px 16px"}}>
+           <div style={{fontSize:T.f(12), color:T.muted, marginBottom:8, lineHeight:1.5}}>
+             {T.isEn ? "Enter your OpenAI API key to get summaries and quizzes directly inside the app. If left blank, we will generate the prompt and open ChatGPT for you." : "הכנס מפתח API של OpenAI כדי לקבל סיכומים וחידונים ישירות בתוך האפליקציה. אם תשאיר ריק, נייצר עבורך את השאלה המושלמת ונפתח את ChatGPT."}
+           </div>
+           <FI type="password" placeholder="sk-..." value={sett.openAiKey || ""} onChange={e=>setSett(s=>({...s, openAiKey:e.target.value}))} style={{direction:"ltr", fontSize:T.f(12)}} />
         </div>
       </div>
       
@@ -1158,8 +1263,6 @@ export default function App(){
   }
 
   useEffect(() => {
-    ["u11", "u10", "u9", "u8", "u7", "p11", "p12", "p13", "p14"].forEach(k => localStorage.removeItem(k));
-
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser({ 
@@ -1216,6 +1319,7 @@ export default function App(){
   const cc=sett.dark?CC_D:CC_L;
   const cl=sett.dark?CL_D:CL_L;
   
+  // חזרנו לעיצוב הבסיסי והיציב!
   const appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
 
   async function handleLogin(credentials) {
@@ -1247,6 +1351,7 @@ export default function App(){
   const NAV=[
     {k:"home",l:T.UI.home,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},
     {k:"library",l:T.UI.library,ico:<IcoBook/>},
+    {k:"ai",l:T.UI.ai,ico:<IcoAI/>},
     {k:"goals",l:T.UI.goals,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},
     {k:"stats",l:T.UI.stats,ico:<IcoStats/>},
     {k:"settings",l:T.UI.settings,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>},
@@ -1256,6 +1361,7 @@ export default function App(){
     <div style={appSt}>
       {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} setProg={setProg} streak={streak} activity={activity}/>}
       {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
+      {tab==="ai"&&<AiScreen activity={activity} T={T} sett={sett} />}
       {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
       {tab==="stats"&&<StatsScreen prog={prog} activity={activity} activeDays={activeDays} T={T} cc={cc} streak={streak}/>}
       {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={handleLogout} user={user}/>}
