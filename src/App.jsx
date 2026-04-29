@@ -85,7 +85,7 @@ const GEMARA=[{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",
 const MISHNA=[{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
 const TANACH=[{b:"בראשית",s:"תורה",c:50},{b:"שמות",s:"תורה",c:40},{b:"ויקרא",s:"תורה",c:27},{b:"במדבר",s:"תורה",c:36},{b:"דברים",s:"תורה",c:34},{b:"יהושע",s:"נביאים",c:24},{b:"שופטים",s:"נביאים",c:21},{b:"שמואל א",s:"נביאים",c:31},{b:"שמואל ב",s:"נביאים",c:24},{b:"מלכים א",s:"נביאים",c:22},{b:"מלכים ב",s:"נביאים",c:25},{b:"ישעיהו",s:"נביאים",c:66},{b:"ירמיהו",s:"נביאים",c:52},{b:"יחזקאל",s:"נביאים",c:48},{b:"הושע",s:"נביאים",c:14},{b:"יואל",s:"נביאים",c:4},{b:"עמוס",s:"נביאים",c:9},{b:"עובדיה",s:"נביאים",c:1},{b:"יונה",s:"נביאים",c:4},{b:"מיכה",s:"נביאים",c:7},{b:"נחום",s:"נביאים",c:3},{b:"חבקוק",s:"נביאים",c:3},{b:"צפניה",s:"נביאים",c:3},{b:"חגי",s:"נביאים",c:2},{b:"זכריה",s:"נביאים",c:14},{b:"מלאכי",s:"נביאים",c:3},{b:"תהלים",s:"כתובים",c:150},{b:"משלי",s:"כתובים",c:31},{b:"איוב",s:"כתובים",c:42},{b:"שיר השירים",s:"כתובים",c:8},{b:"רות",s:"כתובים",c:4},{b:"איכה",s:"כתובים",c:5},{b:"קהלת",s:"כתובים",c:12},{b:"אסתר",s:"כתובים",c:10},{b:"דניאל",s:"כתובים",c:12},{b:"עזרא",s:"כתובים",c:10},{b:"נחמיה",s:"כתובים",c:13},{b:"דברי הימים א",s:"כתובים",c:29},{b:"דברי הימים ב",s:"כתובים",c:36}];
 const MUSAR=[{n:"מסילת ישרים",a:'רמח"ל',p:26},{n:"חובת הלבבות",a:"רבינו בחיי",p:10},{n:"שערי תשובה",a:"רבינו יונה",p:4},{n:"אורחות צדיקים",a:"אנונימי",p:30},{n:"תומר דבורה",a:'רמ"ק',p:10},{n:"פלא יועץ",a:"ר' אליעזר פאפו",p:90},{n:"חפץ חיים",a:"החפץ חיים",p:17},{n:"שמירת הלשון",a:"החפץ חיים",p:30},{n:"אהבת חסד",a:"החפץ חיים",p:24},{n:"מכתב מאליהו",a:"ר' אליהו דסלר",p:5},{n:"עלי שור",a:"ר' שלמה וולבה",p:2},{n:"נתיבות שלום",a:'אדמו"ר מסלונים',p:5},{n:'ליקוטי מוהר"ן',a:"ר' נחמן מברסלב",p:286},{n:"ספר המידות",a:"ר' נחמן מברסלב",p:30},{n:"ספר הישר",a:'ר"ת',p:13}];
-const RAV_KOOK=[{n:"אורות",g:"אורות",p:9},{n:"אורות התשובה",g:"אורות",p:17},{n:"אורות ארץ ישראל",g:"אורות",p:5},{n:"אורות המלחמה",g:"אורות",p:9},{n:"אורות התחיה",g:"אורות",p:9},{n:"אורות ישראל",g:"אורות",p:9},{n:"אורות הקודש א",g:"אורות הקודש",p:9},{n:"אורות הקודש ב",g:"אורות הקודש",p:9},{n:"אורות הקודש ג",g:"אורות הקודש",p:9},{n:"אורות הקודש ד",g:"אורות הקודש",p:7},{n:"אורות התורה",g:"אורות",p:13},{n:"אורות האמונה",g:"אורות",p:8},{n:"עין איה ברכות א",g:"עין איה",p:9},{n:"עין איה ברכות ב",g:"עין איה",p:9},{n:"עין איה שבת א",g:"עין איה",p:11},{n:"עין איה שבת ב",g:"עין איה",p:11},{n:"שמונה קבצים",g:"שמונה קבצים",p:9},{n:"אגרות הראיה א",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ב",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ג",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ד",g:"אגרות הראיה",p:9},{n:"מאמרי הראיה א",g:"מאמרים",p:9},{n:"מאמרי הראיה ב",g:"מאמרים",p:9},{n:"מוסר אביך",g:"שונות",p:6},{n:"עולת ראיה א",g:"שונות",p:9},{n:"עולת ראיה ב",g:"שונות",p:9},{n:"ארפלי טוהר",g:"שונות",p:9},{n:"ריש מילין",g:"שונות",p:9}];
+const RAV_KOOK=[{n:"אורות התשובה",g:"אורות",p:17},{n:"אורות ארץ ישראל",g:"אורות",p:5},{n:"אורות המלחמה",g:"אורות",p:9},{n:"אורות התחיה",g:"אורות",p:9},{n:"אורות ישראל",g:"אורות",p:9},{n:"אורות הקודש א",g:"אורות הקודש",p:9},{n:"אורות הקודש ב",g:"אורות הקודש",p:9},{n:"אורות הקודש ג",g:"אורות הקודש",p:9},{n:"אורות הקודש ד",g:"אורות הקודש",p:7},{n:"אורות התורה",g:"אורות",p:13},{n:"אורות האמונה",g:"אורות",p:8},{n:"עין איה ברכות א",g:"עין איה",p:9},{n:"עין איה ברכות ב",g:"עין איה",p:9},{n:"עין איה שבת א",g:"עין איה",p:11},{n:"עין איה שבת ב",g:"עין איה",p:11},{n:"שמונה קבצים",g:"שמונה קבצים",p:9},{n:"אגרות הראיה א",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ב",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ג",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ד",g:"אגרות הראיה",p:9},{n:"מאמרי הראיה א",g:"מאמרים",p:9},{n:"מאמרי הראיה ב",g:"מאמרים",p:9},{n:"מוסר אביך",g:"שונות",p:6},{n:"עולת ראיה א",g:"שונות",p:9},{n:"עולת ראיה ב",g:"שונות",p:9},{n:"ארפלי טוהר",g:"שונות",p:9},{n:"ריש מילין",g:"שונות",p:9}];
 const MACHSHAVA=[{n:"נפש החיים",a:"ר' חיים מוולוז'ין",p:4},{n:"כוזרי",a:'ריה"ל',p:5},{n:"מורה נבוכים",a:'רמב"ם',p:3},{n:"דרך ה'",a:'רמח"ל',p:4},{n:"דעת תבונות",a:'רמח"ל',p:1},{n:"תניא",a:'אדמו"ר הזקן',p:4},{n:"אמונות ודעות",a:'רס"ג',p:10},{n:"ספר העיקרים",a:"ר' יוסף אלבו",p:4},{n:"נצח ישראל",a:'מהר"ל',p:58},{n:"נתיבות עולם",a:'מהר"ל',p:2},{n:"גבורות ה'",a:'מהר"ל',p:73},{n:"באר הגולה",a:'מהר"ל',p:7}];
 
 const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
@@ -102,7 +102,7 @@ const SEFARIA_MAP = {
   "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
   "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles",
   "מסילת ישרים": "Mesillat_Yesharim", "חובת הלבבות": "Duties_of_the_Heart", "שערי תשובה": "Shaarei_Teshuvah", "אורחות צדיקים": "Orchot_Tzadikim", "תומר דבורה": "Tomer_Devorah", "חפץ חיים": "Chafetz_Chaim", "שמירת הלשון": "Shmirat_HaLashon", "נפש החיים": "Nefesh_HaChayim", "כוזרי": "Kuzari", "מורה נבוכים": "Guide_for_the_Perplexed", "דרך ה'": "Derekh_Hashem", "דעת תבונות": "Da'at_Tevunot", "תניא": "Tanya",
-  "אורות התשובה": "Orot_HaTeshuvah", "אורות התורה": "Orot_HaTorah", "אורות האמונה": "Orot_HaEmunah", "מוסר אביך": "Musar_Avikh", "שמונה קבצים": "Shemonah_Kevatzim", "ארפלי טוהר": "Arpilei_Tohar", "עולת ראיה א": "Olat_Reiyah", "אגרות הראיה א": "Igrot_HaReiyah", "אגרות הראיה ב": "Igrot_HaReiyah", "אגרות הראיה ג": "Igrot_HaReiyah", "אגרות הראיה ד": "Igrot_HaReiyah", "עין איה ברכות א": "Ein_Ayah", "עין איה ברכות ב": "Ein_Ayah", "עין איה שבת א": "Ein_Ayah", "עין איה שבת ב": "Ein_Ayah", "ריש מילין": "Resh_Millin", "אורות": "Orot"
+  "אורות התשובה": "Orot_HaTeshuvah", "אורות התורה": "Orot_HaTorah", "אורות האמונה": "Orot_HaEmunah", "מוסר אביך": "Musar_Avikh", "שמונה קבצים": "Shemonah_Kevatzim", "ארפלי טוהר": "Arpilei_Tohar", "עולת ראיה א": "Olat_Reiyah", "אגרות הראיה א": "Igrot_HaReiyah", "אגרות הראיה ב": "Igrot_HaReiyah", "אגרות הראיה ג": "Igrot_HaReiyah", "אגרות הראיה ד": "Igrot_HaReiyah", "עין איה ברכות א": "Ein_Ayah", "עין איה ברכות ב": "Ein_Ayah", "עין איה שבת א": "Ein_Ayah", "עין איה שבת ב": "Ein_Ayah", "ריש מילין": "Resh_Millin"
 };
 
 function safeHas(setOrObj, val) {
@@ -247,7 +247,7 @@ function mkT(dark,sz,lang) {
   } : {
     home: "בית", library: "ספרייה", goals: "יעדים", stats: "נתונים", settings: "הגדרות",
     welcome: "ברוך הבא!", startTracking: "לך לספרייה והתחל לסמן", openLib: "פתח ספרייה",
-    activeGoals: "יעדים פעילים", recentActivity: "פעילות אח אחרונה", daysLeft: "ימים שנותרו",
+    activeGoals: "יעדים פעילים", recentActivity: "פעילות אחרונה", daysLeft: "ימים שנותרו",
     dafYomi: "דף יומי", parasha: "פרשת השבוע", dailyHalacha: "הלכה יומית", zmanim: "זמני היום",
     markBy: "סמן לפי:", amudim: "עמודים", perakim: "פרקים", mishnayot: "משניות", parshiot: "פרשות",
     cancel: "בטל", markAll: "סמן הכל", clearAll: "נקה הכל", notes: "אפשרויות והערות", repetitions: "חזרות", save: "שמור",
@@ -299,7 +299,7 @@ function DualDateInput({T, value, onChange}) {
 function LegalSheet({show, onClose, type, T}) {
   return (
     <Sheet show={show} onClose={onClose} title={type === 'terms' ? T.UI.terms : T.UI.privacy} T={T}>
-      <div style={{fontSize:T.f(13), color:T.muted, lineHeight:1.6}}>
+      <div style={{fontSize:T.f(13), color:T.muted, lineHeight:1.6, textAlign:"start"}}>
         {type === 'terms' ? (
           <>
             <p>ברוכים הבאים לאפליקציית אליבא.</p>
@@ -392,7 +392,7 @@ function BookCard({cat, item, prog, T, cc, cl, onPress, custom}){
   return (
     <div onClick={()=>onPress(item)} style={{background:T.card,borderRadius:14,padding:"13px 15px",marginBottom:8,cursor:"pointer",boxShadow:T.shadow,borderRight:`4px solid ${fin?col:"transparent"}`,boxSizing:"border-box"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:7}}>
-        <div style={{flex:1}}><div style={{fontSize:T.f(15),fontWeight:700,color:T.navy}}>{item.n}</div>{item.sub&&<div style={{fontSize:T.f(11),color:T.muted,marginTop:1}}>{item.sub}</div>}</div>
+        <div style={{flex:1}}><div style={{fontSize:T.f(15),fontWeight:700,color:T.navy,textAlign:"start"}}>{item.n}</div>{item.sub&&<div style={{fontSize:T.f(11),color:T.muted,marginTop:1,textAlign:"start"}}>{item.sub}</div>}</div>
         <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0,marginRight:8}}>
           {fin&&<span style={{fontSize:T.f(10),padding:"3px 8px",borderRadius:20,background:cl[cat],color:col,fontWeight:800}}>{T.UI.completed}</span>}
           <span style={{fontSize:T.f(12),color:T.muted}}>{dn}/{tot}</span>
@@ -407,7 +407,7 @@ function BookCard({cat, item, prog, T, cc, cl, onPress, custom}){
 function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   const { cat, i: idx, isC, origIdx, autoOpenKey } = detail;
   const list = getBkList(cat, prog.custom);
-  const item = list.find(l => l.idKey === (isC ? 'c'+origIdx : cat+'_s'+idx));
+  const item = list.find(l => l.idKey === (isC ? 'custom_c'+origIdx : cat+'_s'+idx));
   
   const col=cc[cat]||T.primary,lightCol=cl[cat]||"#E8EFF8";
   const[viewMode,setViewMode]=useState(cat==="gemara"?"amudim":cat==="mishna"?"mishna":"perakim");
@@ -595,7 +595,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
         {sefariaRefForNote && !isC && (
           <button onClick={() => { setReaderRef(sefariaRefForNote); setReaderTitle(`${item.n} ${noteSheet.label}`); setNoteSheet(null); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", border:"none", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font, width:"100%", cursor:"pointer"}}>
-            <IcoBook /> קרא קטע זה
+            <IcoBook /> פתח קטע זה
           </button>
         )}
 
@@ -758,7 +758,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
               {l:T.UI.chatzot,k:"chatzot"},
               {l:T.UI.sunset,k:Object.keys(zmanim?.times||{}).find(k=>k.toLowerCase().includes('sunset'))},
               {l:T.UI.tzeit,k:Object.keys(zmanim?.times||{}).find(k=>k.toLowerCase().includes('tzeit'))}
-            ].map(z=>{const t=z.k?fmtTime(zmanim.times[z.k]):"";return t?(
+            ].map(z=>{const t=z.k && zmanim?.times ? fmtTime(zmanim.times[z.k]) : ""; return t?(
               <div key={z.l} style={{background:T.input,borderRadius:8,padding:"6px 8px"}}>
                 <div style={{fontSize:T.f(10),color:T.muted}}>{z.l}</div>
                 <div style={{fontSize:T.f(13),fontWeight:700,color:T.navy,marginTop:1,direction:"ltr",textAlign:T.isEn?"left":"right"}}>{t}</div>
@@ -771,7 +771,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
           <div style={{marginBottom:16}}>
             {goals.slice(0,2).map(g=>{
               const isO=g.cat==="other", list=isO?[]:getBkList(g.cat,prog.custom);
-              const item = list.find(l => l.idKey === (g.isC ? 'c'+g.origIdx : cat+'_s'+g.idx));
+              const item = list.find(l => l.idKey === (g.isC ? 'custom_c'+g.origIdx : g.cat+'_s'+g.idx));
               const nm=isO?g.otherName:(item?.n||"");
               const cur=isO?0:(g.isC?(prog.custom[g.origIdx]?.done?.size||0):calcDone(prog,g.cat,g.idx));
               const p2=pct(Math.min(cur,g.target),g.target);
@@ -806,12 +806,6 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
             })}
           </div>
         </>)}
-        {empty&&(<div style={{textAlign:"center",padding:"36px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow,marginTop:16}}>
-          <div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:12}}><IcoBook/></div>
-          <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.welcome}</div>
-          <div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.startTracking}</div>
-          <button onClick={()=>setTab("library")} style={{marginTop:18,padding:"12px 28px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(15),fontWeight:700,fontFamily:T.font}}>{T.UI.openLib}</button>
-        </div>)}
       </div>
     </div>
   );
@@ -1047,46 +1041,6 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
   );
 }
 
-/* ── INSTALL GUIDE COMPONENT ── */
-function InstallGuide({ T, onClose }) {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const isAndroid = /android/i.test(navigator.userAgent);
-
-  return (
-    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", display:"flex", alignItems:"flex-end", zIndex:9999}}>
-      <div style={{background:T.card, width:"100%", padding:"24px 20px 40px", borderRadius:"24px 24px 0 0", boxSizing:"border-box", textAlign:"center", animation:"slideUp 0.3s ease-out"}}>
-        <div style={{width:40, height:5, background:T.border, borderRadius:10, margin:"0 auto 20px"}}/>
-        <div style={{display:"flex", justifyContent:"center", color:T.gold||GOLD, marginBottom:16}}><IcoStar /></div>
-        <h2 style={{margin:"0 0 12px 0", fontSize:T.f(20), color:T.navy}}>{T.UI.installApp}</h2>
-        <p style={{margin:"0 0 24px 0", fontSize:T.f(14), color:T.muted, lineHeight:1.5}}>
-          הוסף את אליבא למסך הבית שלך לחוויה מהירה וחלקה יותר, בדיוק כמו אפליקציה רגילה.
-        </p>
-        
-        <div style={{background:T.input, padding:"16px", borderRadius:12, marginBottom:24, textAlign:T.isEn?"left":"right"}}>
-          {isIOS ? (
-            <div style={{fontSize:T.f(14), color:T.navy}}>
-              <div style={{marginBottom:12}}>1. בתחתית המסך, לחץ על סמל השיתוף ⍐</div>
-              <div>2. גלול למטה ובחר <strong>"הוסף למסך הבית"</strong> ➕</div>
-            </div>
-          ) : isAndroid ? (
-            <div style={{fontSize:T.f(14), color:T.navy}}>
-              <div style={{marginBottom:12}}>1. למעלה בדפדפן, לחץ על תפריט הנקודות ⋮</div>
-              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
-            </div>
-          ) : (
-            <div style={{fontSize:T.f(14), color:T.navy}}>
-              <div style={{marginBottom:12}}>1. לחץ על תפריט הדפדפן ⋮</div>
-              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
-            </div>
-          )}
-        </div>
-        <button onClick={onClose} style={{background:T.primary, color:"white", border:"none", padding:"14px", width:"100%", borderRadius:12, fontSize:T.f(15), fontWeight:700, cursor:"pointer"}}>הבנתי, תודה</button>
-      </div>
-      <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
-    </div>
-  );
-}
-
 /* ── AUTH SCREEN ── */
 function AuthScreen({onLogin,T}){
   const[mode,setMode]=useState("choose"); 
@@ -1259,7 +1213,7 @@ export default function App(){
     {k:"home",l:T.UI.home,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},
     {k:"library",l:T.UI.library,ico:<IcoBook/>},
     {k:"goals",l:T.UI.goals,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},
-    {k:"settings",l:T.UI.settings,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>},
+    {k:"settings",l:T.UI.settings,ico:<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 00-1.51 1z"/></svg>},
   ];
 
   return (
