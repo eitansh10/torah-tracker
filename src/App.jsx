@@ -658,6 +658,8 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
   
   const halacha=HALACHOT[new Date().getDate()%HALACHOT.length];
   const dafYomi=useMemo(()=>getDafYomi(),[]);
+  const hh = String(now.getHours()).padStart(2, '0');
+const mm2 = String(now.getMinutes()).padStart(2, '0');
 
   const S=useMemo(()=>({
     dapim:GEMARA.reduce((s,_,i)=>s+calcDone(prog,"gemara",i),0),
