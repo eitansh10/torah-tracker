@@ -84,7 +84,7 @@ const GEMARA=[{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",
 const MISHNA=[{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
 const TANACH=[{b:"בראשית",s:"תורה",c:50},{b:"שמות",s:"תורה",c:40},{b:"ויקרא",s:"תורה",c:27},{b:"במדבר",s:"תורה",c:36},{b:"דברים",s:"תורה",c:34},{b:"יהושע",s:"נביאים",c:24},{b:"שופטים",s:"נביאים",c:21},{b:"שמואל א",s:"נביאים",c:31},{b:"שמואל ב",s:"נביאים",c:24},{b:"מלכים א",s:"נביאים",c:22},{b:"מלכים ב",s:"נביאים",c:25},{b:"ישעיהו",s:"נביאים",c:66},{b:"ירמיהו",s:"נביאים",c:52},{b:"יחזקאל",s:"נביאים",c:48},{b:"הושע",s:"נביאים",c:14},{b:"יואל",s:"נביאים",c:4},{b:"עמוס",s:"נביאים",c:9},{b:"עובדיה",s:"נביאים",c:1},{b:"יונה",s:"נביאים",c:4},{b:"מיכה",s:"נביאים",c:7},{b:"נחום",s:"נביאים",c:3},{b:"חבקוק",s:"נביאים",c:3},{b:"צפניה",s:"נביאים",c:3},{b:"חגי",s:"נביאים",c:2},{b:"זכריה",s:"נביאים",c:14},{b:"מלאכי",s:"נביאים",c:3},{b:"תהלים",s:"כתובים",c:150},{b:"משלי",s:"כתובים",c:31},{b:"איוב",s:"כתובים",c:42},{b:"שיר השירים",s:"כתובים",c:8},{b:"רות",s:"כתובים",c:4},{b:"איכה",s:"כתובים",c:5},{b:"קהלת",s:"כתובים",c:12},{b:"אסתר",s:"כתובים",c:10},{b:"דניאל",s:"כתובים",c:12},{b:"עזרא",s:"כתובים",c:10},{b:"נחמיה",s:"כתובים",c:13},{b:"דברי הימים א",s:"כתובים",c:29},{b:"דברי הימים ב",s:"כתובים",c:36}];
 const MUSAR=[{n:"מסילת ישרים",a:'רמח"ל',p:26},{n:"חובת הלבבות",a:"רבינו בחיי",p:10},{n:"שערי תשובה",a:"רבינו יונה",p:4},{n:"אורחות צדיקים",a:"אנונימי",p:30},{n:"תומר דבורה",a:'רמ"ק',p:10},{n:"פלא יועץ",a:"ר' אליעזר פאפו",p:90},{n:"חפץ חיים",a:"החפץ חיים",p:17},{n:"שמירת הלשון",a:"החפץ חיים",p:30},{n:"אהבת חסד",a:"החפץ חיים",p:24},{n:"מכתב מאליהו",a:"ר' אליהו דסלר",p:5},{n:"עלי שור",a:"ר' שלמה וולבה",p:2},{n:"נתיבות שלום",a:'אדמו"ר מסלונים',p:5},{n:'ליקוטי מוהר"ן',a:"ר' נחמן מברסלב",p:286},{n:"ספר המידות",a:"ר' נחמן מברסלב",p:30},{n:"ספר הישר",a:'ר"ת',p:13}];
-const RAV_KOOK=[{n:"אורות",g:"אורות",p:9},{n:"אורות התשובה",g:"אורות",p:17},{n:"אורות ארץ ישראל",g:"אורות",p:5},{n:"אורות המלחמה",g:"אורות",p:9},{n:"אורות התחיה",g:"אורות",p:9},{n:"אורות ישראל",g:"אורות",p:9},{n:"אורות הקודש א",g:"אורות הקודש",p:9},{n:"אורות הקודש ב",g:"אורות הקודש",p:9},{n:"אורות הקודש ג",g:"אורות הקודש",p:9},{n:"אורות הקודש ד",g:"אורות הקודש",p:7},{n:"אורות התורה",g:"אורות",p:13},{n:"אורות האמונה",g:"אורות",p:8},{n:"עין איה ברכות א",g:"עין איה",p:9},{n:"עין איה ברכות ב",g:"עין איה",p:9},{n:"עין איה שבת א",g:"עין איה",p:11},{n:"עין איה שבת ב",g:"עין איה",p:11},{n:"שמונה קבצים",g:"שמונה קבצים",p:9},{n:"אגרות הראיה א",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ב",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ג",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ד",g:"אגרות הראיה",p:9},{n:"מאמרי הראיה א",g:"מאמרים",p:9},{n:"מאמרי הראיה ב",g:"מאמרים",p:9},{n:"מוסר אביך",g:"שונות",p:6},{n:"עולת ראיה א",g:"שונות",p:9},{n:"עולת ראיה ב",g:"שונות",p:9},{n:"ארפלי טוהר",g:"שונות",p:9},{n:"ריש מילין",g:"שונות",p:9}];
+const RAV_KOOK=[{n:"אורות התשובה",g:"אורות",p:17},{n:"אורות ארץ ישראל",g:"אורות",p:5},{n:"אורות המלחמה",g:"אורות",p:9},{n:"אורות התחיה",g:"אורות",p:9},{n:"אורות ישראל",g:"אורות",p:9},{n:"אורות הקודש א",g:"אורות הקודש",p:9},{n:"אורות הקודש ב",g:"אורות הקודש",p:9},{n:"אורות הקודש ג",g:"אורות הקודש",p:9},{n:"אורות הקודש ד",g:"אורות הקודש",p:7},{n:"אורות התורה",g:"אורות",p:13},{n:"אורות האמונה",g:"אורות",p:8},{n:"עין איה ברכות א",g:"עין איה",p:9},{n:"עין איה ברכות ב",g:"עין איה",p:9},{n:"עין איה שבת א",g:"עין איה",p:11},{n:"עין איה שבת ב",g:"עין איה",p:11},{n:"שמונה קבצים",g:"שמונה קבצים",p:9},{n:"אגרות הראיה א",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ב",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ג",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ד",g:"אגרות הראיה",p:9},{n:"מאמרי הראיה א",g:"מאמרים",p:9},{n:"מאמרי הראיה ב",g:"מאמרים",p:9},{n:"מוסר אביך",g:"שונות",p:6},{n:"עולת ראיה א",g:"שונות",p:9},{n:"עולת ראיה ב",g:"שונות",p:9},{n:"ארפלי טוהר",g:"שונות",p:9},{n:"ריש מילין",g:"שונות",p:9}];
 const MACHSHAVA=[{n:"נפש החיים",a:"ר' חיים מוולוז'ין",p:4},{n:"כוזרי",a:'ריה"ל',p:5},{n:"מורה נבוכים",a:'רמב"ם',p:3},{n:"דרך ה'",a:'רמח"ל',p:4},{n:"דעת תבונות",a:'רמח"ל',p:1},{n:"תניא",a:'אדמו"ר הזקן',p:4},{n:"אמונות ודעות",a:'רס"ג',p:10},{n:"ספר העיקרים",a:"ר' יוסף אלבו",p:4},{n:"נצח ישראל",a:'מהר"ל',p:58},{n:"נתיבות עולם",a:'מהר"ל',p:2},{n:"גבורות ה'",a:'מהר"ל',p:73},{n:"באר הגולה",a:'מהר"ל',p:7}];
 
 const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
@@ -101,7 +101,7 @@ const SEFARIA_MAP = {
   "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
   "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles",
   "מסילת ישרים": "Mesillat_Yesharim", "חובת הלבבות": "Duties_of_the_Heart", "שערי תשובה": "Shaarei_Teshuvah", "אורחות צדיקים": "Orchot_Tzadikim", "תומר דבורה": "Tomer_Devorah", "חפץ חיים": "Chafetz_Chaim", "שמירת הלשון": "Shmirat_HaLashon", "נפש החיים": "Nefesh_HaChayim", "כוזרי": "Kuzari", "מורה נבוכים": "Guide_for_the_Perplexed", "דרך ה'": "Derekh_Hashem", "דעת תבונות": "Da'at_Tevunot", "תניא": "Tanya",
-  "אורות": "Orot", "אורות התשובה": "Orot_HaTeshuvah", "אורות התורה": "Orot_HaTorah", "אורות האמונה": "Orot_HaEmunah", "מוסר אביך": "Musar_Avikh", "שמונה קבצים": "Shmoneh_Kevatzim", "ארפלי טוהר": "Arpilei_Tohar", "עולת ראיה א": "Olat_Reiyah_Vol_I", "אגרות הראיה א": "Igrot_HaReiyah_Vol_I"
+  "אורות התשובה": "Orot_HaTeshuvah", "אורות התורה": "Orot_HaTorah", "אורות האמונה": "Orot_HaEmunah", "מוסר אביך": "Musar_Avikh", "שמונה קבצים": "Shmoneh_Kevatzim", "ארפלי טוהר": "Arpilei_Tohar", "עולת ראיה א": "Olat_Reiyah_Vol_I", "אגרות הראיה א": "Igrot_HaReiyah_Vol_I"
 };
 
 function safeHas(setOrObj, val) {
@@ -241,10 +241,11 @@ function mkT(dark,sz,lang) {
     continueWith: "Continue with", or: "or", newAccount: "Create a new account",
     onTrack: "On track ✓", behind: "Behind", perDay: "per day", currPace: "curr pace", fullTractates: "Completed Books",
     dedicateDesc: "Dedicate your learning. Dedications will be visible to all users.", submitDedication: "Submit Dedication",
-    readOnSefaria: "Read this section", loadingSefaria: "Loading Sefaria text...", baseText: "Base Text", rashi: "Rashi", steinsaltz: "Steinsaltz", bartenura: "Bartenura",
+    readOnSefaria: "Continue where you left off", loadingSefaria: "Loading Sefaria text...", baseText: "Base Text", rashi: "Rashi", steinsaltz: "Steinsaltz", bartenura: "Bartenura",
     noResults: "No results found", results: "Results", selectBook: "Select Book...", developedBy: "Developed by Eitan Shachor. All rights reserved.",
     zmanMGA: "Latest Shma (MGA)", zmanGRA: "Latest Shma (GRA)", tfillaMGA: "Latest Tefila (MGA)", tfillaGRA: "Latest Tefila (GRA)", chatzot: "Chatzot", sunrise: "Sunrise", sunset: "Sunset", tzeit: "Nightfall",
-    legal: "Legal & Privacy", terms: "Terms of Service", privacy: "Privacy Policy", agreeTerms: "I agree to the Terms of Service and Privacy Policy", mustAgree: "You must agree to the Terms to continue", installApp: "Install App"
+    legal: "Legal & Privacy", terms: "Terms of Service", privacy: "Privacy Policy", agreeTerms: "I agree to the Terms of Service and Privacy Policy", mustAgree: "You must agree to the Terms to continue", installApp: "Install App",
+    slogan: "Your Learning Center"
   } : {
     home: "בית", library: "ספרייה", goals: "יעדים", stats: "נתונים", settings: "הגדרות",
     welcome: "ברוך הבא!", startTracking: "לך לספרייה והתחל לסמן", openLib: "פתח ספרייה",
@@ -262,10 +263,11 @@ function mkT(dark,sz,lang) {
     continueWith: "המשך עם", or: "או", newAccount: "פתח חשבון חדש",
     onTrack: "במסלול ✓", behind: "מאחור", perDay: "נדרש ליום", currPace: "יעד נוכחי", fullTractates: "ספרים שלמים",
     dedicateDesc: "הקדש את לימודך להצלחת, רפואת או לעילוי נשמת יקיריך. שים לב: ההקדשות יוצגו באפליקציה באופן פומבי לכלל הלומדים.", submitDedication: "שלח בקשת הקדשה",
-    readOnSefaria: "פתח קטע זה", loadingSefaria: "טוען טקסט מספריא...", baseText: "טקסט מקור", rashi: "רש״י", steinsaltz: "ביאור שטיינזלץ", bartenura: "ברטנורא",
+    readOnSefaria: "המשך מהמקום שעצרת", loadingSefaria: "טוען טקסט מספריא...", baseText: "טקסט מקור", rashi: "רש״י", steinsaltz: "ביאור שטיינזלץ", bartenura: "ברטנורא",
     noResults: "לא נמצאו תוצאות", results: "תוצאות", selectBook: "בחר ספר...", developedBy: "פותח ע״י איתן שחור. כל הזכויות שמורות.",
     zmanMGA: "סוף זק״ש (מג״א)", zmanGRA: "סוף זק״ש (גר״א)", tfillaMGA: "סוף תפילה (מג״א)", tfillaGRA: "סוף תפילה (גר״א)", chatzot: "חצות", sunrise: "הנץ החמה", sunset: "שקיעה", tzeit: "צאת הכוכבים",
-    legal: "תקנון ופרטיות", terms: "תנאי שימוש", privacy: "מדיניות פרטיות", agreeTerms: "אני מסכים/ה לתקנון ולמדיניות הפרטיות", mustAgree: "יש לאשר את התקנון כדי להירשם", installApp: "התקן כאפליקציה"
+    legal: "תקנון ופרטיות", terms: "תנאי שימוש", privacy: "מדיניות פרטיות", agreeTerms: "אני מסכים/ה לתקנון ולמדיניות הפרטיות", mustAgree: "יש לאשר את התקנון כדי להירשם", installApp: "התקן כאפליקציה",
+    slogan: "מרכז הלימוד שלך"
   };
 
   const base=dark
@@ -336,7 +338,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
       .then(data => {
         if (data.error) setError(data.error);
         else {
-          // מנגנון רקורסיבי חכם ששואב את כל הפירושים ללא תלות בעומק
           const flattenText = (val) => {
             if (!val) return [];
             if (typeof val === 'string') return [val];
@@ -344,7 +345,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
             if (typeof val === 'object') return flattenText(Object.values(val));
             return [];
           };
-          setTextArr(flattenText(data.he));
+          setTextArr(flattenText(data.he || data.text || []));
         }
         setLoading(false);
       }).catch(e => { setError("אירעה שגיאה בטעינת הטקסט."); setLoading(false); });
@@ -353,12 +354,14 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
   return (
     <Sheet show={show} onClose={()=>{onClose();setCommMode("");}} title={title} T={T}>
       <div style={{minHeight: 200, maxHeight: '65vh', overflowY: 'auto', paddingRight: 8, direction: 'rtl'}}>
-         <select aria-label="Commentary Selection" value={commMode} onChange={e=>setCommMode(e.target.value)} style={{marginBottom:16, width:'100%', padding:8, borderRadius:8, background:T.input, color:T.navy, border:`1px solid ${T.border}`, fontFamily:T.font, fontSize:T.f(14)}}>
-            <option value="">{T.UI.baseText}</option>
-            {cat === 'mishna' && <option value="Bartenura_on_">{T.UI.bartenura}</option>}
-            {cat !== 'mishna' && <option value="Rashi_on_">{T.UI.rashi}</option>}
-            {cat === 'gemara' && <option value="Steinsaltz_on_">{T.UI.steinsaltz}</option>}
-         </select>
+         {(cat === 'tanach' || cat === 'gemara' || cat === 'mishna') && (
+           <select aria-label="Commentary Selection" value={commMode} onChange={e=>setCommMode(e.target.value)} style={{marginBottom:16, width:'100%', padding:8, borderRadius:8, background:T.input, color:T.navy, border:`1px solid ${T.border}`, fontFamily:T.font, fontSize:T.f(14)}}>
+              <option value="">{T.UI.baseText}</option>
+              {cat === 'mishna' && <option value="Bartenura_on_">{T.UI.bartenura}</option>}
+              {(cat === 'tanach' || cat === 'gemara') && <option value="Rashi_on_">{T.UI.rashi}</option>}
+              {cat === 'gemara' && <option value="Steinsaltz_on_">{T.UI.steinsaltz}</option>}
+           </select>
+         )}
          
          {loading && <div style={{textAlign:'center', color: T.muted, padding:40, fontSize: T.f(15)}}>{T.UI.loadingSefaria} ⏳</div>}
          {error && <div style={{textAlign:'center', color: T.red, padding:20, fontWeight:600}}>{error}</div>}
@@ -516,7 +519,6 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 
   const nextUnlearned = useMemo(() => { try { return items.find(it => !isOn(it.key)); } catch(e){ return null; } }, [items, prog, isOn]);
   const nextSefariaRef = nextUnlearned ? getSefariaRefString(cat, item?.n, nextUnlearned.key, tMode, isC, idx) : null;
-  const sefariaRefForNote = noteSheet ? getSefariaRefString(cat, item?.n, noteSheet.key, tMode, isC, idx) : null;
 
   function openNote(key,label){const k=`${isC?'c'+origIdx:cat+':'+idx}:${key}`;setEditNote(prog.notes?.[k]||"");setEditChz(prog.chazara?.[k]||0);setNoteSheet({key,label});}
   function saveNote(){const k=`${isC?'c'+origIdx:cat+':'+idx}:${noteSheet.key}`;setProg(prev=>({...prev,notes:{...prev.notes,[k]:editNote},chazara:{...prev.chazara,[k]:editChz}}));setNoteSheet(null);}
@@ -592,12 +594,6 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       </div>
 
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
-        {sefariaRefForNote && !isC && (
-          <button onClick={() => { setReaderRef(sefariaRefForNote); setReaderTitle(`${item.n} ${noteSheet.label}`); setNoteSheet(null); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", border:"none", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font, width:"100%", cursor:"pointer"}}>
-            <IcoBook /> {T.UI.readOnSefaria}
-          </button>
-        )}
-
         <FL label={T.UI.notes} T={T}><FTA aria-label="Notes input" T={T} value={editNote} onChange={e=>setEditNote(e.target.value)}/></FL>
         <FL label={T.UI.repetitions} T={T}>
           <div style={{display:"flex",alignItems:"center",gap:16,marginTop:4}}>
@@ -666,7 +662,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
     {cat:"musar",l:T.CAT_L.musar,v:S.musar,tot:MUSAR.reduce((s,t)=>s+t.p,0)+RAV_KOOK.reduce((s,t)=>s+t.p,0)+MACHSHAVA.reduce((s,t)=>s+t.p,0),unit:T.CAT_UNIT.musar},
   ];
   const empty=S.dapim===0&&S.mishna===0&&S.tanach===0&&S.musar===0;
-  const hh=String(now.getHours()).padStart(2,"0"), mm2=String(now.getMinutes()).padStart(2,"0");
+
   function fmtTime(iso){if(!iso)return"";try{return new Date(iso).toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});}catch{return "";}}
 
   function goToDafYomi() {
@@ -687,31 +683,27 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
 
   return (
     <div style={{flex:1,overflow:"auto",background:T.bg}}>
-      <div style={{background:`linear-gradient(160deg,#0A1E3A 0%,${NAVY} 60%,#173A5A 100%)`,padding:"22px 18px",position:"relative",overflow:"hidden"}}>
+      <div style={{background:`linear-gradient(160deg,#0A1E3A 0%,${NAVY} 60%,#173A5A 100%)`,padding:"24px 18px",position:"relative",overflow:"hidden"}}>
         <div style={{position:"absolute",top:-50,left:-50,width:200,height:200,borderRadius:"50%",border:`1px solid ${GOLD}18`}}/>
         <div style={{position:"relative"}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:12}}>
+          <div style={{display:"flex", alignItems:"center", gap: 12, marginBottom: 18}}>
+            <LogoAliba T={T} size={42} />
             <div>
-              <div style={{fontSize:T.f(52),fontWeight:800,color:"#fff",lineHeight:1}}>{hh}:{mm2}</div>
-              {today&&<div style={{fontSize:T.f(13),color:GOLD,fontWeight:700,marginTop:3}}>{today}</div>}
-              <div style={{fontSize:T.f(11),color:"rgba(255,255,255,0.45)",marginTop:1}}>{now.toLocaleDateString(T.isEn?"en-US":"he-IL",{weekday:"long"})}</div>
-            </div>
-            <div style={{background:"rgba(255,255,255,0.1)",borderRadius:14,padding:"10px 14px",textAlign:"center",border:`1px solid ${GOLD}33`}}>
-              <div style={{display:"flex", justifyContent:"center", color:GOLD, marginBottom:4}}><IcoFlame/></div>
-              <div style={{fontSize:T.f(20),fontWeight:900,color:GOLD,lineHeight:1,marginTop:3}}>{streak}</div>
-              <div style={{fontSize:T.f(10),color:"rgba(255,255,255,0.6)"}}>{T.isEn?"Day Streak":"ימים רצוף"}</div>
+              <div style={{fontSize:T.f(24), fontWeight:900, color:"#fff", letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div>
+              <div style={{fontSize:T.f(12), color:"rgba(255,255,255,0.7)"}}>{T.UI.slogan}</div>
             </div>
           </div>
-          <div style={{fontSize:T.f(12),color:"rgba(255,255,255,0.8)",fontWeight:600,borderRight:T.isEn?"none":`2px solid ${GOLD}`,borderLeft:T.isEn?`2px solid ${GOLD}`:"none",paddingRight:T.isEn?0:9,paddingLeft:T.isEn?9:0,marginBottom:14,lineHeight:1.5}}>{quote}</div>
+          
+          <div style={{fontSize:T.f(12),color:"rgba(255,255,255,0.8)",fontWeight:600,borderRight:T.isEn?"none":`2px solid ${GOLD}`,borderLeft:T.isEn?`2px solid ${GOLD}`:"none",paddingRight:T.isEn?0:9,paddingLeft:T.isEn?9:0,marginBottom:18,lineHeight:1.5}}>{quote}</div>
           
           <div style={{display:"flex", gap:8}}>
-            {dafYomi.masechet&&<div onClick={goToDafYomi} style={{flex:1, background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"8px 12px",border:`1px solid rgba(201,168,76,0.3)`, cursor:"pointer"}}>
-              <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:2}}><IcoBook/> {T.UI.dafYomi}</div>
+            {dafYomi.masechet&&<div onClick={goToDafYomi} style={{flex:1, background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.3)`, cursor:"pointer"}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoBook/> {T.UI.dafYomi}</div>
               <div style={{fontSize:T.f(14),fontWeight:700,color:"#fff"}}>{dafYomi.masechet} {T.isEn?"Daf":"דף"} {dafYomi.dafHeb}</div>
             </div>}
             
-            {shabbatData?.parasha&&<div onClick={goToParasha} style={{flex:1, background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"8px 12px",border:`1px solid rgba(201,168,76,0.2)`, cursor:"pointer"}}>
-              <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:2}}><IcoStar/> {T.UI.parasha}</div>
+            {shabbatData?.parasha&&<div onClick={goToParasha} style={{flex:1, background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.2)`, cursor:"pointer"}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoStar/> {T.UI.parasha}</div>
               <div style={{fontSize:T.f(13),fontWeight:600,color:"#fff"}}>{shabbatData.parasha}</div>
             </div>}
           </div>
@@ -719,7 +711,6 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
       </div>
       <div style={{padding:"14px 16px 80px"}}>
 
-        {/* Dedication Banner */}
         <div style={{background:T.card,borderRadius:14,padding:"16px",marginBottom:16,border:`1.5px solid ${GOLD}`,boxShadow:T.shadow}}>
           <div style={{display:"flex",alignItems:"center",gap:8,color:GOLD,marginBottom:8}}><IcoHeart/><div style={{fontWeight:800,fontSize:T.f(14)}}>{T.UI.dedicate}</div></div>
           <div style={{fontSize:T.f(12),color:T.muted,lineHeight:1.6,marginBottom:12}}>{T.UI.dedicateDesc}</div>
@@ -882,8 +873,16 @@ function GoalRow({g,prog,T,cc,onDelete,custom}){
   const end=new Date(g.deadline),start=new Date(g.startDate);
   const td=Math.max(1,Math.round((end-start)/86400000)), el=Math.max(0,Math.round((new Date()-start)/86400000)), rem=Math.max(0,Math.round((end-new Date())/86400000));
   const exp=Math.min(100,Math.round(el*100/td));
-  const onTrack=isO||p>=exp,needed=(!isO&&rem>0)?Math.ceil((g.target-cur)/rem):0;
-  const col=cc[g.cat]||T.primary,hd=hebStr(g.deadline);
+  
+  const remainingItems = g.target - cur;
+  let paceStr = "-";
+  let paceLabel = T.UI.perDay;
+  if (!isO && rem > 0 && remainingItems > 0) {
+      if (remainingItems >= rem) { paceStr = String(Math.ceil(remainingItems / rem)); } 
+      else { const daysPerItem = Math.floor(rem / remainingItems); paceStr = "1"; paceLabel = `בכל ${daysPerItem} ימים`; }
+  }
+  const onTrack=isO||p>=exp, col=cc[g.cat]||T.primary, hd=hebStr(g.deadline);
+  
   return (
     <div style={{background:T.card,borderRadius:16,padding:"15px 16px",marginBottom:12,boxShadow:T.shadow}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
@@ -893,7 +892,7 @@ function GoalRow({g,prog,T,cc,onDelete,custom}){
       <Bar p={p} color={col} h={8} dark={T.dark}/>
       <div style={{display:"flex",justifyContent:"space-between",fontSize:T.f(12),color:T.muted,margin:"6px 0 12px"}}><span>{cur}/{g.target} {isO?"":T.CAT_UNIT[g.cat]}</span><span style={{color:col,fontWeight:800}}>{p}%</span></div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(80px, 1fr))",gap:8,marginBottom:12}}>
-        {[{l:T.UI.daysLeft,v:rem},{l:T.UI.perDay,v:(!isO&&needed>0)?needed:"-"},{l:T.UI.currPace,v:isO?"-":`${exp}%`}].map(s=>(
+        {[{l:T.UI.daysLeft,v:rem},{l:paceLabel,v:paceStr},{l:T.UI.currPace,v:isO?"-":`${exp}%`}].map(s=>(
           <div key={s.l} style={{background:T.input,borderRadius:10,padding:"9px 10px"}}><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy}}>{s.v}</div><div style={{fontSize:T.f(10),color:T.muted,marginTop:1}}>{s.l}</div></div>
         ))}
       </div>
@@ -914,7 +913,6 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
   const[otherName,setOtherName]=useState("");
 
   const bkList=cat==="other"?[]:getBkList(cat,prog.custom);
-  
   const selectedItem = bkList.find(b => String(b.idKey) === bookIdKey);
   const maxTot=cat==="other"?0:(selectedItem ? (selectedItem.isC ? prog.custom[selectedItem.origIdx].chapters : bkTotal(cat,selectedItem.i,prog.custom)) : 0);
 
@@ -922,10 +920,8 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
     if(!deadline)return;
     if(cat==="other"&&!otherName)return;
     setGoals(prev=>[...prev,{
-        id:Date.now(), cat, 
-        idx: selectedItem ? selectedItem.i : 0, 
-        isC: selectedItem ? selectedItem.isC : false, 
-        origIdx: selectedItem ? selectedItem.origIdx : 0, 
+        id:Date.now(), cat, idx: selectedItem ? selectedItem.i : 0, 
+        isC: selectedItem ? selectedItem.isC : false, origIdx: selectedItem ? selectedItem.origIdx : 0, 
         target:target?parseInt(target):maxTot, deadline, startDate:todayKey(), otherName
     }]);
     setShowSheet(false);
@@ -1018,50 +1014,11 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
         </div>
       </div>
       <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}>
-        <div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div>
-        <div>{T.UI.developedBy}</div>
+        <div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span><span style={{color:T.gold||GOLD}}>ב</span>א</div>
+        <div style={{direction: "ltr"}}>v 1.0</div>
+        <div>© {new Date().getFullYear()} {T.UI.developedBy}</div>
       </div>
       <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
-    </div>
-  );
-}
-
-/* ── INSTALL GUIDE COMPONENT ── */
-function InstallGuide({ T, onClose }) {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-  const isAndroid = /android/i.test(navigator.userAgent);
-
-  return (
-    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", display:"flex", alignItems:"flex-end", zIndex:9999}}>
-      <div style={{background:T.card, width:"100%", padding:"24px 20px 40px", borderRadius:"24px 24px 0 0", boxSizing:"border-box", textAlign:"center", animation:"slideUp 0.3s ease-out"}}>
-        <div style={{width:40, height:5, background:T.border, borderRadius:10, margin:"0 auto 20px"}}/>
-        <div style={{display:"flex", justifyContent:"center", color:T.gold||GOLD, marginBottom:16}}><IcoStar /></div>
-        <h2 style={{margin:"0 0 12px 0", fontSize:T.f(20), color:T.navy}}>{T.UI.installApp}</h2>
-        <p style={{margin:"0 0 24px 0", fontSize:T.f(14), color:T.muted, lineHeight:1.5}}>
-          הוסף את אליבא למסך הבית שלך לחוויה מהירה וחלקה יותר, בדיוק כמו אפליקציה רגילה.
-        </p>
-        
-        <div style={{background:T.input, padding:"16px", borderRadius:12, marginBottom:24, textAlign:T.isEn?"left":"right"}}>
-          {isIOS ? (
-            <div style={{fontSize:T.f(14), color:T.navy}}>
-              <div style={{marginBottom:12}}>1. בתחתית המסך, לחץ על סמל השיתוף ⍐</div>
-              <div>2. גלול למטה ובחר <strong>"הוסף למסך הבית"</strong> ➕</div>
-            </div>
-          ) : isAndroid ? (
-            <div style={{fontSize:T.f(14), color:T.navy}}>
-              <div style={{marginBottom:12}}>1. למעלה בדפדפן, לחץ על תפריט הנקודות ⋮</div>
-              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
-            </div>
-          ) : (
-            <div style={{fontSize:T.f(14), color:T.navy}}>
-              <div style={{marginBottom:12}}>1. לחץ על תפריט הדפדפן ⋮</div>
-              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
-            </div>
-          )}
-        </div>
-        <button onClick={onClose} style={{background:T.primary, color:"white", border:"none", padding:"14px", width:"100%", borderRadius:12, fontSize:T.f(15), fontWeight:700, cursor:"pointer"}}>הבנתי, תודה</button>
-      </div>
-      <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
     </div>
   );
 }
@@ -1090,8 +1047,8 @@ function AuthScreen({onLogin,T}){
     <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,gap:20,background:T.bg}}>
       <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}><LogoAliba T={T} size={54}/></div>
       <div style={{textAlign:"center", marginBottom:20}}>
-        <div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div>
-        <div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>מרכז הלימוד שלך</div>
+        <div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span><span style={{color:T.gold||GOLD}}>ב</span>א</div>
+        <div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>{T.UI.slogan}</div>
       </div>
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
         <button onClick={()=>onLogin({method:"google"})} style={{display:"flex",alignItems:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font}}>
@@ -1254,7 +1211,6 @@ export default function App(){
           </button>
         ))}
       </div>
-      {showInstallPrompt && <InstallGuide T={T} onClose={() => {localStorage.setItem('hideInstallGuide', '1'); setShowInstallPrompt(false);}} />}
     </div>
   );
 }
