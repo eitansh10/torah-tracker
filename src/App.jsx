@@ -28,6 +28,7 @@ const IcoCalendar = ()=><svg aria-hidden="true" width="16" height="16" viewBox="
 const IcoDots = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
 const IcoEdit = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
 
+/* לוגו אליבא */
 const LogoAliba = ({T, size=48}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={T.gold||"#C9A84C"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill={T.dark?"rgba(201,168,76,0.15)":"rgba(201,168,76,0.2)"}/>
@@ -112,7 +113,7 @@ function safeHas(setOrObj, val) {
 }
 
 function getBkList(cat, custom) {
-  custom = custom || [];
+  const custArr = Array.isArray(custom) ? custom : [];
   let base = [];
   if(cat==="gemara") base = GEMARA.map((t,i)=>({i, n:t.n, sub:t.s, cat}));
   else if(cat==="mishna") base = MISHNA.map((t,i)=>({i, n:t.m, sub:t.s, cat}));
@@ -122,7 +123,7 @@ function getBkList(cat, custom) {
   else if(cat==="machshava") base = MACHSHAVA.map((t,i)=>({i, n:t.n, sub:t.a, cat}));
 
   base = base.map(b => ({...b, isC: false, idKey: cat+'_s'+b.i}));
-  const customsInCat = custom.map((c, i) => ({ i, n: c.name, sub: c.catLabel||"", cat: c.cat, isC: true, origIdx: i, idKey: 'custom_c'+i }));
+  const customsInCat = custArr.map((c, i) => ({ i, n: c.name, sub: c.catLabel||"", cat: c.cat, isC: true, origIdx: i, idKey: 'custom_c'+i }));
 
   if(cat === "custom") return customsInCat;
   return [...customsInCat.filter(c => c.cat === cat), ...base];
@@ -151,8 +152,8 @@ function bkTotal(cat,i,custom) {
 
 function calcDone(prog, cat, i) {
   if (!prog) return 0;
-  if (cat === "gemara") { const g = prog.gemara?.[i]; if (!g) return 0; return Math.round((g.done?.size || 0) / 2); }
-  if (cat === "mishna") { const m = prog.mishna?.[i]; if (!m) return 0; return m.done?.size || 0; }
+  if (cat === "gemara") return Math.round((prog.gemara?.[i]?.done?.size || 0) / 2);
+  if (cat === "mishna") return prog.mishna?.[i]?.done?.size || 0;
   if (cat === "custom") return prog.custom?.[i]?.done?.size || 0;
   if (cat === "tanach") return prog.tanach?.[i]?.size || 0;
   return prog[cat]?.[i]?.size || 0;
@@ -166,7 +167,6 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     const cleanName = bookName.trim();
     const engBook = SEFARIA_MAP[cleanName] || encodeURIComponent(cleanName.replace(/ /g, "_"));
     let kStr = String(key);
-    
     if(cat === "gemara") {
         if(kStr.startsWith("p")) kStr = perekAmudKeys(masIdx, parseInt(kStr.slice(1)))[0] || "2a";
         return `${engBook}.${kStr}`;
@@ -210,8 +210,8 @@ function desProg(data) {
   for(const[k,v] of Object.entries(data.tanach||{})) o.tanach[k]=new Set(v);
   o.tmode={...data.tmode};
   for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(data[c]||{})) o[c][k]=new Set(v);
-  o.custom=(data.custom||[]).map(b=>({...b,done:new Set(b.done)}));
-  o.notes={...data.notes}; o.chazara={...data.chazara};
+  o.custom=Array.isArray(data.custom) ? data.custom.map(b=>({...b,done:new Set(Array.isArray(b.done)?b.done:[])})) : [];
+  o.notes=data.notes||{}; o.chazara=data.chazara||{};
   return o;
 }
 const IP={gemara:{},mishna:{},tanach:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
@@ -281,8 +281,8 @@ function Ring({p,color,size=60,stroke=7,label,sub,dark}){const r=(size-stroke)/2
 function Sheet({show,onClose,title,T,children}){if(!show)return null;return <div onClick={e=>e.target===e.currentTarget&&onClose()} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.65)",display:"flex",alignItems:"flex-end",zIndex:600}}><div style={{background:T.card,borderRadius:"22px 22px 0 0",padding:"16px 18px 52px",width:"100%",maxWidth:480,margin:"0 auto",maxHeight:"90vh",overflowY:"auto",boxSizing:"border-box"}}><div style={{width:38,height:4,background:T.border,borderRadius:99,margin:"0 auto 14px"}}/><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}><span style={{fontSize:T.f(17),fontWeight:700,color:T.navy,fontFamily:T.font}}>{title}</span><button aria-label="Close" onClick={onClose} style={{background:T.input,border:"none",cursor:"pointer",color:T.muted,fontSize:18,padding:"3px 12px",borderRadius:9,fontFamily:T.font}}>✕</button></div>{children}</div></div>;}
 function FI({T,style,...r}){return <input {...r} style={{width:"100%",height:"48px",padding:"11px 13px",borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,color:T.navy,fontSize:"16px",fontFamily:T.font,direction:T.isEn?"ltr":"rtl",textAlign:"start",outline:"none",boxSizing:"border-box",margin:0,...(style||{})}}/>;}
 function FS({T,children,style,...r}){return <select {...r} style={{width:"100%",height:"48px",padding:"11px 13px",borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,color:T.navy,fontSize:"16px",fontFamily:T.font,direction:T.isEn?"ltr":"rtl",textAlign:"start",outline:"none",boxSizing:"border-box",margin:0,...(style||{})}}>{children}</select>;}
-function FTA({T,style,...r}){return <textarea {...r} style={{width:"100%",padding:"11px 13px",borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,color:T.navy,fontSize:"16px",fontFamily:T.font,direction:T.isEn?"ltr":"rtl",outline:"none",boxSizing:"border-box",resize:"vertical",minHeight:90,...(style||{})}}/>;}
-function FL({label,T,children}){return <div style={{marginBottom:14}}><label style={{fontSize:T.f(12),color:T.muted,display:"block",marginBottom:5,fontWeight:600,fontFamily:T.font}}>{label}</label>{children}</div>;}
+function FTA({T,style,...r}){return <textarea {...r} style={{width:"100%",padding:"11px 13px",borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,color:T.navy,fontSize:"16px",fontFamily:T.font,direction:T.isEn?"ltr":"rtl",textAlign:"start",outline:"none",boxSizing:"border-box",resize:"vertical",minHeight:90,...(style||{})}}/>;}
+function FL({label,T,children}){return <div style={{marginBottom:14}}><label style={{fontSize:T.f(12),color:T.muted,display:"block",marginBottom:5,fontWeight:600,fontFamily:T.font,textAlign:"start"}}>{label}</label>{children}</div>;}
 function PB({onClick,children,T,color,style,disabled}){return <button disabled={disabled} onClick={onClick} style={{width:"100%",height:"48px",padding:13,background:disabled?"#ccc":color||T.primary,color:"#fff",border:"none",borderRadius:12,fontSize:T.f(15),fontWeight:700,cursor:"pointer",fontFamily:T.font,boxSizing:"border-box",margin:0,...(style||{})}}>{children}</button>;}
 function MB({active,onClick,label,color,T}){return <button onClick={onClick} style={{flex:1,padding:"9px 4px",borderRadius:10,border:`2px solid ${active?color:T.border}`,background:active?color:"transparent",color:active?"#fff":T.muted,fontSize:T.f(13),cursor:"pointer",fontWeight:active?700:400,fontFamily:T.font,transition:"all .2s"}}>{label}</button>;}
 function Toggle({on,onToggle,primary}){return <div onClick={onToggle} style={{width:50,height:28,borderRadius:14,background:on?primary:"#D1D5DB",cursor:"pointer",position:"relative",flexShrink:0}}><div style={{position:"absolute",top:3,width:22,height:22,borderRadius:"50%",background:"#fff",left:on?25:3,transition:"left .2s",boxShadow:"0 1px 4px rgba(0,0,0,0.2)"}}/></div>;}
@@ -460,8 +460,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 
   function isOn(key){
     if(isC) return safeHas(prog?.custom?.[origIdx]?.done, key);
-    if(cat==="gemara"){const g=prog?.gemara?.[idx];if(!g)return false;if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);return ak.length>0&&ak.every(k=>safeHas(g.done, k));}return safeHas(g.done, key);}
-    if(cat==="mishna"){const m=prog?.mishna?.[idx];if(!m)return false;if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);return mk.length>0&&mk.every(k=>safeHas(m.done, k));}return safeHas(m.done, key);}
+    if(cat==="gemara"){const g=prog?.gemara?.[idx];if(!g)return false;if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);return ak.length>0&&ak.every(k=>safeHas(g?.done, k));}return safeHas(g?.done, key);}
+    if(cat==="mishna"){const m=prog?.mishna?.[idx];if(!m)return false;if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);return mk.length>0&&mk.every(k=>safeHas(m?.done, k));}return safeHas(m?.done, key);}
     if(cat==="tanach"){
       if(typeof key==="string"){
         const chapters=PARASHA_CHAPTERS[key];
@@ -475,8 +475,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 
   function isPartial(key){
     if(isC) return false;
-    if(cat==="gemara"&&String(key).startsWith("p")){const g=prog?.gemara?.[idx];if(!g)return false;const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const cnt=ak.filter(k=>safeHas(g.done, k)).length;return cnt>0&&cnt<ak.length;}
-    if(cat==="mishna"&&String(key).startsWith("pp")){const m=prog?.mishna?.[idx];if(!m)return false;const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const cnt=mk.filter(k=>safeHas(m.done, k)).length;return cnt>0&&cnt<mk.length;}
+    if(cat==="gemara"&&String(key).startsWith("p")){const g=prog?.gemara?.[idx];if(!g)return false;const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const cnt=ak.filter(k=>safeHas(g?.done, k)).length;return cnt>0&&cnt<ak.length;}
+    if(cat==="mishna"&&String(key).startsWith("pp")){const m=prog?.mishna?.[idx];if(!m)return false;const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const cnt=mk.filter(k=>safeHas(m?.done, k)).length;return cnt>0&&cnt<mk.length;}
     if(cat==="tanach"&&typeof key==="string"){
       const chapters=PARASHA_CHAPTERS[key];
       if(!chapters) return false;
@@ -490,7 +490,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     const wasOn=isOn(key);
     setProg(prev=>{
       const p = prev || IP;
-      if(isC){const arr=[...p.custom],nd=new Set(arr[origIdx].done);nd.has(key)?nd.delete(key):nd.add(key);arr[origIdx]={...arr[origIdx],done:nd};return{...p,custom:arr};}
+      if(isC){const arr=[...(p.custom||[])],nd=new Set(arr[origIdx]?.done||[]);nd.has(key)?nd.delete(key):nd.add(key);if(arr[origIdx]) arr[origIdx]={...arr[origIdx],done:nd};return{...p,custom:arr};}
       if(cat==="gemara"){const g={...p.gemara},cur=g[idx]||{done:new Set()};let nd=new Set(cur.done);if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const allOn=ak.every(k=>nd.has(k));allOn?ak.forEach(k=>nd.delete(k)):ak.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}g[idx]={done:nd};return{...p,gemara:g};}
       if(cat==="mishna"){const mm={...p.mishna},cur=mm[idx]||{done:new Set()};let nd=new Set(cur.done);if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const allOn=mk.every(k=>nd.has(k));allOn?mk.forEach(k=>nd.delete(k)):mk.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}mm[idx]={done:nd};return{...p,mishna:mm};}
       if(cat==="tanach"){
@@ -510,7 +510,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     }
   }
 
-  function setTMode(mode){setProg(prev=>({...prev,tmode:{...(prev?.tmode||{}),[idx]:mode}}));}
+  function setTMode(mode){setProg(prev=>{const p = prev || IP; return {...p,tmode:{...(p.tmode||{}),[idx]:mode}}});}
 
   const totForMode=isC?items.length:(cat==="tanach"?TANACH[idx]?.c||0:items.length);
   const doneCnt=isC?(prog?.custom?.[origIdx]?.done?.size||0):(cat==="tanach"?(prog?.tanach?.[idx]?.size||0):items.filter(it=>isOn(it.key)).length);
@@ -521,8 +521,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   const nextSefariaRef = nextUnlearned ? getSefariaRefString(cat, item?.n, nextUnlearned.key, tMode, isC, idx) : null;
   const sefariaRefForNote = noteSheet ? getSefariaRefString(cat, item?.n, noteSheet.key, tMode, isC, idx) : null;
 
-  function openNote(key,label){const k=`${isC?'c'+origIdx:cat+':'+idx}:${key}`;setEditNote(prog?.notes?.[k]||"");setEditChz(prog?.chazara?.[k]||0);setNoteSheet({key,label});}
-  function saveNote(){const k=`${isC?'c'+origIdx:cat+':'+idx}:${noteSheet.key}`;setProg(prev=>({...prev,notes:{...prev?.notes,[k]:editNote},chazara:{...prev?.chazara,[k]:editChz}}));setNoteSheet(null);}
+  function openNote(key,label){const k=`${isC?'custom_c'+origIdx:cat+'_s'+idx}:${key}`;setEditNote(prog?.notes?.[k]||"");setEditChz(prog?.chazara?.[k]||0);setNoteSheet({key,label});}
+  function saveNote(){const k=`${isC?'custom_c'+origIdx:cat+'_s'+idx}:${noteSheet.key}`;setProg(prev=>{const p = prev || IP; return {...p,notes:{...(p.notes||{}),[k]:editNote},chazara:{...(p.chazara||{}),[k]:editChz}}});setNoteSheet(null);}
 
   return (
     <div style={{flex:1,display:"flex",flexDirection:"column",background:T.bg}}>
@@ -531,7 +531,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points={T.isEn?"15 18 9 12 15 6":"9 18 15 12 9 6"}/></svg> {T.isEn?"Back":"חזרה"}
         </button>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div><div style={{fontSize:T.f(22),fontWeight:900,color:T.navy}}>{item?.n}</div>{item?.sub&&<div style={{fontSize:T.f(12),color:T.muted,marginTop:2}}>{item.sub} · {T.CAT_L[cat]}</div>}</div>
+          <div><div style={{fontSize:T.f(22),fontWeight:900,color:T.navy,textAlign:"start"}}>{item?.n}</div>{item?.sub&&<div style={{fontSize:T.f(12),color:T.muted,marginTop:2,textAlign:"start"}}>{item.sub} · {T.CAT_L[cat]}</div>}</div>
           <div style={{background:lightCol,borderRadius:14,padding:"10px 16px",textAlign:"center",flexShrink:0}}>
             <div style={{fontSize:T.f(24),fontWeight:900,color:col}}>{p}%</div>
             <div style={{fontSize:T.f(10),color:col,opacity:.8}}>{doneCnt}/{totForMode}</div>
@@ -547,21 +547,21 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       </div>
       <div style={{flex:1,overflow:"auto",padding:"14px 16px 32px"}}>
         {!isC && cat==="gemara"&&(<div style={{marginBottom:16}}>
-          <div style={{fontSize:T.f(12),color:T.muted,marginBottom:8,fontWeight:600}}>{T.UI.markBy}</div>
+          <div style={{fontSize:T.f(12),color:T.muted,marginBottom:8,fontWeight:600,textAlign:"start"}}>{T.UI.markBy}</div>
           <div style={{display:"flex",gap:8}}>
             <MB active={viewMode==="amudim"} onClick={()=>setViewMode("amudim")} label={T.UI.amudim} color={col} T={T}/>
             <MB active={viewMode==="perakim"} onClick={()=>setViewMode("perakim")} label={T.UI.perakim} color={col} T={T}/>
           </div>
         </div>)}
         {!isC && cat==="mishna"&&(<div style={{marginBottom:16}}>
-          <div style={{fontSize:T.f(12),color:T.muted,marginBottom:8,fontWeight:600}}>{T.UI.markBy}</div>
+          <div style={{fontSize:T.f(12),color:T.muted,marginBottom:8,fontWeight:600,textAlign:"start"}}>{T.UI.markBy}</div>
           <div style={{display:"flex",gap:8}}>
             <MB active={viewMode==="mishna"} onClick={()=>setViewMode("mishna")} label={T.UI.mishnayot} color={col} T={T}/>
             <MB active={viewMode==="perakim"} onClick={()=>setViewMode("perakim")} label={T.UI.perakim} color={col} T={T}/>
           </div>
         </div>)}
         {!isC && isTorah&&(<div style={{marginBottom:16}}>
-          <div style={{fontSize:T.f(12),color:T.muted,marginBottom:8,fontWeight:600}}>{T.UI.markBy}</div>
+          <div style={{fontSize:T.f(12),color:T.muted,marginBottom:8,fontWeight:600,textAlign:"start"}}>{T.UI.markBy}</div>
           <div style={{display:"flex",gap:8}}>
             <MB active={tMode==="perakim"} onClick={()=>setTMode("perakim")} label={T.UI.perakim} color={col} T={T}/>
             <MB active={tMode==="parshiot"} onClick={()=>setTMode("parshiot")} label={T.UI.parshiot} color={col} T={T}/>
@@ -572,7 +572,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
           {items.map(it=>{
             if(!it) return null;
             const on=isOn(it.key),part=isPartial(it.key);
-            const nk=`${isC?'c'+origIdx:cat+':'+idx}:${it.key}`;
+            const nk=`${isC?'custom_c'+origIdx:cat+'_s'+idx}:${it.key}`;
             const hasN=!!(prog?.notes?.[nk]||"").trim(),chzN=prog?.chazara?.[nk]||0;
             const bg=on?col:part?(col+"33"):"transparent";
             const fc=on?"#fff":part?col:T.muted;
@@ -597,7 +597,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
         {sefariaRefForNote && !isC && (
           <button onClick={() => { setReaderRef(sefariaRefForNote); setReaderTitle(`${item?.n||""} ${noteSheet.label}`); setNoteSheet(null); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", border:"none", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font, width:"100%", cursor:"pointer"}}>
-            <IcoBook /> פתח קטע זה
+            <IcoBook /> קרא קטע זה
           </button>
         )}
 
@@ -668,7 +668,6 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
     {cat:"tanach",l:T.CAT_L.tanach,v:S.tanach,tot:TANACH.reduce((s,t)=>s+t.c,0),unit:T.CAT_UNIT.tanach},
     {cat:"musar",l:T.CAT_L.musar,v:S.musar,tot:MUSAR.reduce((s,t)=>s+t.p,0)+RAV_KOOK.reduce((s,t)=>s+t.p,0)+MACHSHAVA.reduce((s,t)=>s+t.p,0),unit:T.CAT_UNIT.musar},
   ];
-  const empty=S.dapim===0&&S.mishna===0&&S.tanach===0&&S.musar===0;
 
   function fmtTime(iso){if(!iso)return"";try{return new Date(iso).toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});}catch{return "";}}
 
@@ -723,9 +722,10 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
       </div>
       <div style={{padding:"14px 16px 80px"}}>
 
+        {/* Dedication Banner */}
         <div style={{background:T.card,borderRadius:14,padding:"16px",marginBottom:16,border:`1.5px solid ${GOLD}`,boxShadow:T.shadow}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,color:GOLD,marginBottom:8}}><IcoHeart/><div style={{fontWeight:800,fontSize:T.f(14)}}>{T.UI.dedicate}</div></div>
-          <div style={{fontSize:T.f(12),color:T.muted,lineHeight:1.6,marginBottom:12}}>{T.UI.dedicateDesc}</div>
+          <div style={{display:"flex",alignItems:"center",gap:8,color:GOLD,marginBottom:8}}><IcoHeart/><div style={{fontWeight:800,fontSize:T.f(14),textAlign:"start"}}>{T.UI.dedicate}</div></div>
+          <div style={{fontSize:T.f(12),color:T.muted,lineHeight:1.6,marginBottom:12,textAlign:"start"}}>{T.UI.dedicateDesc}</div>
           <a href="mailto:eitanshachor1@gmail.com?subject=%D7%94%D7%A7%D7%93%D7%A9%D7%AA%20%D7%9C%D7%99%D7%9E%D7%95%D7%93" style={{display:"inline-block",padding:"8px 16px",background:T.dark?"rgba(201,168,76,0.15)":"#FBF5E0",color:GOLD,borderRadius:10,textDecoration:"none",fontSize:T.f(12),fontWeight:700}}>{T.UI.submitDedication}</a>
         </div>
 
@@ -743,8 +743,8 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
 
         <div style={{background:T.card,borderRadius:14,padding:"13px 14px",marginBottom:14,boxShadow:T.shadow,borderRight:`3px solid ${GOLD}`}}>
           <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(11),fontWeight:700,color:GOLD,marginBottom:5}}><IcoScroll/> {T.UI.dailyHalacha}</div>
-          <div style={{fontSize:T.f(13),color:T.navy,lineHeight:1.6, marginBottom:6}}>{halacha.t}</div>
-          <div style={{fontSize:T.f(10),color:T.muted}}>{halacha.s}</div>
+          <div style={{fontSize:T.f(13),color:T.navy,lineHeight:1.6, marginBottom:6,textAlign:"start"}}>{halacha.t}</div>
+          <div style={{fontSize:T.f(10),color:T.muted,textAlign:"start"}}>{halacha.s}</div>
         </div>
 
         {zmanim?.times&&<div style={{background:T.card,borderRadius:14,padding:"13px 14px",marginBottom:14,boxShadow:T.shadow}}>
@@ -761,16 +761,16 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
               {l:T.UI.tzeit,k:Object.keys(zmanim.times).find(k=>k.toLowerCase().includes('tzeit'))}
             ].map(z=>{const t=z.k?fmtTime(zmanim.times[z.k]):"";return t?(
               <div key={z.l} style={{background:T.input,borderRadius:8,padding:"6px 8px"}}>
-                <div style={{fontSize:T.f(10),color:T.muted}}>{z.l}</div>
+                <div style={{fontSize:T.f(10),color:T.muted,textAlign:"start"}}>{z.l}</div>
                 <div style={{fontSize:T.f(13),fontWeight:700,color:T.navy,marginTop:1,direction:"ltr",textAlign:T.isEn?"left":"right"}}>{t}</div>
               </div>):null;})}
           </div>
         </div>}
 
-        {goals.length>0&&(<>
-          <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:10}}>{T.UI.activeGoals}</div>
+        {(goals||[]).length>0&&(<>
+          <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.activeGoals}</div>
           <div style={{marginBottom:16}}>
-            {goals.slice(0,2).map(g=>{
+            {(goals||[]).slice(0,2).map(g=>{
               if(!g) return null;
               const isO=g.cat==="other", list=isO?[]:getBkList(g.cat,prog?.custom);
               const item = list.find(l => l.idKey === (g.isC ? 'custom_c'+g.origIdx : g.cat+'_s'+g.idx));
@@ -781,7 +781,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
               return (
                 <div key={g.id} onClick={()=>setTab("goals")} style={{background:T.card,borderRadius:14,padding:"12px 14px",marginBottom:10,cursor:"pointer",boxShadow:T.shadow,borderRight:`3px solid ${col2}`}}>
                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}>
-                    <div><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted}}>{rem} {T.UI.daysLeft}</div></div>
+                    <div><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy,textAlign:"start"}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted,textAlign:"start"}}>{rem} {T.UI.daysLeft}</div></div>
                     <div style={{fontSize:T.f(22),fontWeight:900,color:col2}}>{p2}%</div>
                   </div>
                   <Bar p={p2} color={col2} h={6} dark={T.dark}/>
@@ -791,17 +791,17 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
           </div>
         </>)}
         
-        {activity.length>0&&(<>
-          <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:10,marginTop:goals.length>0?4:0}}>{T.UI.recentActivity}</div>
+        {(activity||[]).length>0&&(<>
+          <div style={{fontSize:T.f(14),fontWeight:800,color:T.navy,marginBottom:10,marginTop:(goals||[]).length>0?4:0,textAlign:"start"}}>{T.UI.recentActivity}</div>
           <div style={{background:T.card,borderRadius:14,padding:"4px 14px",boxShadow:T.shadow}}>
-            {activity.slice(0,3).map((a,i)=>{
+            {(activity||[]).slice(0,3).map((a,i)=>{
               if(!a) return null;
               return (
-                <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:i<Math.min(activity.length,3)-1?`1px solid ${T.border}`:"none"}}>
+                <div key={i} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 0",borderBottom:i<Math.min((activity||[]).length,3)-1?`1px solid ${T.border}`:"none"}}>
                   <div style={{color:cc[a.cat]||T.primary}}><IcoBook/></div>
                   <div style={{flex:1,minWidth:0}}>
-                    <div style={{fontSize:T.f(13),fontWeight:600,color:T.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.bk} {a.label ? `- ${a.label}` : ''}</div>
-                    <div style={{fontSize:T.f(11),color:T.muted}}>{a.timeStr}</div>
+                    <div style={{fontSize:T.f(13),fontWeight:600,color:T.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",textAlign:"start"}}>{a.bk} {a.label ? `- ${a.label}` : ''}</div>
+                    <div style={{fontSize:T.f(11),color:T.muted,textAlign:"start"}}>{a.timeStr}</div>
                   </div>
                   <div style={{width:8,height:8,borderRadius:"50%",background:cc[a.cat]||T.primary,flexShrink:0}}/>
                 </div>
@@ -850,7 +850,7 @@ function LibraryScreen({prog,T,cc,cl,setProg,setDetail,libCat,setLibCat}){
             {filtered.map(bk=>(
               <div key={bk.idKey}>
                 <BookCard cat={libCat} item={bk} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog?.custom}/>
-                {bk.isC && <button onClick={()=>removeCustom(bk.origIdx)} style={{fontSize:T.f(12),color:T.red,background:"none",border:"none",cursor:"pointer",marginTop:-4,marginBottom:8,paddingRight:6,fontFamily:T.font}}>{T.UI.del}</button>}
+                {bk.isC && <button onClick={()=>removeCustom(bk.origIdx)} style={{fontSize:T.f(12),color:T.red,background:"none",border:"none",cursor:"pointer",marginTop:-4,marginBottom:8,paddingRight:6,fontFamily:T.font,textAlign:"start"}}>{T.UI.del}</button>}
               </div>
             ))}
           </div>
@@ -896,7 +896,7 @@ function GoalRow({g,prog,T,cc,onEdit,onDelete,custom}){
   return (
     <div style={{background:T.card,borderRadius:16,padding:"15px 16px",marginBottom:12,boxShadow:T.shadow}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}>
-        <div><div style={{fontSize:T.f(16),fontWeight:900,color:T.navy}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted}}>{isO?"Personal":T.CAT_L[g.cat]}</div></div>
+        <div><div style={{fontSize:T.f(16),fontWeight:900,color:T.navy,textAlign:"start"}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted,textAlign:"start"}}>{isO?"Personal":T.CAT_L[g.cat]}</div></div>
         {!isO&&<span style={{fontSize:T.f(11),padding:"4px 11px",borderRadius:20,background:onTrack?"#DCFCE7":"#FEE2E2",color:onTrack?"#166534":"#B91C1C",fontWeight:800,flexShrink:0}}>{onTrack?T.UI.onTrack:T.UI.behind}</span>}
       </div>
       <Bar p={p} color={col} h={8} dark={T.dark}/>
@@ -907,7 +907,7 @@ function GoalRow({g,prog,T,cc,onEdit,onDelete,custom}){
         ))}
       </div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:T.f(12),color:T.muted}}>
-        <div><div>{new Date(g.deadline).toLocaleDateString("he-IL")}</div>{hd&&<div style={{color:col,fontWeight:700,marginTop:2}}>{hd}</div>}</div>
+        <div style={{textAlign:"start"}}><div>{new Date(g.deadline).toLocaleDateString("he-IL")}</div>{hd&&<div style={{color:col,fontWeight:700,marginTop:2}}>{hd}</div>}</div>
         <div style={{display:"flex", gap:14}}>
           <button aria-label="Edit goal" onClick={onEdit} style={{background:"none",border:"none",cursor:"pointer",color:T.muted,fontSize:T.f(13),fontFamily:T.font, display:"flex", alignItems:"center"}}><IcoEdit/></button>
           <button aria-label="Delete goal" onClick={onDelete} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(13),fontFamily:T.font}}>{T.UI.del}</button>
@@ -942,9 +942,9 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
     if(!deadline)return;
     if(cat==="other"&&!otherName)return;
     if(editingGoalId) {
-       setGoals(prev => prev.map(x => x.id === editingGoalId ? {...x, cat, idx: selectedItem ? selectedItem.i : 0, isC: selectedItem ? selectedItem.isC : false, origIdx: selectedItem ? selectedItem.origIdx : 0, target:target?parseInt(target):maxTot, deadline, otherName} : x));
+       setGoals(prev => (prev||[]).map(x => x.id === editingGoalId ? {...x, cat, idx: selectedItem ? selectedItem.i : 0, isC: selectedItem ? selectedItem.isC : false, origIdx: selectedItem ? selectedItem.origIdx : 0, target:target?parseInt(target):maxTot, deadline, otherName} : x));
     } else {
-       setGoals(prev=>[...prev,{id:Date.now(), cat, idx: selectedItem ? selectedItem.i : 0, isC: selectedItem ? selectedItem.isC : false, origIdx: selectedItem ? selectedItem.origIdx : 0, target:target?parseInt(target):maxTot, deadline, startDate:todayKey(), otherName}]);
+       setGoals(prev=>[...(prev||[]),{id:Date.now(), cat, idx: selectedItem ? selectedItem.i : 0, isC: selectedItem ? selectedItem.isC : false, origIdx: selectedItem ? selectedItem.origIdx : 0, target:target?parseInt(target):maxTot, deadline, startDate:todayKey(), otherName}]);
     }
     setShowSheet(false);
   }
@@ -955,7 +955,7 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
         <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div>
         <button onClick={openNew} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button>
       </div>
-      {goals.length===0&&(
+      {(!goals||goals.length===0)&&(
         <div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}>
           <div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div>
           <div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div>
@@ -964,7 +964,7 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
         </div>
       )}
       <div>
-        {goals.map(g=> g ? <GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>editGoal(g)} onDelete={()=>setGoals(prev=>prev.filter(x=>x.id!==g.id))} custom={prog?.custom}/> : null)}
+        {(goals||[]).map(g=> g ? <GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>editGoal(g)} onDelete={()=>setGoals(prev=>(prev||[]).filter(x=>x.id!==g.id))} custom={prog?.custom}/> : null)}
       </div>
       <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingGoalId ? (T.isEn?"Edit Goal":"עריכת יעד") : T.UI.newGoal} T={T}>
         <FL label={T.UI.topic} T={T}>
@@ -989,25 +989,25 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
 
   return (
     <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
-      <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:20}}>{T.UI.settings}</div>
+      <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:20,textAlign:"start"}}>{T.UI.settings}</div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
-        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>{T.UI.appearance}</div>
+        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.appearance}</div>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 16px",borderBottom:`1px solid ${T.border}`}}>
-          <div><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy}}>{T.UI.darkMode}</div><div style={{fontSize:T.f(11),color:T.muted}}>{T.UI.darkSub}</div></div>
+          <div style={{textAlign:"start"}}><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy}}>{T.UI.darkMode}</div><div style={{fontSize:T.f(11),color:T.muted}}>{T.UI.darkSub}</div></div>
           <Toggle on={sett.dark} onToggle={()=>setSett(s=>({...s,dark:!s.dark}))} primary={T.primary}/>
         </div>
         <div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`}}>
-          <div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10}}>{T.UI.fontSize}</div>
-          <div style={{display:"flex",gap:8}}>{[{v:0,l:T.UI.small},{v:1,l:T.UI.medium},{v:2,l:T.UI.large}].map(o=><button aria-pressed={sett.fontSize===o.v} key={o.v} onClick={()=>setSett(s=>({...s,fontSize:o.v}))} style={{flex:1,padding:9,borderRadius:10,border:`2px solid ${sett.fontSize===o.v?T.primary:T.border}`,background:sett.fontSize===o.v?T.primary:"transparent",color:sett.fontSize===o.v?"#fff":T.muted,fontSize:T.f(13),cursor:"pointer",fontWeight:sett.fontSize===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div>
+          <div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.fontSize}</div>
+          <div style={{display:"flex",gap:8}}>{[{v:0,l:T.UI.small},{v:1,l:T.UI.medium},{v:2,l:T.UI.large}].map(o=><button aria-pressed={sett.fontSize===o.v} key={o.v} onClick={()=>setSett(s=>({...s,fontSize:o.v}))} style={{flex:1,height:"48px",borderRadius:10,border:`2px solid ${sett.fontSize===o.v?T.primary:T.border}`,background:sett.fontSize===o.v?T.primary:"transparent",color:sett.fontSize===o.v?"#fff":T.muted,fontSize:T.f(13),cursor:"pointer",fontWeight:sett.fontSize===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div>
         </div>
         <div style={{padding:"14px 16px"}}>
-          <div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10}}>{T.UI.language}</div>
-          <div style={{display:"flex",gap:8}}>{[{v:"he",l:"עברית"},{v:"en",l:"English"}].map(o=><button aria-pressed={sett.lang===o.v} key={o.v} onClick={()=>setSett(s=>({...s,lang:o.v}))} style={{flex:1,padding:9,borderRadius:10,border:`2px solid ${sett.lang===o.v?T.primary:T.border}`,background:sett.lang===o.v?T.primary:"transparent",color:sett.lang===o.v?"#fff":T.muted,fontSize:T.f(13),cursor:"pointer",fontWeight:sett.lang===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div>
+          <div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.language}</div>
+          <div style={{display:"flex",gap:8}}>{[{v:"he",l:"עברית"},{v:"en",l:"English"}].map(o=><button aria-pressed={sett.lang===o.v} key={o.v} onClick={()=>setSett(s=>({...s,lang:o.v}))} style={{flex:1,height:"48px",borderRadius:10,border:`2px solid ${sett.lang===o.v?T.primary:T.border}`,background:sett.lang===o.v?T.primary:"transparent",color:sett.lang===o.v?"#fff":T.muted,fontSize:T.f(13),cursor:"pointer",fontWeight:sett.lang===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div>
         </div>
       </div>
       
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
-        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>{T.UI.support || "תמיכה"}</div>
+        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.support || "תמיכה"}</div>
         <div style={{padding:"14px 16px"}}>
            <a href="mailto:eitanshachor1@gmail.com" style={{display:"flex", alignItems:"center", gap:10, color:T.navy, textDecoration:"none", fontSize:T.f(14), fontWeight:600, fontFamily:T.font}}>
               ✉️ {T.isEn ? "Contact Developer" : "צור קשר / דיווח על באגים"}
@@ -1016,7 +1016,7 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
       </div>
 
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
-        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>{T.UI.legal}</div>
+        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.legal}</div>
         <div style={{padding:"14px 16px", borderBottom:`1px solid ${T.border}`}}>
           <button onClick={()=>setLegalType('terms')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,fontFamily:T.font,padding:0, width:"100%", textAlign:"start"}}>{T.UI.terms}</button>
         </div>
@@ -1026,13 +1026,13 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
       </div>
 
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}>
-        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5}}>{T.UI.account}</div>
-        <div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`}}>
+        <div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.account}</div>
+        <div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`,textAlign:"start"}}>
           <div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{user?.name||"משתמש"}</div>
           <div style={{fontSize:T.f(12),color:T.muted,marginTop:2}}>{user?.email||""}</div>
         </div>
         <div style={{padding:"14px 16px"}}>
-          <button onClick={onLogout} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(14),fontWeight:700,fontFamily:T.font,padding:0}}>{T.UI.signOut}</button>
+          <button onClick={onLogout} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(14),fontWeight:700,fontFamily:T.font,padding:0,width:"100%",textAlign:"start"}}>{T.UI.signOut}</button>
         </div>
       </div>
       <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}>
@@ -1073,12 +1073,12 @@ function AuthScreen({onLogin,T}){
         <div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>{T.UI.slogan}</div>
       </div>
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
-        <button onClick={()=>onLogin({method:"google"})} style={{display:"flex",alignItems:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font}}>
+        <button onClick={()=>onLogin({method:"google"})} style={{display:"flex",alignItems:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font,height:"48px"}}>
           <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
           {T.UI.continueWith} Google
         </button>
         <div style={{display:"flex",alignItems:"center",gap:10,margin:"4px 0"}}><div style={{flex:1,height:1,background:T.border}}/><span style={{fontSize:T.f(12),color:T.muted}}>{T.UI.or}</span><div style={{flex:1,height:1,background:T.border}}/></div>
-        <button onClick={()=>setMode("email")} style={{padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:600,color:T.navy,fontFamily:T.font}}>📧 {T.UI.login}</button>
+        <button onClick={()=>setMode("email")} style={{padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:600,color:T.navy,fontFamily:T.font,height:"48px"}}>📧 {T.UI.login}</button>
         <button onClick={()=>setMode("register")} style={{padding:"11px",borderRadius:14,border:"none",background:"transparent",cursor:"pointer",fontSize:T.f(13),color:T.muted,fontFamily:T.font}}>{T.UI.newAccount}</button>
       </div>
       {err&&<div style={{color:T.red,fontSize:T.f(13),marginTop:12,textAlign:"center"}}>{err}</div>}
@@ -1095,7 +1095,7 @@ function AuthScreen({onLogin,T}){
       <button aria-label="Go Back" onClick={()=>{setMode("choose");setErr("");}} style={{alignSelf:"flex-start",background:"none",border:"none",cursor:"pointer",color:T.muted,fontSize:T.f(13),marginBottom:20,fontFamily:T.font,display:"flex",alignItems:"center",gap:4}}>
         <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points={T.isEn?"15 18 9 12 15 6":"9 18 15 12 9 6"}/></svg> {T.isEn?"Back":"חזרה"}
       </button>
-      <div style={{fontSize:T.f(22),fontWeight:900,color:T.navy,marginBottom:6}}>{mode==="email"?T.UI.login:T.UI.register}</div>
+      <div style={{fontSize:T.f(22),fontWeight:900,color:T.navy,marginBottom:6,textAlign:"start"}}>{mode==="email"?T.UI.login:T.UI.register}</div>
       <FL label={T.UI.email} T={T}><FI aria-label="Email" T={T} type="email" value={email} onChange={e=>setEmail(e.target.value)} style={{direction:"ltr"}}/></FL>
       <FL label={T.UI.password} T={T}><FI aria-label="Password" T={T} type="password" value={pass} onChange={e=>setPass(e.target.value)} style={{direction:"ltr"}}/></FL>
       {mode==="register"&&(
@@ -1103,7 +1103,7 @@ function AuthScreen({onLogin,T}){
           <FL label={T.UI.name} T={T}><FI aria-label="Full Name" T={T} value={name} onChange={e=>setName(e.target.value)}/></FL>
           <label style={{display:"flex", alignItems:"flex-start", gap:8, marginBottom:16, cursor:"pointer"}}>
             <input type="checkbox" checked={agree} onChange={e=>setAgree(e.target.checked)} style={{marginTop:4}} />
-            <span style={{fontSize:T.f(12), color:T.muted, lineHeight:1.4}}>{T.UI.agreeTerms}</span>
+            <span style={{fontSize:T.f(12), color:T.muted, lineHeight:1.4, textAlign:"start"}}>{T.UI.agreeTerms}</span>
           </label>
         </>
       )}
@@ -1133,17 +1133,6 @@ export default function App(){
   const[activity,setActivity]=useState([]);
   const[activeDays,setActiveDays]=useState([]);
   const[loaded,setLoaded]=useState(false);
-  const[showInstallPrompt, setShowInstallPrompt]=useState(false);
-
-  useEffect(() => {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    const hasSeenPrompt = localStorage.getItem('hideInstallGuide');
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile && !isStandalone && !hasSeenPrompt) {
-        const timer = setTimeout(() => setShowInstallPrompt(true), 3500);
-        return () => clearTimeout(timer);
-    }
-  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -1154,7 +1143,7 @@ export default function App(){
           if (docSnap.exists()) {
             const data = docSnap.data();
             if (data.prog) setProg(desProg(data.prog));
-            if (data.goals) setGoals(data.goals);
+            if (data.goals && Array.isArray(data.goals)) setGoals(data.goals);
             if (data.sett) setSett(data.sett);
             if (data.activity && Array.isArray(data.activity)) setActivity(data.activity);
             if (data.activeDays && Array.isArray(data.activeDays)) setActiveDays(data.activeDays);
@@ -1170,9 +1159,9 @@ export default function App(){
     if (!loaded || !user) return;
     const timeoutId = setTimeout(() => {
       setDoc(doc(db, "users", user.uid), {
-        prog: serProg(prog), goals, sett,
-        activity: activity.slice(0, 50),
-        activeDays: activeDays.slice(-60)
+        prog: serProg(prog), goals: goals||[], sett,
+        activity: (activity||[]).slice(0, 50),
+        activeDays: (activeDays||[]).slice(-60)
       }, { merge: true }).catch(e => console.error(e));
     }, 2000); 
     return () => clearTimeout(timeoutId);
@@ -1233,7 +1222,6 @@ export default function App(){
           </button>
         ))}
       </div>
-      {showInstallPrompt && <InstallGuide T={T} onClose={() => {localStorage.setItem('hideInstallGuide', '1'); setShowInstallPrompt(false);}} />}
     </div>
   );
 }
