@@ -30,8 +30,12 @@ const IcoDots = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 
 /* לוגו משולב - לב וספר */
 const LogoAliba = ({T}) => (
   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke={T.gold||"#C9A84C"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 19.5C4 19.5 4 9 4 9C4 5.5 6.5 3 9.5 3C11.5 3 12 4.5 12 4.5C12 4.5 12.5 3 14.5 3C17.5 3 20 5.5 20 9C20 9 20 19.5 20 19.5C20 19.5 16 18 12 21.5C8 18 4 19.5 4 19.5Z" fill={T.dark?"rgba(201,168,76,0.1)":"rgba(255,255,255,0.1)"} />
-    <path d="M12 4.5V21.5" />
+    <path d="M12 20.5C7.5 17.5 4.5 14 4.5 10C4.5 6.5 7 4.5 9.5 4.5C11 4.5 12 6 12 6C12 6 13 4.5 14.5 4.5C17 4.5 19.5 6.5 19.5 10C19.5 14 16.5 17.5 12 20.5Z" fill={T.dark?"rgba(201,168,76,0.15)":"rgba(255,255,255,0.15)"}/>
+    <line x1="8" y1="2" x2="8" y2="5" />
+    <line x1="8" y1="18" x2="8" y2="22" />
+    <line x1="16" y1="2" x2="16" y2="5" />
+    <line x1="16" y1="18" x2="16" y2="22" />
+    <path d="M12 6V20.5" strokeDasharray="2 2" opacity="0.6"/>
   </svg>
 );
 
@@ -240,7 +244,7 @@ function mkT(dark,sz,lang) {
     continueWith: "Continue with", or: "or", newAccount: "Create a new account",
     onTrack: "On track ✓", behind: "Behind", perDay: "per day", currPace: "curr pace", fullTractates: "Completed Books",
     dedicateDesc: "Dedicate your learning. Dedications will be visible to all users.", submitDedication: "Submit Dedication",
-    readOnSefaria: "Read this section", loadingSefaria: "Loading Sefaria text...", baseText: "Base Text", rashi: "Rashi", steinsaltz: "Steinsaltz",
+    readOnSefaria: "Read this section", loadingSefaria: "Loading Sefaria text...", baseText: "Base Text", rashi: "Rashi", steinsaltz: "Steinsaltz", bartenura: "Bartenura",
     noResults: "No results found", results: "Results", selectBook: "Select Book...", developedBy: "Developed by Eitan Shachor. All rights reserved.",
     zmanMGA: "Latest Shma (MGA)", zmanGRA: "Latest Shma (GRA)", tfillaMGA: "Latest Tefila (MGA)", tfillaGRA: "Latest Tefila (GRA)", chatzot: "Chatzot", sunrise: "Sunrise", sunset: "Sunset", tzeit: "Nightfall",
     legal: "Legal & Privacy", terms: "Terms of Service", privacy: "Privacy Policy", agreeTerms: "I agree to the Terms of Service and Privacy Policy", mustAgree: "You must agree to the Terms to continue", installApp: "Install App"
@@ -261,7 +265,7 @@ function mkT(dark,sz,lang) {
     continueWith: "המשך עם", or: "או", newAccount: "פתח חשבון חדש",
     onTrack: "במסלול ✓", behind: "מאחור", perDay: "נדרש ליום", currPace: "יעד נוכחי", fullTractates: "ספרים שלמים",
     dedicateDesc: "הקדש את לימודך להצלחת, רפואת או לעילוי נשמת יקיריך. שים לב: ההקדשות יוצגו באפליקציה באופן פומבי לכלל הלומדים.", submitDedication: "שלח בקשת הקדשה",
-    readOnSefaria: "פתח קטע זה", loadingSefaria: "טוען טקסט מספריא...", baseText: "טקסט מקור", rashi: "רש״י", steinsaltz: "ביאור שטיינזלץ",
+    readOnSefaria: "פתח קטע זה", loadingSefaria: "טוען טקסט מספריא...", baseText: "טקסט מקור", rashi: "רש״י", steinsaltz: "ביאור שטיינזלץ", bartenura: "ברטנורא",
     noResults: "לא נמצאו תוצאות", results: "תוצאות", selectBook: "בחר ספר...", developedBy: "פותח ע״י איתן שחור. כל הזכויות שמורות.",
     zmanMGA: "סוף זק״ש (מג״א)", zmanGRA: "סוף זק״ש (גר״א)", tfillaMGA: "סוף תפילה (מג״א)", tfillaGRA: "סוף תפילה (גר״א)", chatzot: "חצות", sunrise: "הנץ החמה", sunset: "שקיעה", tzeit: "צאת הכוכבים",
     legal: "תקנון ופרטיות", terms: "תנאי שימוש", privacy: "מדיניות פרטיות", agreeTerms: "אני מסכים/ה לתקנון ולמדיניות הפרטיות", mustAgree: "יש לאשר את התקנון כדי להירשם", installApp: "התקן כאפליקציה"
@@ -338,6 +342,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
           const flattenText = (arr) => {
             if (typeof arr === 'string') return [arr];
             if (Array.isArray(arr)) return arr.flatMap(flattenText);
+            if (typeof arr === 'object' && arr !== null) return Object.values(arr).flatMap(flattenText);
             return [];
           };
           setTextArr(flattenText(data.he || []));
@@ -351,7 +356,8 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
       <div style={{minHeight: 200, maxHeight: '65vh', overflowY: 'auto', paddingRight: 8, direction: 'rtl'}}>
          <select aria-label="Commentary Selection" value={commMode} onChange={e=>setCommMode(e.target.value)} style={{marginBottom:16, width:'100%', padding:8, borderRadius:8, background:T.input, color:T.navy, border:`1px solid ${T.border}`, fontFamily:T.font, fontSize:T.f(14)}}>
             <option value="">{T.UI.baseText}</option>
-            <option value="Rashi_on_">{T.UI.rashi}</option>
+            {cat === 'mishna' && <option value="Bartenura_on_">{T.UI.bartenura}</option>}
+            {cat !== 'mishna' && <option value="Rashi_on_">{T.UI.rashi}</option>}
             {cat === 'gemara' && <option value="Steinsaltz_on_">{T.UI.steinsaltz}</option>}
          </select>
          
@@ -1013,7 +1019,7 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
         </div>
       </div>
       <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:2,marginTop:24}}>
-        <div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>לב</span>א</div>
+        <div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ליב</span>א</div>
         <div>{T.UI.developedBy}</div>
       </div>
       <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
@@ -1085,8 +1091,8 @@ function AuthScreen({onLogin,T}){
     <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,gap:20,background:T.bg}}>
       <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}><LogoAliba T={T}/></div>
       <div style={{textAlign:"center", marginBottom:20}}>
-        <div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>לב</span>א</div>
-        <div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>הלב שבלימוד שלך</div>
+        <div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ליב</span>א</div>
+        <div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>מרכז הלימוד שלך</div>
       </div>
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
         <button onClick={()=>onLogin({method:"google"})} style={{display:"flex",alignItems:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font}}>
