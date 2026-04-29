@@ -28,7 +28,7 @@ const IcoCalendar = ()=><svg aria-hidden="true" width="16" height="16" viewBox="
 const IcoDots = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
 const IcoEdit = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
 
-/* לוגו אליבא */
+/* לוגו אליבא (מינימליסטי - שילוב של ספר ותבנית לב) */
 const LogoAliba = ({T, size=48}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={T.gold||"#C9A84C"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill={T.dark?"rgba(201,168,76,0.15)":"rgba(201,168,76,0.2)"}/>
@@ -167,7 +167,6 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     const cleanName = bookName.trim();
     const engBook = SEFARIA_MAP[cleanName] || encodeURIComponent(cleanName.replace(/ /g, "_"));
     let kStr = String(key);
-    
     if(cat === "gemara") {
         if(kStr.startsWith("p")) kStr = perekAmudKeys(masIdx, parseInt(kStr.slice(1)))[0] || "2a";
         return `${engBook}.${kStr}`;
@@ -344,7 +343,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
             if (!val) return [];
             if (typeof val === 'string') return [val];
             if (Array.isArray(val)) return val.reduce((acc, curr) => acc.concat(flattenText(curr)), []);
-            if (typeof val === 'object') return flattenText(Object.values(val));
+            if (typeof val === 'object' && val !== null) return flattenText(Object.values(val));
             return [];
           };
           setTextArr(flattenText(data.he || data.text || []));
@@ -544,7 +543,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
         
         {nextSefariaRef && !isC && (
           <button onClick={() => { setReaderRef(nextSefariaRef); setReaderTitle(`${item?.n||""} ${nextUnlearned.label}`); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px 14px", background:col, color:"#fff", border:"none", borderRadius:12, textDecoration:"none", fontWeight:700, marginTop:14, fontSize:T.f(14), width:"100%", cursor:"pointer", fontFamily:T.font}}>
-            <IcoBook /> {T.UI.readOnSefaria}
+            <IcoBook /> {T.UI.openSection}
           </button>
         )}
       </div>
@@ -600,7 +599,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
         {sefariaRefForNote && !isC && (
           <button onClick={() => { setReaderRef(sefariaRefForNote); setReaderTitle(`${item?.n||""} ${noteSheet.label}`); setNoteSheet(null); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", border:"none", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font, width:"100%", cursor:"pointer"}}>
-            <IcoBook /> {T.UI.openSection}
+            <IcoBook /> פתח קטע זה
           </button>
         )}
 
@@ -704,7 +703,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
                </div>
              </div>
              <div style={{textAlign:"left"}}>
-                <div style={{fontSize:T.f(30),fontWeight:800,color:"#fff",lineHeight:1}}>{hh}:{mm2}</div>
+                <div style={{fontSize:T.f(30),fontWeight:800,color:"#fff",lineHeight:1}}>{String(now.getHours()).padStart(2,"0")}:{String(now.getMinutes()).padStart(2,"0")}</div>
              </div>
           </div>
           
