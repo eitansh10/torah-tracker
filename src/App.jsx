@@ -28,7 +28,7 @@ const IcoCalendar = ()=><svg aria-hidden="true" width="16" height="16" viewBox="
 const IcoDots = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
 const IcoEdit = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
 
-/* לוגו אליבא (מינימליסטי - שילוב של ספר ותבנית לב) */
+/* לוגו אליבא */
 const LogoAliba = ({T, size=48}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={T.gold||"#C9A84C"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill={T.dark?"rgba(201,168,76,0.15)":"rgba(201,168,76,0.2)"}/>
@@ -84,7 +84,8 @@ const HALACHOT = [{ t: "קריאת שמע של ערבית — מצווה לקר�
 const GEMARA=[{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",d:157,p:24},{n:"עירובין",s:"מועד",d:105,p:10},{n:"פסחים",s:"מועד",d:121,p:10},{n:"שקלים",s:"מועד",d:22,p:8},{n:"יומא",s:"מועד",d:88,p:8},{n:"סוכה",s:"מועד",d:56,p:5},{n:"ביצה",s:"מועד",d:40,p:5},{n:"ראש השנה",s:"מועד",d:35,p:4},{n:"תענית",s:"מועד",d:31,p:4},{n:"מגילה",s:"מועד",d:32,p:4},{n:"מועד קטן",s:"מועד",d:29,p:3},{n:"חגיגה",s:"מועד",d:27,p:3},{n:"יבמות",s:"נשים",d:122,p:16},{n:"כתובות",s:"נשים",d:112,p:13},{n:"נדרים",s:"נשים",d:91,p:11},{n:"נזיר",s:"נשים",d:66,p:9},{n:"סוטה",s:"נשים",d:49,p:9},{n:"גיטין",s:"נשים",d:90,p:9},{n:"קידושין",s:"נשים",d:82,p:4},{n:"בבא קמא",s:"נזיקין",d:119,p:10},{n:"בבא מציעא",s:"נזיקין",d:119,p:10},{n:"בבא בתרא",s:"נזיקין",d:176,p:10},{n:"סנהדרין",s:"נזיקין",d:113,p:11},{n:"מכות",s:"נזיקין",d:24,p:3},{n:"שבועות",s:"נזיקין",d:49,p:8},{n:"עבודה זרה",s:"נזיקין",d:76,p:5},{n:"הוריות",s:"נזיקין",d:14,p:3},{n:"זבחים",s:"קדשים",d:120,p:14},{n:"מנחות",s:"קדשים",d:110,p:13},{n:"חולין",s:"קדשים",d:142,p:12},{n:"בכורות",s:"קדשים",d:61,p:9},{n:"ערכין",s:"קדשים",d:34,p:9},{n:"תמורה",s:"קדשים",d:34,p:7},{n:"כריתות",s:"קדשים",d:28,p:6},{n:"מעילה",s:"קדשים",d:22,p:6},{n:"נידה",s:"טהרות",d:73,p:10}];
 const MISHNA=[{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
 const TANACH=[{b:"בראשית",s:"תורה",c:50},{b:"שמות",s:"תורה",c:40},{b:"ויקרא",s:"תורה",c:27},{b:"במדבר",s:"תורה",c:36},{b:"דברים",s:"תורה",c:34},{b:"יהושע",s:"נביאים",c:24},{b:"שופטים",s:"נביאים",c:21},{b:"שמואל א",s:"נביאים",c:31},{b:"שמואל ב",s:"נביאים",c:24},{b:"מלכים א",s:"נביאים",c:22},{b:"מלכים ב",s:"נביאים",c:25},{b:"ישעיהו",s:"נביאים",c:66},{b:"ירמיהו",s:"נביאים",c:52},{b:"יחזקאל",s:"נביאים",c:48},{b:"הושע",s:"נביאים",c:14},{b:"יואל",s:"נביאים",c:4},{b:"עמוס",s:"נביאים",c:9},{b:"עובדיה",s:"נביאים",c:1},{b:"יונה",s:"נביאים",c:4},{b:"מיכה",s:"נביאים",c:7},{b:"נחום",s:"נביאים",c:3},{b:"חבקוק",s:"נביאים",c:3},{b:"צפניה",s:"נביאים",c:3},{b:"חגי",s:"נביאים",c:2},{b:"זכריה",s:"נביאים",c:14},{b:"מלאכי",s:"נביאים",c:3},{b:"תהלים",s:"כתובים",c:150},{b:"משלי",s:"כתובים",c:31},{b:"איוב",s:"כתובים",c:42},{b:"שיר השירים",s:"כתובים",c:8},{b:"רות",s:"כתובים",c:4},{b:"איכה",s:"כתובים",c:5},{b:"קהלת",s:"כתובים",c:12},{b:"אסתר",s:"כתובים",c:10},{b:"דניאל",s:"כתובים",c:12},{b:"עזרא",s:"כתובים",c:10},{b:"נחמיה",s:"כתובים",c:13},{b:"דברי הימים א",s:"כתובים",c:29},{b:"דברי הימים ב",s:"כתובים",c:36}];
-const MUSAR=[{n:"חובת הלבבות",a:"רבינו בחיי",p:10},{n:"שערי תשובה",a:"רבינו יונה",p:4},{n:"אורחות צדיקים",a:"אנונימי",p:30},{n:"תומר דבורה",a:'רמ"ק',p:10},{n:"פלא יועץ",a:"ר' אליעזר פאפו",p:90},{n:"חפץ חיים",a:"החפץ חיים",p:17},{n:"שמירת הלשון",a:"החפץ חיים",p:30},{n:"אהבת חסד",a:"החפץ חיים",p:24},{n:'ליקוטי מוהר"ן',a:"ר' נחמן מברסלב",p:286},{n:"ספר המידות",a:"ר' נחמן מברסלב",p:30},{n:"ספר הישר",a:'ר"ת',p:13}];
+
+const MUSAR=[{n:"מסילת ישרים",a:'רמח"ל',p:26},{n:"חובת הלבבות",a:"רבינו בחיי",p:10},{n:"שערי תשובה",a:"רבינו יונה",p:4},{n:"אורחות צדיקים",a:"אנונימי",p:30},{n:"תומר דבורה",a:'רמ"ק',p:10},{n:"פלא יועץ",a:"ר' אליעזר פאפו",p:90},{n:"חפץ חיים",a:"החפץ חיים",p:17},{n:"שמירת הלשון",a:"החפץ חיים",p:30},{n:"אהבת חסד",a:"החפץ חיים",p:24},{n:'ליקוטי מוהר"ן',a:"ר' נחמן מברסלב",p:286},{n:"ספר המידות",a:"ר' נחמן מברסלב",p:30},{n:"ספר הישר",a:'ר"ת',p:13}];
 const RAV_KOOK=[{n:"אורות ארץ ישראל",g:"אורות",p:5},{n:"אורות המלחמה",g:"אורות",p:9},{n:"אורות התחיה",g:"אורות",p:9},{n:"אורות ישראל ותחיתו",g:"אורות",p:9},{n:"אורות הקודש",g:"אורות הקודש",p:9},{n:"מוסר אביך",g:"שונות",p:6},{n:"שמונה קבצים",g:"שמונה קבצים",p:9}];
 const MACHSHAVA=[{n:"נפש החיים",a:"ר' חיים מוולוז'ין",p:4},{n:"כוזרי",a:'ריה"ל',p:5},{n:"מורה נבוכים",a:'רמב"ם',p:3},{n:"תניא",a:'אדמו"ר הזקן',p:4},{n:"אמונות ודעות",a:'רס"ג',p:10},{n:"ספר העיקרים",a:"ר' יוסף אלבו",p:4},{n:"נצח ישראל",a:'מהר"ל',p:58},{n:"נתיבות עולם",a:'מהר"ל',p:2},{n:"גבורות ה׳",a:'מהר"ל',p:73},{n:"באר הגולה",a:'מהר"ל',p:7}];
 
@@ -103,31 +104,32 @@ const SEFARIA_MAP = {
   "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles"
 };
 
-// מיפוי מיוחד לספרים המורכבים לפי הלינקים שביקשת (הורדתי את ה-.1 מהסוף כדי שהאפליקציה תדביק את מספר הפרק בעצמה)
+// מיפוי נקי לספרי מוסר, הרב קוק ומחשבה (מחרוזת טקסט מדויקת כפי שספריא דורשים)
 const COMPLEX_REFS = {
-  "חובת הלבבות": "Duties_of_the_Heart%2C_First_Treatise_on_Unity", 
-  "פלא יועץ": "Pele_Yoetz",
-  "חפץ חיים": "Chafetz_Chaim%2C_Part_One%2C_The_Prohibition_Against_Lashon_Hara%2C_Principle_1",
-  "שמירת הלשון": "Shemirat_HaLashon%2C_Book_II",
-  "אהבת חסד": "Ahavat_Chesed%2C_Part_II",
-  "ליקוטי מוהר\"ן": "Likutei_Moharan",
-  "ספר המידות": "Sefer_HaMiddot%2C_Truth%2C_Part_I",
-  "ספר הישר": "Sefer_HaYashar",
-  "אורות ארץ ישראל": "Orot%2C_Lights_from_Darkness%2C_Land_of_Israel",
-  "אורות המלחמה": "Orot%2C_Lights_from_Darkness%2C_War",
-  "אורות התחיה": "Orot%2C_Lights_from_Darkness%2C_Lights_of_Rebirth",
-  "אורות ישראל ותחיתו": "Orot%2C_Lights_from_Darkness%2C_Israel_and_its_Rebirth",
-  "אורות הקודש": "Orot_HaKodesh.1",
-  "מוסר אביך": "Musar_Avikha",
-  "שמונה קבצים": "Shemonah_Kevatzim",
-  "מורה נבוכים": "Guide_for_the_Perplexed%2C_Part_1",
-  "תניא": "Tanya%2C_Part_I%3B_Likkutei_Amarim",
-  "אמונות ודעות": "HaEmunot_veHaDeot%2C_%5BTreatise_I%5D_The_Creation_of_the_World",
-  "ספר העיקרים": "Sefer_HaIkkarim%2C_Maamar_1",
-  "נצח ישראל": "Netzach_Yisrael",
-  "נתיבות עולם": "Netivot_Olam%2C_Netiv_Hatorah",
-  "גבורות ה׳": "Gevurot_Hashem",
-  "באר הגולה": "Be'er_HaGolah%2C_Well_1"
+  "חובת הלבבות": "Duties of the Heart, First Treatise on Unity", 
+  "פלא יועץ": "Pele Yoetz",
+  "חפץ חיים": "Chafetz Chaim, Part One, The Prohibition Against Lashon Hara, Principle",
+  "שמירת הלשון": "Shemirat HaLashon, Book II",
+  "אהבת חסד": "Ahavat Chesed, Part II",
+  "ליקוטי מוהר\"ן": "Likutei Moharan",
+  "ספר המידות": "Sefer HaMiddot, Truth, Part I",
+  "ספר הישר": "Sefer HaYashar",
+  "אורות ארץ ישראל": "Orot, Lights from Darkness, Land of Israel",
+  "אורות המלחמה": "Orot, Lights from Darkness, War",
+  "אורות התחיה": "Orot, Lights from Darkness, Lights of Rebirth",
+  "אורות ישראל ותחיתו": "Orot, Lights from Darkness, Israel and its Rebirth",
+  "אורות הקודש": "Orot HaKodesh 1",
+  "מוסר אביך": "Musar Avikha",
+  "שמונה קבצים": "Shemonah Kevatzim 1",
+  "מורה נבוכים": "Guide for the Perplexed, Part 1",
+  "תניא": "Tanya, Part I; Likkutei Amarim",
+  "אמונות ודעות": "HaEmunot veHaDeot, [Treatise I] The Creation of the World",
+  "ספר העיקרים": "Sefer HaIkkarim, Maamar 1",
+  "נצח ישראל": "Netzach Yisrael",
+  "נתיבות עולם": "Netivot Olam, Netiv Hatorah",
+  "גבורות ה׳": "Gevurot Hashem",
+  "גבורות ה'": "Gevurot Hashem",
+  "באר הגולה": "Be'er HaGolah, Well 1"
 };
 
 function safeHas(setOrObj, val) {
@@ -185,7 +187,7 @@ function calcDone(prog, cat, i) {
 }
 function pct(d,t){return t>0?Math.min(100,Math.round(d*100/t)):0;}
 
-/* ── SEFARIA API LINK GENERATOR ── */
+/* ── SEFARIA API LINK GENERATOR (SMART RESOLVER) ── */
 function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
   if(!bookName || !key || isC) return ""; 
   try {
@@ -193,10 +195,12 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     let kStr = String(key);
     
     if (cat === "musar" || cat === "ravKook" || cat === "machshava") {
-      const baseRef = COMPLEX_REFS[cleanName];
-      if (baseRef) {
-         if (cleanName === "ספר המידות") return baseRef; // חריג שלא צריך מספר בסוף
-         return `${baseRef}.${kStr}`; // מדביק את הפרק לקידומת המדויקת שביקשת
+      const bRef = COMPLEX_REFS[cleanName];
+      if (bRef) {
+         if (cleanName === "מוסר אביך" && kStr === "הקדמה") return "Musar Avikha, Introduction 1";
+         if (cleanName === "אמונות ודעות" && kStr === "הקדמה") return "HaEmunot veHaDeot, Introduction 1";
+         if (cleanName === "ספר המידות") return bRef; 
+         return `${bRef} ${kStr}`; // הוספת הפרק באמצעות רווח (כמו שספריא עובד בטקסט פשוט)
       }
     }
 
@@ -261,7 +265,10 @@ function mkT(dark,sz,lang) {
   } : {
     home: "בית", library: "ספרייה", goals: "יעדים", stats: "נתונים", settings: "הגדרות", welcome: "ברוך הבא!", startTracking: "לך לספרייה והתחל לסמן", openLib: "פתח ספרייה", activeGoals: "יעדים פעילים", recentActivity: "פעילות אחרונה", daysLeft: "ימים שנותרו", dafYomi: "דף יומי", parasha: "פרשת השבוע", dailyHalacha: "הלכה יומית", zmanim: "זמני היום", markBy: "סמן לפי:", amudim: "עמודים", perakim: "פרקים", mishnayot: "משניות", parshiot: "פרשות", cancel: "בטל", markAll: "סמן הכל", clearAll: "נקה הכל", notes: "אפשרויות והערות", repetitions: "חזרות", save: "שמור", addBook: "+ הוסף ספר אישי", searchPlaceholder: "חיפוש בכל הספרים...", completed: "הושלם", del: "מחק", newGoal: "+ יעד חדש", noGoals: "אין יעדים עדיין", setGoal: "הגדר יעד ועקוב אחרי הקצב שלך", firstGoal: "+ יעד ראשון", topic: "תחום", book: "ספר / מסכת", target: "יעד (אופציונלי)", deadline: "תאריך יעד", saveGoal: "שמור יעד", dedicate: "הקדשת לימוד", appearance: "מראה", darkMode: "מצב כהה", darkSub: "רקע כהה ללמידה בלילה", fontSize: "גודל טקסט", small: "קטן", medium: "רגיל", large: "גדול", language: "שפה", account: "חשבון", signOut: "התנתקות", support: "תמיכה", contactDev: "צור קשר עם המפתח", sendEmail: "שלח מייל", login: "כניסה", register: "יצירת חשבון", email: "אימייל", password: "סיסמה", name: "שם מלא", continueWith: "המשך עם", or: "או", newAccount: "פתח חשבון חדש", onTrack: "במסלול ✓", behind: "מאחור", perDay: "לכל יום", currPace: "יעד נוכחי", fullTractates: "ספרים שלמים", dedicateDesc: "הקדש את לימודך להצלחת, רפואת או לעילוי נשמת יקיריך. שים לב: ההקדשות יוצגו באפליקציה באופן פומבי לכלל הלומדים.", submitDedication: "שלח בקשת הקדשה", readOnSefaria: "המשך מהמקום שעצרת", openSection: "פתח קטע זה", loadingSefaria: "טוען טקסט מספריא...", baseText: "טקסט מקור", rashi: "רש״י", steinsaltz: "ביאור שטיינזלץ", bartenura: "ברטנורא", noResults: "לא נמצאו תוצאות", results: "תוצאות", selectBook: "בחר ספר...", developedBy: "פותח ע״י איתן שחור. כל הזכויות שמורות.", zmanMGA: "סוף זק״ש (מג״א)", zmanGRA: "סוף זק״ש (גר״א)", tfillaMGA: "סוף תפילה (מג״א)", tfillaGRA: "סוף תפילה (גר״א)", chatzot: "חצות", sunrise: "הנץ החמה", sunset: "שקיעה", tzeit: "צאת הכוכבים", legal: "תקנון ופרטיות", terms: "תנאי שימוש", privacy: "מדיניות פרטיות", agreeTerms: "אני מסכים/ה לתקנון ולמדיניות הפרטיות", mustAgree: "יש לאשר את התקנון כדי להירשם", installApp: "התקן כאפליקציה", slogan: "מרכז הלימוד שלך"
   };
-  const base=dark ?{bg:"#0D1B2E",card:"#152438",navy:"#D0E4FF",gold:"#E8C060",muted:"#8A9BB0",border:"rgba(200,220,255,0.10)",input:"#1E3050",shadow:"0 2px 16px rgba(0,0,0,0.5)",primary:"#4A7FC0",red:"#FCA5A5"} :{bg:"#FAF7EE",card:"#FFFFFF",navy:NAVY,gold:GOLD,muted:"#6B7280",border:"rgba(26,58,107,0.10)",input:"#F3EED8",shadow:"0 2px 14px rgba(26,58,107,0.09)",primary:NAVY,red:"#B91C1C"};
+
+  const base=dark
+    ?{bg:"#0D1B2E",card:"#152438",navy:"#D0E4FF",gold:"#E8C060",muted:"#8A9BB0",border:"rgba(200,220,255,0.10)",input:"#1E3050",shadow:"0 2px 16px rgba(0,0,0,0.5)",primary:"#4A7FC0",red:"#FCA5A5"}
+    :{bg:"#FAF7EE",card:"#FFFFFF",navy:NAVY,gold:GOLD,muted:"#6B7280",border:"rgba(26,58,107,0.10)",input:"#F3EED8",shadow:"0 2px 14px rgba(26,58,107,0.09)",primary:NAVY,red:"#B91C1C"};
   return {...base,f,dark,isEn,CAT_L,CAT_UNIT,CAT_UNIT_SING,UI,font:"'Heebo',system-ui,sans-serif"};
 }
 
@@ -312,6 +319,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
     if (!show || !sefariaRef) return;
     setLoading(true); setError(null); setTextArr([]);
     const refToFetch = commMode ? `${commMode}${sefariaRef}` : sefariaRef;
+
     fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(refToFetch)}?context=0&pad=0`)
       .then(r => r.json())
       .then(data => {
@@ -386,12 +394,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   const item = list.find(l => l.idKey === (isC ? 'custom_c'+origIdx : cat+'_s'+idx));
   const col=cc[cat]||T.primary,lightCol=cl[cat]||"#E8EFF8";
   const[viewMode,setViewMode]=useState(cat==="gemara"?"amudim":cat==="mishna"?"mishna":"perakim");
-  const[noteSheet,setNoteSheet]=useState(null);
-  const[editNote,setEditNote]=useState("");
-  const[editChz,setEditChz]=useState(0);
-  const[readerRef, setReaderRef]=useState(null);
-  const[readerTitle, setReaderTitle]=useState("");
-  const[hasAutoOpened, setHasAutoOpened]=useState(false);
+  const[noteSheet,setNoteSheet]=useState(null), [editNote,setEditNote]=useState(""), [editChz,setEditChz]=useState(0), [readerRef, setReaderRef]=useState(null), [readerTitle, setReaderTitle]=useState(""), [hasAutoOpened, setHasAutoOpened]=useState(false);
   const tMode=prog?.tmode?.[idx]||"perakim";
   const isTorah=cat==="tanach"&&idx<5&&!isC;
 
@@ -413,6 +416,8 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     } else {
       const src={musar:MUSAR,ravKook:RAV_KOOK,machshava:MACHSHAVA}[cat];
       const p=(src||[])[idx]?.p||0;
+      const bname = (src||[])[idx]?.n;
+      if (bname === "מוסר אביך" || bname === "אמונות ודעות") arr.push({key:"הקדמה",label:"הקדמה"});
       for(let i=1;i<=p;i++) arr.push({key:i,label:toHeb(i)});
     }
     return arr;
@@ -457,6 +462,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   }
 
   function toggle(key, forceLabel){
+    const wasOn=isOn(key);
     setProg(prev=>{
       const p = prev || IP;
       if(isC){const arr=[...(p.custom||[])],nd=new Set(arr[origIdx]?.done||[]);nd.has(key)?nd.delete(key):nd.add(key);if(arr[origIdx]) arr[origIdx]={...arr[origIdx],done:nd};return{...p,custom:arr};}
@@ -473,7 +479,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       }
       const cp={...p[cat]},nd=new Set(cp[idx]||[]);nd.has(key)?nd.delete(key):nd.add(key);cp[idx]=nd;return{...p,[cat]:cp};
     });
-    if(!isOn(key)) {
+    if(!wasOn) {
         const itemLabel = forceLabel || items.find(i=>i.key===key)?.label || String(key);
         onActivity({cat,bk:item?.n||"",label:itemLabel});
     }
@@ -557,7 +563,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
           <div style={{fontSize:T.f(12),color:"rgba(255,255,255,0.8)",fontWeight:600,borderRight:T.isEn?"none":`2px solid ${GOLD}`,borderLeft:T.isEn?`2px solid ${GOLD}`:"none",paddingRight:T.isEn?0:9,paddingLeft:T.isEn?9:0,marginBottom:18,lineHeight:1.5,textAlign:"start"}}>{QUOTES[0]}</div>
           <div style={{display:"flex", gap:8}}>
             {dafYomi.masechet&&<div onClick={()=>{const list=getBkList("gemara",prog?.custom); const it=list.find(m=>m.n===dafYomi.masechet); if(it) setDetail({...it, autoOpenKey:`${dafYomi.daf}a`});}} style={{flex:1, background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.3)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoBook/> {T.UI.dafYomi}</div><div style={{fontSize:T.f(14),fontWeight:700,color:"#fff"}}>{dafYomi.masechet} {T.isEn?"Daf":"דף"} {dafYomi.dafHeb}</div></div>}
-            {shabbatData?.parasha&&<div onClick={()=>{const pName=shabbatData.parasha.replace('פרשת ', '').trim();const bookIdx=PARSHIOT.findIndex(book=>book.includes(pName));if(bookIdx!==-1){const list=getBkList("tanach",prog?.custom);setDetail({...list[bookIdx],autoOpenKey:pName});}}} style={{flex:1, background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.2)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoStar/> {T.UI.parasha}</div><div style={{fontSize:T.f(13),fontWeight:600,color:"#fff"}}>{shabbatData.parasha}</div></div>}
+            {shabbatData?.parasha&&<div onClick={()=>{const list=getBkList("tanach",prog?.custom); const bookIdx=PARSHIOT.findIndex(b=>b.includes(shabbatData.parasha.replace('פרשת ',''))); if(bookIdx!==-1) setDetail({...list[bookIdx], autoOpenKey: shabbatData.parasha.replace('פרשת ','')});}} style={{flex:1, background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.2)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoStar/> {T.UI.parasha}</div><div style={{fontSize:T.f(13),fontWeight:600,color:"#fff"}}>{shabbatData.parasha}</div></div>}
           </div>
         </div>
       </div>
@@ -578,36 +584,16 @@ function LibraryScreen({prog,T,cc,cl,setProg,setDetail,libCat,setLibCat}){
   const[search,setSearch]=useState(""), [custSheet,setCustSheet]=useState(false), [cd,setCd]=useState({name:"",chapters:"",cat:"musar"});
   const allResults=useMemo(()=>{if(!search.trim())return[]; return getAllBooks(prog?.custom).filter(b=>b.n.includes(search.trim())||b.sub?.includes(search.trim())).map(b=>({...b, displayCat: b.cat}));},[search,prog]);
   const filtered=useMemo(()=>{if(search.trim())return[]; return getBkList(libCat,prog?.custom).map(b=>({...b, displayCat: libCat}));},[libCat,search,prog]);
-  return (
-    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-      <div style={{background:T.card,borderBottom:`1px solid ${T.border}`}}><div style={{padding:"14px 16px 0",fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.library}</div><div style={{padding:"0 16px 10px"}}><FI aria-label="Search" T={T} value={search} onChange={e=>setSearch(e.target.value)} placeholder={`🔎 ${T.UI.searchPlaceholder || "חיפוש בכל הספרים..."}`}/></div>
-        {!search.trim()&&(<div style={{display:"flex",gap:7,overflowX:"auto",paddingBottom:12,paddingRight:16,paddingLeft:16,scrollbarWidth:"none",justifyContent:"flex-start"}}>{CATS.map(c=><button key={c} onClick={()=>setLibCat(c)} style={{whiteSpace:"nowrap",padding:"7px 15px",borderRadius:20,fontSize:T.f(13),border:`2px solid ${libCat===c?cc[c]:T.border}`,background:libCat===c?cc[c]:"transparent",cursor:"pointer",color:libCat===c?"#fff":T.muted,fontWeight:libCat===c?800:400,flexShrink:0,fontFamily:T.font}}>{T.CAT_L[c]}</button>)}</div>)}</div>
-      <div style={{flex:1,overflow:"auto",padding:"12px 16px 80px"}}>{search.trim()?(<div>{allResults.length===0&&<div style={{textAlign:"center",padding:40,color:T.muted,fontSize:T.f(14)}}>{T.UI.noResults}</div>}{allResults.length>0&&<div style={{fontSize:T.f(11),color:T.muted,marginBottom:10,textAlign:"start"}}>{allResults.length} {T.UI.results}</div>}{allResults.map(bk=>(<div key={bk.idKey}><div style={{fontSize:T.f(10),color:cc[bk.displayCat]||T.muted,fontWeight:700,marginBottom:3,textAlign:"start"}}>{T.CAT_L[bk.displayCat]}</div><BookCard cat={bk.displayCat} item={bk} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog?.custom}/></div>))}</div>):(<div>{libCat==="custom"&&<button onClick={()=>setCustSheet(true)} style={{width:"100%",height:"48px",borderRadius:14,border:`2px dashed ${T.border}`,background:"transparent",cursor:"pointer",color:T.muted,fontSize:T.f(14),marginBottom:10,fontFamily:T.font}}>{T.UI.addBook}</button>}{filtered.map(bk=>(<div key={bk.idKey}><BookCard cat={bk.displayCat} item={bk} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog?.custom}/>{bk.isC && <button onClick={()=>{setProg(prev=>{const p=prev||IP; const arr=[...(p.custom||[])]; arr.splice(bk.origIdx,1); return {...p,custom:arr};});}} style={{fontSize:T.f(12),color:T.red,background:"none",border:"none",cursor:"pointer",marginTop:-4,marginBottom:8,paddingRight:6,fontFamily:T.font,textAlign:"start"}}>{T.UI.del}</button>}</div>))}</div>)}</div>
-      <Sheet show={custSheet} onClose={()=>setCustSheet(false)} title={T.UI.addBook} T={T}><FL label={T.UI.book} T={T}><FI T={T} value={cd.name} onChange={e=>setCd(f=>({...f,name:e.target.value}))}/></FL><FL label={T.UI.perakim} T={T}><FI T={T} type="number" value={cd.chapters} onChange={e=>setCd(f=>({...f,chapters:e.target.value}))}/></FL><FL label={T.UI.topic} T={T}><FS T={T} value={cd.cat} onChange={e=>setCd(f=>({...f,cat:e.target.value}))}><option value="musar">מוסר</option><option value="ravKook">ספרי הראי״ה</option><option value="machshava">מחשבה</option><option value="other">אישי / אחר</option></FS></FL><PB T={T} onClick={()=>{if(!cd.name||!cd.chapters)return; setProg(prev=>{const p=prev||IP; return {...p,custom:[...(p.custom||[]),{name:cd.name,chapters:parseInt(cd.chapters),catLabel:"אישי",cat:cd.cat,done:new Set()}]}}); setCustSheet(false); setCd({name:"",chapters:"",cat:"musar"});}} style={{marginTop:6,background:NAVY}}>{T.UI.save}</PB></Sheet></div>
-  );
-}
-
-/* ── GOALS ── */
-function GoalRow({g,prog,T,cc,onEdit,onDelete,custom}){
-  if (!g) return null;
-  const isO=g.cat==="other", list=isO?[]:getBkList(g.cat,custom), item=list.find(l=>l.idKey===(g.isC?'custom_c'+g.origIdx:g.cat+'_s'+g.idx)), nm=isO?g.otherName:(item?.n||""); if(!nm)return null;
-  const cur=isO?0:(g.isC?(prog?.custom?.[g.origIdx]?.done?.size||0):calcDone(prog,g.cat,g.idx)), p=pct(Math.min(cur,g.target),g.target), rem=Math.max(0,Math.round((new Date(g.deadline)-new Date())/86400000)), exp=Math.min(100,Math.round((Math.max(0,Math.round((new Date()-new Date(g.startDate))/86400000)))*100/Math.max(1,Math.round((new Date(g.deadline)-new Date(g.startDate))/86400000)))), remainingItems=g.target-cur;
-  let paceStr="-", paceLabel=T.UI.perDay; const u=isO?"":(T.isEn?"items":T.CAT_UNIT_SING[g.cat]);
-  if(!isO && rem>0 && remainingItems>0){ if(remainingItems>=rem) paceStr=Math.ceil(remainingItems/rem)+" "+u; else { paceStr="1 "+u; paceLabel=`בכל ${Math.floor(rem/remainingItems)} ימים`; } }
-  return (<div style={{background:T.card,borderRadius:16,padding:"15px 16px",marginBottom:12,boxShadow:T.shadow}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}><div><div style={{fontSize:T.f(16),fontWeight:900,color:T.navy,textAlign:"start"}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted,textAlign:"start"}}>{isO?"Personal":T.CAT_L[g.cat]}</div></div>{!isO&&<span style={{fontSize:T.f(11),padding:"4px 11px",borderRadius:20,background:p>=exp?"#DCFCE7":"#FEE2E2",color:p>=exp?"#166534":"#B91C1C",fontWeight:800,flexShrink:0}}>{p>=exp?T.UI.onTrack:T.UI.behind}</span>}</div><Bar p={p} color={cc[g.cat]||T.primary} h={8} dark={T.dark}/><div style={{display:"flex",justifyContent:"space-between",fontSize:T.f(12),color:T.muted,margin:"6px 0 12px"}}><span>{cur}/{g.target} {isO?"":T.CAT_UNIT[g.cat]}</span><span style={{color:cc[g.cat]||T.primary,fontWeight:800}}>{p}%</span></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(80px, 1fr))",gap:8,marginBottom:12}}>{[{l:T.UI.daysLeft,v:rem},{l:paceLabel,v:paceStr},{l:T.UI.currPace,v:isO?"-":`${exp}%`}].map(s=>(<div key={s.l} style={{background:T.input,borderRadius:10,padding:"9px 10px"}}><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy}}>{s.v}</div><div style={{fontSize:T.f(10),color:T.muted,marginTop:1}}>{s.l}</div></div>))}</div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:T.f(12),color:T.muted}}><div style={{textAlign:"start"}}><div>{new Date(g.deadline).toLocaleDateString("he-IL")}</div>{hebStr(g.deadline)&&<div style={{color:cc[g.cat]||T.primary,fontWeight:700,marginTop:2}}>{hebStr(g.deadline)}</div>}</div><div style={{display:"flex", gap:14}}><button onClick={onEdit} style={{background:"none",border:"none",cursor:"pointer",color:T.muted}}><IcoEdit/></button><button onClick={onDelete} style={{background:"none",border:"none",cursor:"pointer",color:T.red}}>{T.UI.del}</button></div></div></div>);
+  return (<div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}><div style={{background:T.card,borderBottom:`1px solid ${T.border}`}}><div style={{padding:"14px 16px 0",fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.library}</div><div style={{padding:"0 16px 10px"}}><FI aria-label="Search" T={T} value={search} onChange={e=>setSearch(e.target.value)} placeholder={`🔎 ${T.UI.searchPlaceholder || "חיפוש בכל הספרים..."}`}/></div>{!search.trim()&&(<div style={{display:"flex",gap:7,overflowX:"auto",paddingBottom:12,paddingRight:16,paddingLeft:16,scrollbarWidth:"none",justifyContent:"flex-start"}}>{CATS.map(c=><button key={c} onClick={()=>setLibCat(c)} style={{whiteSpace:"nowrap",padding:"7px 15px",borderRadius:20,fontSize:T.f(13),border:`2px solid ${libCat===c?cc[c]:T.border}`,background:libCat===c?cc[c]:"transparent",cursor:"pointer",color:libCat===c?"#fff":T.muted,fontWeight:libCat===c?800:400,flexShrink:0,fontFamily:T.font}}>{T.CAT_L[c]}</button>)}</div>)}</div>
+  <div style={{flex:1,overflow:"auto",padding:"12px 16px 80px"}}>{search.trim()?(<div>{allResults.length===0&&<div style={{textAlign:"center",padding:40,color:T.muted,fontSize:T.f(14)}}>{T.UI.noResults}</div>}{allResults.length>0&&<div style={{fontSize:T.f(11),color:T.muted,marginBottom:10,textAlign:"start"}}>{allResults.length} {T.UI.results}</div>}{allResults.map(bk=>(<div key={bk.idKey}><div style={{fontSize:T.f(10),color:cc[bk.displayCat]||T.muted,fontWeight:700,marginBottom:3,textAlign:"start"}}>{T.CAT_L[bk.displayCat]}</div><BookCard cat={bk.displayCat} item={bk} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog?.custom}/></div>))}</div>):(<div>{libCat==="custom"&&<button onClick={()=>setCustSheet(true)} style={{width:"100%",height:"48px",borderRadius:14,border:`2px dashed ${T.border}`,background:"transparent",cursor:"pointer",color:T.muted,fontSize:T.f(14),marginBottom:10,fontFamily:T.font}}>{T.UI.addBook}</button>}{filtered.map(bk=>(<div key={bk.idKey}><BookCard cat={bk.displayCat} item={bk} prog={prog} T={T} cc={cc} cl={cl} onPress={setDetail} custom={prog?.custom}/>{bk.isC&&<button onClick={()=>{setProg(prev=>{const p=prev||IP, arr=[...(p.custom||[])];arr.splice(bk.origIdx,1);return{...p,custom:arr};});}} style={{fontSize:T.f(12),color:T.red,background:"none",border:"none",cursor:"pointer",marginTop:-4,marginBottom:8,paddingRight:6,fontFamily:T.font,textAlign:"start"}}>{T.UI.del}</button>}</div>))}</div>)}</div><Sheet show={custSheet} onClose={()=>setCustSheet(false)} title={T.UI.addBook} T={T}><FL label={T.UI.book} T={T}><FI T={T} value={cd.name} onChange={e=>setCd(f=>({...f,name:e.target.value}))}/></FL><FL label={T.UI.perakim} T={T}><FI T={T} type="number" value={cd.chapters} onChange={e=>setCd(f=>({...f,chapters:e.target.value}))}/></FL><FL label={T.UI.topic} T={T}><FS T={T} value={cd.cat} onChange={e=>setCd(f=>({...f,cat:e.target.value}))}><option value="musar">מוסר</option><option value="ravKook">ספרי הראי״ה</option><option value="machshava">מחשבה</option><option value="other">אישי / אחר</option></FS></FL><PB T={T} onClick={()=>{if(!cd.name||!cd.chapters)return;setProg(prev=>{const p=prev||IP;return{...p,custom:[...(p.custom||[]),{name:cd.name,chapters:parseInt(cd.chapters),catLabel:"אישי",cat:cd.cat,done:new Set()}]}});setCustSheet(false);setCd({name:"",chapters:"",cat:"musar"});}} style={{marginTop:6,background:NAVY}}>{T.UI.save}</PB></Sheet></div>);
 }
 
 function GoalsScreen({goals,setGoals,prog,T,cc}){
-  const[showSheet,setShowSheet]=useState(false), [editingId, setEditingId]=useState(null), [cat,setCat]=useState("gemara"), [bookIdKey,setBookIdKey]=useState(""), [target,setTarget]=useState(""), [deadline,setDeadline]=useState(""), [otherName,setOtherName]=useState("");
-  const bkList=cat==="other"?[]:getBkList(cat,prog?.custom), selectedItem=bkList.find(b=>String(b.idKey)===bookIdKey), maxTot=cat==="other"?0:(selectedItem?(selectedItem.isC?prog?.custom?.[selectedItem.origIdx]?.chapters:bkTotal(cat,selectedItem.i,prog?.custom)):0);
-  function openNew(){ setEditingId(null); setCat("gemara"); setBookIdKey(""); setTarget(""); setDeadline(""); setOtherName(""); setShowSheet(true); }
-  function save(){ if(!deadline||(cat==="other"&&!otherName))return; if(editingId) setGoals(prev=>(prev||[]).map(x=>x.id===editingId?{...x, cat, idx:selectedItem?selectedItem.i:0, isC:!!selectedItem?.isC, origIdx:selectedItem?selectedItem.origIdx:0, target:target?parseInt(target):maxTot, deadline, otherName}:x)); else setGoals(prev=>[...(prev||[]),{id:Date.now(), cat, idx:selectedItem?selectedItem.i:0, isC:!!selectedItem?.isC, origIdx:selectedItem?selectedItem.origIdx:0, target:target?parseInt(target):maxTot, deadline, startDate:todayKey(), otherName}]); setShowSheet(false); }
-  return (
-    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div><button onClick={openNew} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button></div>
-      {(!goals||goals.length===0)&&(<div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}><div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div><div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.setGoal}</div><button onClick={openNew} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button></div>)}
-      <div>{(goals||[]).map(g=>g?(<GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>{setEditingId(g.id);setCat(g.cat);setBookIdKey(g.isC?'custom_c'+g.origIdx:g.cat+'_s'+g.idx);setTarget(g.target);setDeadline(g.deadline);setOtherName(g.otherName||"");setShowSheet(true);}} onDelete={()=>setGoals(prev=>(prev||[]).filter(x=>x.id!==g.id))} custom={prog?.custom}/>):null)}</div>
-      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingId?(T.isEn?"Edit Goal":"עריכת יעד"):T.UI.newGoal} T={T}><FL label={T.UI.topic} T={T}><FS T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>{CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}</FS></FL>{cat!=="other"&&bkList.length>0&&<FL label={T.UI.book} T={T}><FS T={T} value={bookIdKey} onChange={e=>{setBookIdKey(e.target.value);setTarget("");}}><option value="">{T.UI.selectBook}</option>{bkList.map(b=><option key={b.idKey} value={b.idKey}>{b.n}</option>)}</FS></FL>}<FL label={`${T.UI.target} ${maxTot>0?`(${T.UI.max||"Max"}: ${maxTot})`:""}`} T={T}><FI T={T} type="number" value={target} onChange={e=>setTarget(e.target.value)} placeholder={maxTot>0?`${maxTot}`:""}/></FL><FL label={T.UI.deadline} T={T}><DualDateInput T={T} value={deadline} onChange={e=>setDeadline(e.target.value)}/></FL><PB T={T} onClick={save} style={{marginTop:16,background:NAVY}}>{T.UI.saveGoal}</PB></Sheet></div>
-  );
+  const[showSheet,setShowSheet]=useState(false),[editingId,setEditingId]=useState(null),[cat,setCat]=useState("gemara"),[bookIdKey,setBookIdKey]=useState(""),[target,setTarget]=useState(""),[deadline,setDeadline]=useState(""),[otherName,setOtherName]=useState("");
+  const bkList=cat==="other"?[]:getBkList(cat,prog?.custom),selectedItem=bkList.find(b=>String(b.idKey)===bookIdKey),maxTot=cat==="other"?0:(selectedItem?(selectedItem.isC?prog?.custom?.[selectedItem.origIdx]?.chapters:bkTotal(cat,selectedItem.i,prog?.custom)):0);
+  return (<div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div><button onClick={()=>{setEditingId(null);setCat("gemara");setBookIdKey("");setTarget("");setDeadline("");setOtherName("");setShowSheet(true);}} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button></div>{(!goals||goals.length===0)&&(<div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}><div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div><div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.setGoal}</div></div>)}
+  <div>{(goals||[]).map(g=>g?(<GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>{setEditingId(g.id);setCat(g.cat);setBookIdKey(g.isC?'custom_c'+g.origIdx:g.cat+'_s'+g.idx);setTarget(g.target);setDeadline(g.deadline);setOtherName(g.otherName||"");setShowSheet(true);}} onDelete={()=>setGoals(p=>(p||[]).filter(x=>x.id!==g.id))} custom={prog?.custom}/>):null)}</div>
+  <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingId?(T.isEn?"Edit Goal":"עריכת יעד"):T.UI.newGoal} T={T}><FL label={T.UI.topic} T={T}><FS T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>{CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}</FS></FL>{cat!=="other"&&bkList.length>0&&<FL label={T.UI.book} T={T}><FS T={T} value={bookIdKey} onChange={e=>{setBookIdKey(e.target.value);setTarget("");}}><option value="">{T.UI.selectBook}</option>{bkList.map(b=><option key={b.idKey} value={b.idKey}>{b.n}</option>)}</FS></FL>}<FL label={`${T.UI.target} ${maxTot>0?`(${maxTot})`:""}`} T={T}><FI T={T} type="number" value={target} onChange={e=>setTarget(e.target.value)}/></FL><FL label={T.UI.deadline} T={T}><DualDateInput T={T} value={deadline} onChange={e=>setDeadline(e.target.value)}/></FL><PB T={T} onClick={()=>{if(!deadline||(cat==="other"&&!otherName))return;if(editingId)setGoals(p=>(p||[]).map(x=>x.id===editingId?{...x,cat,idx:selectedItem?selectedItem.i:0,isC:!!selectedItem?.isC,origIdx:selectedItem?selectedItem.origIdx:0,target:target?parseInt(target):maxTot,deadline,otherName}:x));else setGoals(p=>[...(p||[]),{id:Date.now(),cat,idx:selectedItem?selectedItem.i:0,isC:!!selectedItem?.isC,origIdx:selectedItem?selectedItem.origIdx:0,target:target?parseInt(target):maxTot,deadline,startDate:todayKey(),otherName}]);setShowSheet(false);}} style={{marginTop:16,background:NAVY}}>{T.UI.saveGoal}</PB></Sheet></div>);
 }
 
 /* ── SETTINGS ── */
@@ -637,7 +623,7 @@ export default function App(){
   const[user,setUser]=useState(null), [tab,setTab]=useState("home"), [libCat,setLibCat]=useState("gemara"), [detail,setDetail]=useState(null), [sett,setSett]=useState({dark:false,fontSize:1,lang:"he"}), [prog,setProg]=useState(IP), [goals,setGoals]=useState([]), [activity,setActivity]=useState([]), [activeDays,setActiveDays]=useState([]), [loaded,setLoaded]=useState(false);
   useEffect(() => { const unsubscribe = onAuthStateChanged(auth, async (u) => { if (u) { setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); try { const docSnap = await getDoc(doc(db, "users", u.uid)); if (docSnap.exists()) { const data = docSnap.data(); if(data){ setProg(desProg(data.prog)); setGoals(Array.isArray(data.goals) ? data.goals : []); setSett(prev=>({...prev, ...(data.sett||{})})); setActivity(Array.isArray(data.activity)?data.activity:[]); setActiveDays(Array.isArray(data.activeDays)?data.activeDays:[]); } } } catch (e) { console.error(e); } setLoaded(true); } else { setUser(null); setLoaded(true); } }); return () => unsubscribe(); }, []);
   useEffect(() => { if (!loaded || !user) return; const t = setTimeout(() => { setDoc(doc(db, "users", user.uid), { prog: serProg(prog), goals: goals||[], sett, activity: (activity||[]).slice(0, 50), activeDays: (activeDays||[]).slice(-60) }, { merge: true }).catch(e => console.error(e)); }, 2000); return () => clearTimeout(t); }, [prog, goals, sett, activity, activeDays, loaded, user]);
-  const streak=useMemo(()=>{ if(!activeDays?.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); if(sorted[0]!==todayKey()&&sorted[0]!==(new Date(Date.now()-86400000).toISOString().slice(0,10))) return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
+  const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   if(!user) return <div style={appSt}><AuthScreen onLogin={async(c)=>{try{if(c.method==="email") await signInWithEmailAndPassword(auth, c.email, c.pass); else if(c.method==="register") await createUserWithEmailAndPassword(auth, c.email, c.pass); else await signInWithPopup(auth, new GoogleAuthProvider());}catch(e){alert("שגיאה: "+e.message);}}} T={T}/></div>;
