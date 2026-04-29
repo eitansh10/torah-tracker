@@ -85,7 +85,7 @@ const GEMARA=[{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",
 const MISHNA=[{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
 const TANACH=[{b:"בראשית",s:"תורה",c:50},{b:"שמות",s:"תורה",c:40},{b:"ויקרא",s:"תורה",c:27},{b:"במדבר",s:"תורה",c:36},{b:"דברים",s:"תורה",c:34},{b:"יהושע",s:"נביאים",c:24},{b:"שופטים",s:"נביאים",c:21},{b:"שמואל א",s:"נביאים",c:31},{b:"שמואל ב",s:"נביאים",c:24},{b:"מלכים א",s:"נביאים",c:22},{b:"מלכים ב",s:"נביאים",c:25},{b:"ישעיהו",s:"נביאים",c:66},{b:"ירמיהו",s:"נביאים",c:52},{b:"יחזקאל",s:"נביאים",c:48},{b:"הושע",s:"נביאים",c:14},{b:"יואל",s:"נביאים",c:4},{b:"עמוס",s:"נביאים",c:9},{b:"עובדיה",s:"נביאים",c:1},{b:"יונה",s:"נביאים",c:4},{b:"מיכה",s:"נביאים",c:7},{b:"נחום",s:"נביאים",c:3},{b:"חבקוק",s:"נביאים",c:3},{b:"צפניה",s:"נביאים",c:3},{b:"חגי",s:"נביאים",c:2},{b:"זכריה",s:"נביאים",c:14},{b:"מלאכי",s:"נביאים",c:3},{b:"תהלים",s:"כתובים",c:150},{b:"משלי",s:"כתובים",c:31},{b:"איוב",s:"כתובים",c:42},{b:"שיר השירים",s:"כתובים",c:8},{b:"רות",s:"כתובים",c:4},{b:"איכה",s:"כתובים",c:5},{b:"קהלת",s:"כתובים",c:12},{b:"אסתר",s:"כתובים",c:10},{b:"דניאל",s:"כתובים",c:12},{b:"עזרא",s:"כתובים",c:10},{b:"נחמיה",s:"כתובים",c:13},{b:"דברי הימים א",s:"כתובים",c:29},{b:"דברי הימים ב",s:"כתובים",c:36}];
 const MUSAR=[{n:"מסילת ישרים",a:'רמח"ל',p:26},{n:"חובת הלבבות",a:"רבינו בחיי",p:10},{n:"שערי תשובה",a:"רבינו יונה",p:4},{n:"אורחות צדיקים",a:"אנונימי",p:30},{n:"תומר דבורה",a:'רמ"ק',p:10},{n:"פלא יועץ",a:"ר' אליעזר פאפו",p:90},{n:"חפץ חיים",a:"החפץ חיים",p:17},{n:"שמירת הלשון",a:"החפץ חיים",p:30},{n:"אהבת חסד",a:"החפץ חיים",p:24},{n:"מכתב מאליהו",a:"ר' אליהו דסלר",p:5},{n:"עלי שור",a:"ר' שלמה וולבה",p:2},{n:"נתיבות שלום",a:'אדמו"ר מסלונים',p:5},{n:'ליקוטי מוהר"ן',a:"ר' נחמן מברסלב",p:286},{n:"ספר המידות",a:"ר' נחמן מברסלב",p:30},{n:"ספר הישר",a:'ר"ת',p:13}];
-const RAV_KOOK=[{n:"אורות התשובה",g:"אורות",p:17},{n:"אורות ארץ ישראל",g:"אורות",p:5},{n:"אורות המלחמה",g:"אורות",p:9},{n:"אורות התחיה",g:"אורות",p:9},{n:"אורות ישראל",g:"אורות",p:9},{n:"אורות הקודש א",g:"אורות הקודש",p:9},{n:"אורות הקודש ב",g:"אורות הקודש",p:9},{n:"אורות הקודש ג",g:"אורות הקודש",p:9},{n:"אורות הקודש ד",g:"אורות הקודש",p:7},{n:"אורות התורה",g:"אורות",p:13},{n:"אורות האמונה",g:"אורות",p:8},{n:"עין איה ברכות א",g:"עין איה",p:9},{n:"עין איה ברכות ב",g:"עין איה",p:9},{n:"עין איה שבת א",g:"עין איה",p:11},{n:"עין איה שבת ב",g:"עין איה",p:11},{n:"שמונה קבצים",g:"שמונה קבצים",p:9},{n:"אגרות הראיה א",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ב",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ג",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ד",g:"אגרות הראיה",p:9},{n:"מאמרי הראיה א",g:"מאמרים",p:9},{n:"מאמרי הראיה ב",g:"מאמרים",p:9},{n:"מוסר אביך",g:"שונות",p:6},{n:"עולת ראיה א",g:"שונות",p:9},{n:"עולת ראיה ב",g:"שונות",p:9},{n:"ארפלי טוהר",g:"שונות",p:9},{n:"ריש מילין",g:"שונות",p:9}];
+const RAV_KOOK=[{n:"אורות התשובה",g:"אורות",p:17},{n:"אורות ארץ ישראל",g:"אורות",p:5},{n:"אורות המלחמה",g:"אורות",p:9},{n:"אורות התחיה",g:"אורות",p:9},{n:"אורות ישראל",g:"אורות",p:9},{n:"אורות הקודש א",g:"אורות הקודש",p:9},{n:"אורות הקודש ב",g:"אורות הקודש",p:9},{n:"אורות הקודש ג",g:"אורות הקודש",p:9},{n:"אורות הקודש ד",g:"אורות הקודש",p:7},{n:"אורות התורה",g:"אורות",p:13},{n:"אורות האמונה",g:"אורות",p:8},{n:"עין איה ברכות א",g:"עין איה",p:9},{n:"עין איה ברכות ב",g:"עין איה",p:9},{n:"עין איה שבת א",g:"עין איה",p:11},{n:"עין איה שבת ב",g:"עין איה",p:11},{n:"שמונה קבצים",g:"שמונה קבצים",p:9},{n:"אגרות הראיה א",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ב",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ג",g:"אגרות הראיה",p:9},{n:"אגרות הראיה ד",g:"אגרות הראיה",p:9},{n:"מאמרי הראיה א",g:"מאמרים",p:9},{n:"מאמרי הראיה ב",g:"מאמרים",p:9},{n:"מוסר אביך",g:"שונות",p:6},{n:"עולת ראיה א",g:"שונות",p:9},{n:"עולת ראיה ב",g:"שונות",p:9},{n:"ארפלי טוהר",g:"שונות",p:9},{n:"ריש מילין",g:"שונות",p:9},{n:"אורות",g:"אורות",p:9}];
 const MACHSHAVA=[{n:"נפש החיים",a:"ר' חיים מוולוז'ין",p:4},{n:"כוזרי",a:'ריה"ל',p:5},{n:"מורה נבוכים",a:'רמב"ם',p:3},{n:"דרך ה'",a:'רמח"ל',p:4},{n:"דעת תבונות",a:'רמח"ל',p:1},{n:"תניא",a:'אדמו"ר הזקן',p:4},{n:"אמונות ודעות",a:'רס"ג',p:10},{n:"ספר העיקרים",a:"ר' יוסף אלבו",p:4},{n:"נצח ישראל",a:'מהר"ל',p:58},{n:"נתיבות עולם",a:'מהר"ל',p:2},{n:"גבורות ה'",a:'מהר"ל',p:73},{n:"באר הגולה",a:'מהר"ל',p:7}];
 
 const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
@@ -102,7 +102,7 @@ const SEFARIA_MAP = {
   "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
   "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles",
   "מסילת ישרים": "Mesillat_Yesharim", "חובת הלבבות": "Duties_of_the_Heart", "שערי תשובה": "Shaarei_Teshuvah", "אורחות צדיקים": "Orchot_Tzadikim", "תומר דבורה": "Tomer_Devorah", "חפץ חיים": "Chafetz_Chaim", "שמירת הלשון": "Shmirat_HaLashon", "נפש החיים": "Nefesh_HaChayim", "כוזרי": "Kuzari", "מורה נבוכים": "Guide_for_the_Perplexed", "דרך ה'": "Derekh_Hashem", "דעת תבונות": "Da'at_Tevunot", "תניא": "Tanya",
-  "אורות התשובה": "Orot_HaTeshuvah", "אורות התורה": "Orot_HaTorah", "אורות האמונה": "Orot_HaEmunah", "מוסר אביך": "Musar_Avikh", "שמונה קבצים": "Shemonah_Kevatzim", "ארפלי טוהר": "Arpilei_Tohar", "עולת ראיה א": "Olat_Reiyah", "אגרות הראיה א": "Igrot_HaReiyah", "אגרות הראיה ב": "Igrot_HaReiyah", "אגרות הראיה ג": "Igrot_HaReiyah", "אגרות הראיה ד": "Igrot_HaReiyah", "עין איה ברכות א": "Ein_Ayah", "עין איה ברכות ב": "Ein_Ayah", "עין איה שבת א": "Ein_Ayah", "עין איה שבת ב": "Ein_Ayah", "ריש מילין": "Resh_Millin"
+  "אורות התשובה": "Orot_HaTeshuvah", "אורות התורה": "Orot_HaTorah", "אורות האמונה": "Orot_HaEmunah", "מוסר אביך": "Musar_Avikh", "שמונה קבצים": "Shemonah_Kevatzim", "ארפלי טוהר": "Arpilei_Tohar", "עולת ראיה א": "Olat_Reiyah", "אגרות הראיה א": "Igrot_HaReiyah", "אגרות הראיה ב": "Igrot_HaReiyah", "אגרות הראיה ג": "Igrot_HaReiyah", "אגרות הראיה ד": "Igrot_HaReiyah", "עין איה ברכות א": "Ein_Ayah", "עין איה ברכות ב": "Ein_Ayah", "עין איה שבת א": "Ein_Ayah", "עין איה שבת ב": "Ein_Ayah", "ריש מילין": "Resh_Millin", "אורות": "Orot"
 };
 
 function safeHas(setOrObj, val) {
@@ -190,28 +190,30 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
   } catch(e) { return ""; }
 }
 
-/* ── STORAGE ── */
+/* ── STORAGE (SAFE METHODS) ── */
 function serProg(prog) {
   const p = prog || IP;
   const o={gemara:{},mishna:{},tanach:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
-  for(const[k,v] of Object.entries(p.gemara||{})) o.gemara[k]={done:[...(v.done||new Set())]};
-  for(const[k,v] of Object.entries(p.mishna||{})) o.mishna[k]={done:[...(v.done||new Set())]};
-  for(const[k,v] of Object.entries(p.tanach||{})) o.tanach[k]=[...v];
-  o.tmode={...p.tmode};
-  for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(p[c]||{})) o[c][k]=[...v];
-  o.custom=(p.custom||[]).map(b=>({...b,done:[...(b.done||new Set())]}));
-  o.notes={...p.notes}; o.chazara={...p.chazara};
+  const sArr = (s) => Array.isArray(s) ? s : (s instanceof Set ? [...s] : []);
+  for(const[k,v] of Object.entries(p.gemara||{})) o.gemara[k]={done:sArr(v?.done)};
+  for(const[k,v] of Object.entries(p.mishna||{})) o.mishna[k]={done:sArr(v?.done)};
+  for(const[k,v] of Object.entries(p.tanach||{})) o.tanach[k]=sArr(v);
+  o.tmode={...(p.tmode||{})};
+  for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(p[c]||{})) o[c][k]=sArr(v);
+  o.custom=(Array.isArray(p.custom)?p.custom:[]).map(b=>({...b,done:sArr(b?.done)}));
+  o.notes={...(p.notes||{})}; o.chazara={...(p.chazara||{})};
   return o;
 }
 function desProg(data) {
   if(!data) return IP;
   const o={gemara:{},mishna:{},tanach:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
-  for(const[k,v] of Object.entries(data.gemara||{})) o.gemara[k]={done:new Set(v.done)};
-  for(const[k,v] of Object.entries(data.mishna||{})) o.mishna[k]={done:new Set(v.done)};
-  for(const[k,v] of Object.entries(data.tanach||{})) o.tanach[k]=new Set(v);
-  o.tmode={...data.tmode};
-  for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(data[c]||{})) o[c][k]=new Set(v);
-  o.custom=Array.isArray(data.custom) ? data.custom.map(b=>({...b,done:new Set(Array.isArray(b.done)?b.done:[])})) : [];
+  const toSet = (arr) => new Set(Array.isArray(arr) ? arr : []);
+  for(const[k,v] of Object.entries(data.gemara||{})) o.gemara[k]={done:toSet(v?.done)};
+  for(const[k,v] of Object.entries(data.mishna||{})) o.mishna[k]={done:toSet(v?.done)};
+  for(const[k,v] of Object.entries(data.tanach||{})) o.tanach[k]=toSet(v);
+  o.tmode={...(data.tmode||{})};
+  for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(data[c]||{})) o[c][k]=toSet(v);
+  o.custom=Array.isArray(data.custom) ? data.custom.map(b=>({...b,done:toSet(b?.done)})) : [];
   o.notes=data.notes||{}; o.chazara=data.chazara||{};
   return o;
 }
@@ -241,7 +243,7 @@ function mkT(dark,sz,lang) {
     continueWith: "Continue with", or: "or", newAccount: "Create a new account",
     onTrack: "On track ✓", behind: "Behind", perDay: "per day", currPace: "curr pace", fullTractates: "Completed Books",
     dedicateDesc: "Dedicate your learning. Dedications will be visible to all users.", submitDedication: "Submit Dedication",
-    readOnSefaria: "Continue where you left off", loadingSefaria: "Loading Sefaria text...", baseText: "Base Text", rashi: "Rashi", steinsaltz: "Steinsaltz", bartenura: "Bartenura",
+    readOnSefaria: "Continue where you left off", openSection: "Open this section", loadingSefaria: "Loading Sefaria text...", baseText: "Base Text", rashi: "Rashi", steinsaltz: "Steinsaltz", bartenura: "Bartenura",
     noResults: "No results found", results: "Results", selectBook: "Select Book...", developedBy: "Developed by Eitan Shachor. All rights reserved.",
     zmanMGA: "Latest Shma (MGA)", zmanGRA: "Latest Shma (GRA)", tfillaMGA: "Latest Tefila (MGA)", tfillaGRA: "Latest Tefila (GRA)", chatzot: "Chatzot", sunrise: "Sunrise", sunset: "Sunset", tzeit: "Nightfall",
     legal: "Legal & Privacy", terms: "Terms of Service", privacy: "Privacy Policy", agreeTerms: "I agree to the Terms of Service and Privacy Policy", mustAgree: "You must agree to the Terms to continue", installApp: "Install App",
@@ -263,7 +265,7 @@ function mkT(dark,sz,lang) {
     continueWith: "המשך עם", or: "או", newAccount: "פתח חשבון חדש",
     onTrack: "במסלול ✓", behind: "מאחור", perDay: "לכל יום", currPace: "יעד נוכחי", fullTractates: "ספרים שלמים",
     dedicateDesc: "הקדש את לימודך להצלחת, רפואת או לעילוי נשמת יקיריך. שים לב: ההקדשות יוצגו באפליקציה באופן פומבי לכלל הלומדים.", submitDedication: "שלח בקשת הקדשה",
-    readOnSefaria: "המשך מהמקום שעצרת", loadingSefaria: "טוען טקסט מספריא...", baseText: "טקסט מקור", rashi: "רש״י", steinsaltz: "ביאור שטיינזלץ", bartenura: "ברטנורא",
+    readOnSefaria: "המשך מהמקום שעצרת", openSection: "פתח קטע זה", loadingSefaria: "טוען טקסט מספריא...", baseText: "טקסט מקור", rashi: "רש״י", steinsaltz: "ביאור שטיינזלץ", bartenura: "ברטנורא",
     noResults: "לא נמצאו תוצאות", results: "תוצאות", selectBook: "בחר ספר...", developedBy: "פותח ע״י איתן שחור. כל הזכויות שמורות.",
     zmanMGA: "סוף זק״ש (מג״א)", zmanGRA: "סוף זק״ש (גר״א)", tfillaMGA: "סוף תפילה (מג״א)", tfillaGRA: "סוף תפילה (גר״א)", chatzot: "חצות", sunrise: "הנץ החמה", sunset: "שקיעה", tzeit: "צאת הכוכבים",
     legal: "תקנון ופרטיות", terms: "תנאי שימוש", privacy: "מדיניות פרטיות", agreeTerms: "אני מסכים/ה לתקנון ולמדיניות הפרטיות", mustAgree: "יש לאשר את התקנון כדי להירשם", installApp: "התקן כאפליקציה",
@@ -342,7 +344,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
             if (!val) return [];
             if (typeof val === 'string') return [val];
             if (Array.isArray(val)) return val.reduce((acc, curr) => acc.concat(flattenText(curr)), []);
-            if (typeof val === 'object' && val !== null) return flattenText(Object.values(val));
+            if (typeof val === 'object') return flattenText(Object.values(val));
             return [];
           };
           setTextArr(flattenText(data.he || data.text || []));
@@ -598,7 +600,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
         {sefariaRefForNote && !isC && (
           <button onClick={() => { setReaderRef(sefariaRefForNote); setReaderTitle(`${item?.n||""} ${noteSheet.label}`); setNoteSheet(null); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", border:"none", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font, width:"100%", cursor:"pointer"}}>
-            <IcoBook /> פתח קטע זה
+            <IcoBook /> {T.UI.openSection}
           </button>
         )}
 
@@ -1143,11 +1145,13 @@ export default function App(){
           const docSnap = await getDoc(doc(db, "users", currentUser.uid));
           if (docSnap.exists()) {
             const data = docSnap.data();
-            if (data.prog) setProg(desProg(data.prog));
-            if (data.goals && Array.isArray(data.goals)) setGoals(data.goals);
-            if (data.sett) setSett(data.sett);
-            if (data.activity && Array.isArray(data.activity)) setActivity(data.activity);
-            if (data.activeDays && Array.isArray(data.activeDays)) setActiveDays(data.activeDays);
+            if (data) {
+              setProg(desProg(data.prog));
+              setGoals(Array.isArray(data.goals) ? data.goals : []);
+              if (data.sett) setSett(prev => ({...prev, ...data.sett}));
+              setActivity(Array.isArray(data.activity) ? data.activity : []);
+              setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
+            }
           }
         } catch (e) { console.error(e); }
         setLoaded(true);
@@ -1160,9 +1164,11 @@ export default function App(){
     if (!loaded || !user) return;
     const timeoutId = setTimeout(() => {
       setDoc(doc(db, "users", user.uid), {
-        prog: serProg(prog), goals: goals||[], sett,
-        activity: (activity||[]).slice(0, 50),
-        activeDays: (activeDays||[]).slice(-60)
+        prog: serProg(prog), 
+        goals: Array.isArray(goals) ? goals : [], 
+        sett,
+        activity: (Array.isArray(activity) ? activity : []).slice(0, 50),
+        activeDays: (Array.isArray(activeDays) ? activeDays : []).slice(-60)
       }, { merge: true }).catch(e => console.error(e));
     }, 2000); 
     return () => clearTimeout(timeoutId);
