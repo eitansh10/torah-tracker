@@ -26,8 +26,9 @@ const IcoScroll = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 
 const IcoHeart = ()=><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>;
 const IcoCalendar = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>;
 const IcoDots = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>;
+const IcoEdit = ()=><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>;
 
-/* לוגו מינימליסטי: לב שמרכזו מופרד ונותן תחושה של ספר תורה */
+/* לוגו אליבא */
 const LogoAliba = ({T, size=48}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={T.gold||"#C9A84C"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
     <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill={T.dark?"rgba(201,168,76,0.15)":"rgba(201,168,76,0.2)"}/>
@@ -217,12 +218,9 @@ const IP={gemara:{},mishna:{},tanach:{},tmode:{},musar:{},ravKook:{},machshava:{
 /* ── THEME & TRANSLATION ── */
 function mkT(dark,sz,lang) {
   const sc=[0.88,1,1.14][sz]||1, f=n=>Math.round(n*sc), isEn=lang==="en";
-  const CAT_L = isEn 
-    ? {gemara:"Gemara",mishna:"Mishna",tanach:"Tanach",musar:"Musar",ravKook:"Rav Kook",machshava:"Machshava",custom:"Custom"}
-    : {gemara:"גמרא",mishna:"משניות",tanach:'תנ"ך',musar:"מוסר",ravKook:"ספרי הראי״ה",machshava:"מחשבה",custom:"אישי"};
-  const CAT_UNIT=isEn
-    ?{gemara:"dapim",mishna:"mishnayot",tanach:"chapters",musar:"chapters",ravKook:"chapters",machshava:"chapters",custom:"chapters"}
-    :{gemara:"דפים",mishna:"משניות",tanach:"פרקים",musar:"פרקים",ravKook:"פרקים",machshava:"פרקים",custom:"פרקים"};
+  const CAT_L = isEn ? {gemara:"Gemara",mishna:"Mishna",tanach:"Tanach",musar:"Musar",ravKook:"Rav Kook",machshava:"Machshava",custom:"Custom"} : {gemara:"גמרא",mishna:"משניות",tanach:'תנ"ך',musar:"מוסר",ravKook:"ספרי הראי״ה",machshava:"מחשבה",custom:"אישי"};
+  const CAT_UNIT = isEn ? {gemara:"dapim",mishna:"mishnayot",tanach:"chapters",musar:"chapters",ravKook:"chapters",machshava:"chapters",custom:"chapters"} : {gemara:"דפים",mishna:"משניות",tanach:"פרקים",musar:"פרקים",ravKook:"פרקים",machshava:"פרקים",custom:"פרקים"};
+  const CAT_UNIT_SING = isEn ? {gemara:"daf",mishna:"mishna",tanach:"chapter",musar:"chapter",ravKook:"chapter",machshava:"chapter",custom:"chapter"} : {gemara:"דף",mishna:"משנה",tanach:"פרק",musar:"פרק",ravKook:"פרק",machshava:"פרק",custom:"פרק"};
   
   const UI = isEn ? {
     home: "Home", library: "Library", goals: "Goals", stats: "Stats", settings: "Settings",
@@ -261,7 +259,7 @@ function mkT(dark,sz,lang) {
     signOut: "התנתקות", support: "תמיכה", contactDev: "צור קשר עם המפתח", sendEmail: "שלח מייל",
     login: "כניסה", register: "יצירת חשבון", email: "אימייל", password: "סיסמה", name: "שם מלא",
     continueWith: "המשך עם", or: "או", newAccount: "פתח חשבון חדש",
-    onTrack: "במסלול ✓", behind: "מאחור", perDay: "נדרש ליום", currPace: "יעד נוכחי", fullTractates: "ספרים שלמים",
+    onTrack: "במסלול ✓", behind: "מאחור", perDay: "לכל יום", currPace: "יעד נוכחי", fullTractates: "ספרים שלמים",
     dedicateDesc: "הקדש את לימודך להצלחת, רפואת או לעילוי נשמת יקיריך. שים לב: ההקדשות יוצגו באפליקציה באופן פומבי לכלל הלומדים.", submitDedication: "שלח בקשת הקדשה",
     readOnSefaria: "המשך מהמקום שעצרת", loadingSefaria: "טוען טקסט מספריא...", baseText: "טקסט מקור", rashi: "רש״י", steinsaltz: "ביאור שטיינזלץ", bartenura: "ברטנורא",
     noResults: "לא נמצאו תוצאות", results: "תוצאות", selectBook: "בחר ספר...", developedBy: "פותח ע״י איתן שחור. כל הזכויות שמורות.",
@@ -273,7 +271,7 @@ function mkT(dark,sz,lang) {
   const base=dark
     ?{bg:"#0D1B2E",card:"#152438",navy:"#D0E4FF",gold:"#E8C060",muted:"#8A9BB0",border:"rgba(200,220,255,0.10)",input:"#1E3050",shadow:"0 2px 16px rgba(0,0,0,0.5)",primary:"#4A7FC0",red:"#FCA5A5"}
     :{bg:"#FAF7EE",card:"#FFFFFF",navy:NAVY,gold:GOLD,muted:"#6B7280",border:"rgba(26,58,107,0.10)",input:"#F3EED8",shadow:"0 2px 14px rgba(26,58,107,0.09)",primary:NAVY,red:"#B91C1C"};
-  return {...base,f,dark,isEn,CAT_L,CAT_UNIT,UI,font:"'Heebo',system-ui,sans-serif"};
+  return {...base,f,dark,isEn,CAT_L,CAT_UNIT,CAT_UNIT_SING,UI,font:"'Heebo',system-ui,sans-serif"};
 }
 
 /* ── UI PRIMITIVES ── */
@@ -333,16 +331,17 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
     setLoading(true); setError(null); setTextArr([]);
     const refToFetch = commMode ? `${commMode}${sefariaRef}` : sefariaRef;
 
-    fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(refToFetch)}?context=0`)
+    fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(refToFetch)}?context=0&pad=0`)
       .then(r => r.json())
       .then(data => {
         if (data.error) setError(data.error);
         else {
+          // מנגנון רקורסיבי חכם ששואב את כל הפירושים ללא תלות בעומק
           const flattenText = (val) => {
             if (!val) return [];
             if (typeof val === 'string') return [val];
             if (Array.isArray(val)) return val.reduce((acc, curr) => acc.concat(flattenText(curr)), []);
-            if (typeof val === 'object') return flattenText(Object.values(val));
+            if (typeof val === 'object' && val !== null) return flattenText(Object.values(val));
             return [];
           };
           setTextArr(flattenText(data.he || data.text || []));
@@ -519,6 +518,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 
   const nextUnlearned = useMemo(() => { try { return items.find(it => !isOn(it.key)); } catch(e){ return null; } }, [items, prog, isOn]);
   const nextSefariaRef = nextUnlearned ? getSefariaRefString(cat, item?.n, nextUnlearned.key, tMode, isC, idx) : null;
+  const sefariaRefForNote = noteSheet ? getSefariaRefString(cat, item?.n, noteSheet.key, tMode, isC, idx) : null;
 
   function openNote(key,label){const k=`${isC?'c'+origIdx:cat+':'+idx}:${key}`;setEditNote(prog.notes?.[k]||"");setEditChz(prog.chazara?.[k]||0);setNoteSheet({key,label});}
   function saveNote(){const k=`${isC?'c'+origIdx:cat+':'+idx}:${noteSheet.key}`;setProg(prev=>({...prev,notes:{...prev.notes,[k]:editNote},chazara:{...prev.chazara,[k]:editChz}}));setNoteSheet(null);}
@@ -594,6 +594,12 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       </div>
 
       <Sheet show={!!noteSheet} onClose={()=>setNoteSheet(null)} title={`${noteSheet?.label||""}`} T={T}>
+        {sefariaRefForNote && !isC && (
+          <button onClick={() => { setReaderRef(sefariaRefForNote); setReaderTitle(`${item.n} ${noteSheet.label}`); setNoteSheet(null); }} style={{display:"flex", alignItems:"center", justifyContent:"center", gap:8, padding:"12px", background:col, color:"#fff", border:"none", borderRadius:10, textDecoration:"none", fontWeight:700, marginBottom:16, fontFamily:T.font, width:"100%", cursor:"pointer"}}>
+            <IcoBook /> פתח קטע זה
+          </button>
+        )}
+
         <FL label={T.UI.notes} T={T}><FTA aria-label="Notes input" T={T} value={editNote} onChange={e=>setEditNote(e.target.value)}/></FL>
         <FL label={T.UI.repetitions} T={T}>
           <div style={{display:"flex",alignItems:"center",gap:16,marginTop:4}}>
@@ -611,7 +617,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 }
 
 /* ── HOME ── */
-function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
+function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
   const today=useMemo(()=>hebDateFull(),[]);
   const[now,setNow]=useState(new Date());
   useEffect(()=>{const id=setInterval(()=>setNow(new Date()),30000);return()=>clearInterval(id);},[]);
@@ -662,7 +668,6 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
     {cat:"musar",l:T.CAT_L.musar,v:S.musar,tot:MUSAR.reduce((s,t)=>s+t.p,0)+RAV_KOOK.reduce((s,t)=>s+t.p,0)+MACHSHAVA.reduce((s,t)=>s+t.p,0),unit:T.CAT_UNIT.musar},
   ];
   const empty=S.dapim===0&&S.mishna===0&&S.tanach===0&&S.musar===0;
-
   function fmtTime(iso){if(!iso)return"";try{return new Date(iso).toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});}catch{return "";}}
 
   function goToDafYomi() {
@@ -711,6 +716,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,streak,activity}){
       </div>
       <div style={{padding:"14px 16px 80px"}}>
 
+        {/* Dedication Banner */}
         <div style={{background:T.card,borderRadius:14,padding:"16px",marginBottom:16,border:`1.5px solid ${GOLD}`,boxShadow:T.shadow}}>
           <div style={{display:"flex",alignItems:"center",gap:8,color:GOLD,marginBottom:8}}><IcoHeart/><div style={{fontWeight:800,fontSize:T.f(14)}}>{T.UI.dedicate}</div></div>
           <div style={{fontSize:T.f(12),color:T.muted,lineHeight:1.6,marginBottom:12}}>{T.UI.dedicateDesc}</div>
@@ -864,7 +870,7 @@ function LibraryScreen({prog,T,cc,cl,setProg,setDetail,libCat,setLibCat}){
 }
 
 /* ── GOALS ── */
-function GoalRow({g,prog,T,cc,onDelete,custom}){
+function GoalRow({g,prog,T,cc,onEdit,onDelete,custom}){
   const isO=g.cat==="other",list=isO?[]:getBkList(g.cat,custom);
   const item=list.find(l=>l.idKey===(g.isC?'c'+g.origIdx:'s'+g.idx));
   const nm=isO?g.otherName:(item?.n||"");if(!nm)return null;
@@ -877,9 +883,10 @@ function GoalRow({g,prog,T,cc,onDelete,custom}){
   const remainingItems = g.target - cur;
   let paceStr = "-";
   let paceLabel = T.UI.perDay;
+  const u = isO ? "" : (T.isEn ? "items" : T.CAT_UNIT_SING[g.cat]);
   if (!isO && rem > 0 && remainingItems > 0) {
-      if (remainingItems >= rem) { paceStr = String(Math.ceil(remainingItems / rem)); } 
-      else { const daysPerItem = Math.floor(rem / remainingItems); paceStr = "1"; paceLabel = `בכל ${daysPerItem} ימים`; }
+      if (remainingItems >= rem) { paceStr = String(Math.ceil(remainingItems / rem)) + " " + u; } 
+      else { const daysPerItem = Math.floor(rem / remainingItems); paceStr = "1 " + u; paceLabel = `בכל ${daysPerItem} ימים`; }
   }
   const onTrack=isO||p>=exp, col=cc[g.cat]||T.primary, hd=hebStr(g.deadline);
   
@@ -898,7 +905,10 @@ function GoalRow({g,prog,T,cc,onDelete,custom}){
       </div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:T.f(12),color:T.muted}}>
         <div><div>{new Date(g.deadline).toLocaleDateString("he-IL")}</div>{hd&&<div style={{color:col,fontWeight:700,marginTop:2}}>{hd}</div>}</div>
-        <button aria-label="Delete goal" onClick={onDelete} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(13),fontFamily:T.font}}>{T.UI.del}</button>
+        <div style={{display:"flex", gap:14}}>
+          <button aria-label="Edit goal" onClick={onEdit} style={{background:"none",border:"none",cursor:"pointer",color:T.muted,fontSize:T.f(13),fontFamily:T.font, display:"flex", alignItems:"center"}}><IcoEdit/></button>
+          <button aria-label="Delete goal" onClick={onDelete} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(13),fontFamily:T.font}}>{T.UI.del}</button>
+        </div>
       </div>
     </div>
   );
@@ -906,6 +916,7 @@ function GoalRow({g,prog,T,cc,onDelete,custom}){
 
 function GoalsScreen({goals,setGoals,prog,T,cc}){
   const[showSheet,setShowSheet]=useState(false);
+  const[editingGoalId, setEditingGoalId]=useState(null);
   const[cat,setCat]=useState("gemara");
   const[bookIdKey,setBookIdKey]=useState("");
   const[target,setTarget]=useState("");
@@ -916,14 +927,22 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
   const selectedItem = bkList.find(b => String(b.idKey) === bookIdKey);
   const maxTot=cat==="other"?0:(selectedItem ? (selectedItem.isC ? prog.custom[selectedItem.origIdx].chapters : bkTotal(cat,selectedItem.i,prog.custom)) : 0);
 
+  function openNew(){
+    setEditingGoalId(null); setCat("gemara"); setBookIdKey(""); setTarget(""); setDeadline(""); setOtherName(""); setShowSheet(true);
+  }
+
+  function editGoal(g){
+    setEditingGoalId(g.id); setCat(g.cat); setBookIdKey(g.isC ? 'c'+g.origIdx : 's'+g.idx); setTarget(g.target); setDeadline(g.deadline); setOtherName(g.otherName||""); setShowSheet(true);
+  }
+
   function save(){
     if(!deadline)return;
     if(cat==="other"&&!otherName)return;
-    setGoals(prev=>[...prev,{
-        id:Date.now(), cat, idx: selectedItem ? selectedItem.i : 0, 
-        isC: selectedItem ? selectedItem.isC : false, origIdx: selectedItem ? selectedItem.origIdx : 0, 
-        target:target?parseInt(target):maxTot, deadline, startDate:todayKey(), otherName
-    }]);
+    if(editingGoalId) {
+       setGoals(prev => prev.map(x => x.id === editingGoalId ? {...x, cat, idx: selectedItem ? selectedItem.i : 0, isC: selectedItem ? selectedItem.isC : false, origIdx: selectedItem ? selectedItem.origIdx : 0, target:target?parseInt(target):maxTot, deadline, otherName} : x));
+    } else {
+       setGoals(prev=>[...prev,{id:Date.now(), cat, idx: selectedItem ? selectedItem.i : 0, isC: selectedItem ? selectedItem.isC : false, origIdx: selectedItem ? selectedItem.origIdx : 0, target:target?parseInt(target):maxTot, deadline, startDate:todayKey(), otherName}]);
+    }
     setShowSheet(false);
   }
 
@@ -931,20 +950,20 @@ function GoalsScreen({goals,setGoals,prog,T,cc}){
     <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
         <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div>
-        <button onClick={()=>setShowSheet(true)} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button>
+        <button onClick={openNew} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button>
       </div>
       {goals.length===0&&(
         <div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}>
           <div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div>
           <div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div>
           <div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.setGoal}</div>
-          <button onClick={()=>setShowSheet(true)} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button>
+          <button onClick={openNew} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button>
         </div>
       )}
       <div>
-        {goals.map(g=><GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onDelete={()=>setGoals(prev=>prev.filter(x=>x.id!==g.id))} custom={prog.custom}/>)}
+        {goals.map(g=><GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>editGoal(g)} onDelete={()=>setGoals(prev=>prev.filter(x=>x.id!==g.id))} custom={prog.custom}/>)}
       </div>
-      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={T.UI.newGoal} T={T}>
+      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingGoalId ? (T.isEn?"Edit Goal":"עריכת יעד") : T.UI.newGoal} T={T}>
         <FL label={T.UI.topic} T={T}>
           <FS aria-label="Select Category" T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>
             {CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}
@@ -1014,11 +1033,51 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
         </div>
       </div>
       <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}>
-        <div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span><span style={{color:T.gold||GOLD}}>ב</span>א</div>
+        <div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div>
         <div style={{direction: "ltr"}}>v 1.0</div>
         <div>© {new Date().getFullYear()} {T.UI.developedBy}</div>
       </div>
       <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
+    </div>
+  );
+}
+
+/* ── INSTALL GUIDE COMPONENT ── */
+function InstallGuide({ T, onClose }) {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  const isAndroid = /android/i.test(navigator.userAgent);
+
+  return (
+    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", display:"flex", alignItems:"flex-end", zIndex:9999}}>
+      <div style={{background:T.card, width:"100%", padding:"24px 20px 40px", borderRadius:"24px 24px 0 0", boxSizing:"border-box", textAlign:"center", animation:"slideUp 0.3s ease-out"}}>
+        <div style={{width:40, height:5, background:T.border, borderRadius:10, margin:"0 auto 20px"}}/>
+        <div style={{display:"flex", justifyContent:"center", color:T.gold||GOLD, marginBottom:16}}><IcoStar /></div>
+        <h2 style={{margin:"0 0 12px 0", fontSize:T.f(20), color:T.navy}}>{T.UI.installApp}</h2>
+        <p style={{margin:"0 0 24px 0", fontSize:T.f(14), color:T.muted, lineHeight:1.5}}>
+          הוסף את אליבא למסך הבית שלך לחוויה מהירה וחלקה יותר, בדיוק כמו אפליקציה רגילה.
+        </p>
+        
+        <div style={{background:T.input, padding:"16px", borderRadius:12, marginBottom:24, textAlign:T.isEn?"left":"right"}}>
+          {isIOS ? (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. בתחתית המסך, לחץ על סמל השיתוף ⍐</div>
+              <div>2. גלול למטה ובחר <strong>"הוסף למסך הבית"</strong> ➕</div>
+            </div>
+          ) : isAndroid ? (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. למעלה בדפדפן, לחץ על תפריט הנקודות ⋮</div>
+              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
+            </div>
+          ) : (
+            <div style={{fontSize:T.f(14), color:T.navy}}>
+              <div style={{marginBottom:12}}>1. לחץ על תפריט הדפדפן ⋮</div>
+              <div>2. בחר <strong>"התקן אפליקציה"</strong> או <strong>"הוסף למסך הבית"</strong></div>
+            </div>
+          )}
+        </div>
+        <button onClick={onClose} style={{background:T.primary, color:"white", border:"none", padding:"14px", width:"100%", borderRadius:12, fontSize:T.f(15), fontWeight:700, cursor:"pointer"}}>הבנתי, תודה</button>
+      </div>
+      <style>{`@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }`}</style>
     </div>
   );
 }
@@ -1047,7 +1106,7 @@ function AuthScreen({onLogin,T}){
     <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,gap:20,background:T.bg}}>
       <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}><LogoAliba T={T} size={54}/></div>
       <div style={{textAlign:"center", marginBottom:20}}>
-        <div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span><span style={{color:T.gold||GOLD}}>ב</span>א</div>
+        <div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div>
         <div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>{T.UI.slogan}</div>
       </div>
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
@@ -1211,6 +1270,7 @@ export default function App(){
           </button>
         ))}
       </div>
+      {showInstallPrompt && <InstallGuide T={T} onClose={() => {localStorage.setItem('hideInstallGuide', '1'); setShowInstallPrompt(false);}} />}
     </div>
   );
 }
