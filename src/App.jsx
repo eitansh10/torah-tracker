@@ -82,6 +82,14 @@ const PARASHA_CHAPTERS = {"בראשית":[1,2,3,4,5,6],"נח":[6,7,8,9,10,11],"�
 const PARSHIOT = [["בראשית","נח","לך לך","וירא","חיי שרה","תולדות","ויצא","וישלח","וישב","מקץ","ויגש","ויחי"],["שמות","וארא","בא","בשלח","יתרו","משפטים","תרומה","תצוה","כי תשא","ויקהל","פקודי"],["ויקרא","צו","שמיני","תזריע","מצורע","אחרי מות","קדושים","אמור","בהר","בחוקותי"],["במדבר","נשא","בהעלותך","שלח","קרח","חקת","בלק","פינחס","מטות","מסעי"],["דברים","ואתחנן","עקב","ראה","שופטים","כי תצא","כי תבוא","נצבים","וילך","האזינו","וזאת הברכה"]];
 const PARASHA_VERSES = {"בראשית":146,"נח":153,"לך לך":126,"וירא":147,"חיי שרה":105,"תולדות":106,"ויצא":148,"וישלח":154,"וישב":112,"מקץ":146,"ויגש":106,"ויחי":85,"שמות":124,"וארא":121,"בא":105,"בשלח":116,"יתרו":72,"משפטים":118,"תרומה":96,"תצוה":101,"כי תשא":139,"ויקהל":122,"פקודי":92,"ויקרא":111,"צו":97,"שמיני":91,"תזריע":67,"מצורע":90,"אחרי מות":80,"קדושים":64,"אמור":106,"בהר":57,"בחוקותי":78,"במדבר":159,"נשא":176,"בהעלותך":136,"שלח":119,"קרח":95,"חקת":87,"בלק":104,"פינחס":168,"מטות":112,"מסעי":132,"דברים":105,"ואתחנן":122,"עקב":111,"ראה":126,"שופטים":97,"כי תצא":110,"כי תבוא":122,"נצבים":40,"וילך":30,"האזינו":52,"וזאת הברכה":41};
 
+const PARASHA_MAP = {
+  "בראשית": "Parashat_Bereshit", "נח": "Parashat_Noach", "לך לך": "Parashat_Lekh_Lekha", "וירא": "Parashat_Vayera", "חיי שרה": "Parashat_Chayei_Sara", "תולדות": "Parashat_Toldot", "ויצא": "Parashat_Vayetzei", "וישלח": "Parashat_Vayishlach", "וישב": "Parashat_Vayeshev", "מקץ": "Parashat_Miketz", "ויגש": "Parashat_Vayigash", "ויחי": "Parashat_Vayechi",
+  "שמות": "Parashat_Shemot", "וארא": "Parashat_Vaera", "בא": "Parashat_Bo", "בשלח": "Parashat_Beshalach", "יתרו": "Parashat_Yitro", "משפטים": "Parashat_Mishpatim", "תרומה": "Parashat_Terumah", "תצוה": "Parashat_Tetzaveh", "כי תשא": "Parashat_Ki_Tisa", "ויקהל": "Parashat_Vayakhel", "פקודי": "Parashat_Pekudei",
+  "ויקרא": "Parashat_Vayikra", "צו": "Parashat_Tzav", "שמיני": "Parashat_Shemini", "תזריע": "Parashat_Tazria", "מצורע": "Parashat_Metzora", "אחרי מות": "Parashat_Achrei_Mot", "קדושים": "Parashat_Kedoshim", "אמור": "Parashat_Emor", "בהר": "Parashat_Behar", "בחוקותי": "Parashat_Bechukotai",
+  "במדבר": "Parashat_Bamidbar", "נשא": "Parashat_Naso", "בהעלותך": "Parashat_Behaalotekha", "שלח": "Parashat_Shelach", "קרח": "Parashat_Korach", "חקת": "Parashat_Chukat", "בלק": "Parashat_Balak", "פינחס": "Parashat_Pinchas", "מטות": "Parashat_Matot", "מסעי": "Parashat_Masei",
+  "דברים": "Parashat_Devarim", "ואתחנן": "Parashat_Vaetchanan", "עקב": "Parashat_Eikev", "ראה": "Parashat_Re'eh", "שופטים": "Parashat_Shoftim", "כי תצא": "Parashat_Ki_Teitzei", "כי תבוא": "Parashat_Ki_Tavo", "נצבים": "Parashat_Nitzavim", "וילך": "Parashat_Vayeilekh", "האזינו": "Parashat_Ha'Azinu", "וזאת הברכה": "Parashat_V'Zot_HaBerakhah"
+};
+
 const MUSAR = [
   { n: "מסילת ישרים", a: 'רמח"ל', struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Mesilat_Yesharim,_Introduction"}] }, { t: "פרקים", p: 26, refBase: "Mesilat_Yesharim" }] },
   { n: "חובת הלבבות", a: "רבינו בחיי", struct: [{ t: "הקדמות", items: [{k:"intro", l:"הקדמה", ref:"Duties_of_the_Heart,_Introduction"}]}, { t: "שער היחוד", p: 10, refBase: "Duties_of_the_Heart,_First_Treatise_on_Unity" }, { t: "שער הבחינה", p: 6, refBase: "Duties_of_the_Heart,_Second_Treatise_on_Examination" }, { t: "שער עבודת האלקים", p: 10, refBase: "Duties_of_the_Heart,_Third_Treatise_on_Service_of_God" }, { t: "שער הבטחון", p: 7, refBase: "Duties_of_the_Heart,_Fourth_Treatise_on_Trust_in_God" }, { t: "שער יחוד המעשה", p: 5, refBase: "Duties_of_the_Heart,_Fifth_Treatise_on_Devotion" }, { t: "שער הכניעה", p: 10, refBase: "Duties_of_the_Heart,_Sixth_Treatise_on_Humility" }, { t: "שער התשובה", p: 10, refBase: "Duties_of_the_Heart,_Seventh_Treatise_on_Repentance" }, { t: "שער חשבון הנפש", p: 6, refBase: "Duties_of_the_Heart,_Eighth_Treatise_on_Self-Accounting" }, { t: "שער הפרישות", p: 7, refBase: "Duties_of_the_Heart,_Ninth_Treatise_on_Abstinence" }, { t: "שער אהבת ה'", p: 7, refBase: "Duties_of_the_Heart,_Tenth_Treatise_on_Love_of_God" }] },
@@ -107,7 +115,7 @@ const MACHSHAVA = [
   { n: "נצח ישראל", a: 'מהר"ל', struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Netzach_Yisrael,_Introduction"}] }, { t: "פרקים", p: 60, refBase: "Netzach_Yisrael" }] },
   { n: "נתיבות עולם", a: 'מהר"ל', struct: [{ t: "נתיב התורה", p: 19, refBase: "Netivot_Olam,_Netiv_Hatorah" }, { t: "נתיב העבודה", p: 19, refBase: "Netivot_Olam,_Netiv_HaAvodah" }] },
   { n: "גבורות ה׳", a: 'מהר"ל', struct: [{ t: "הקדמות", items: [{k:"intro1", l:"הקדמה", ref:"Gevurot_Hashem,_First_Introduction"}] }, { t: "פרקים", p: 72, refBase: "Gevurot_Hashem" }] },
-  { n: "באר הגולה", a: 'מהר"ל', struct: [{ t: "בארות", p: 7, refBase: "Be'er_HaGolah,_Well" }] }
+  { n: "באר הגולה", a: 'מהר"ל', struct: [{ t: "בארות", items: [{k:"1", l:"באר א'", ref:"Be'er_HaGolah,_Well_1"}, {k:"2", l:"באר ב'", ref:"Be'er_HaGolah,_Well_2"}, {k:"3", l:"באר ג'", ref:"Be'er_HaGolah,_Well_3"}, {k:"4", l:"באר ד'", ref:"Be'er_HaGolah,_Well_4"}, {k:"5", l:"באר ה'", ref:"Be'er_HaGolah,_Well_5"}, {k:"6", l:"באר ו'", ref:"Be'er_HaGolah,_Well_6"}, {k:"7", l:"באר ז'", ref:"Be'er_HaGolah,_Well_7"}] }] }
 ];
 
 const RAV_KOOK = [
@@ -116,7 +124,7 @@ const RAV_KOOK = [
   { n: "אורות התחיה", g: "אורות", struct: [{ t: "אורות התחיה", p: 72, refBase: "Orot,_Lights_from_Darkness,_Lights_of_Rebirth" }] },
   { n: "אורות ישראל", g: "אורות", struct: [{ t: "פרק א'", p: 16, refBase: "Orot,_Orot_Yisrael.1" }, { t: "פרק ב'", p: 8, refBase: "Orot,_Orot_Yisrael.2" }, { t: "פרק ג'", p: 11, refBase: "Orot,_Orot_Yisrael.3" }, { t: "פרק ד'", p: 10, refBase: "Orot,_Orot_Yisrael.4" }, { t: "פרק ה'", p: 16, refBase: "Orot,_Orot_Yisrael.5" }, { t: "פרק ו'", p: 9, refBase: "Orot,_Orot_Yisrael.6" }, { t: "פרק ז'", p: 19, refBase: "Orot,_Orot_Yisrael.7" }, { t: "פרק ח'", p: 9, refBase: "Orot,_Orot_Yisrael.8" }, { t: "פרק ט'", p: 9, refBase: "Orot,_Orot_Yisrael.9" }] },
   { n: "אורות הקודש", g: "אורות הקודש", struct: [{ t: "חלק א'", p: 137, refBase: "Orot_HaKodesh_I" }, { t: "חלק ב'", p: 602, refBase: "Orot_HaKodesh_II" }, { t: "חלק ג'", p: 358, refBase: "Orot_HaKodesh_III" }] }, 
-  { n: "מוסר אביך", g: "שונות", struct: [{ t: "פרקים", items: [{k:"intro", l:"הקדמה", ref:"Musar_Avikha,_Introduction"}], p: 6, refBase: "Musar_Avikha.1" }] },
+  { n: "מוסר אביך", g: "שונות", struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Musar_Avikha,_Introduction"}]}, { t: "פרקים", p: 6, refBase: "Musar_Avikha" }] },
   { n: "שמונה קבצים", g: "שמונה קבצים", struct: [
     { t: "קובץ א'", p: 874, refBase: "Shemonah_Kevatzim.1" }, { t: "קובץ ב'", p: 337, refBase: "Shemonah_Kevatzim.2" }, { t: "קובץ ג'", p: 385, refBase: "Shemonah_Kevatzim.3" }, { t: "קובץ ד'", p: 121, refBase: "Shemonah_Kevatzim.4" }, { t: "קובץ ה'", p: 288, refBase: "Shemonah_Kevatzim.5" }, { t: "קובץ ו'", p: 289, refBase: "Shemonah_Kevatzim.6" }, { t: "קובץ ז'", p: 228, refBase: "Shemonah_Kevatzim.7" }, { t: "קובץ ח'", p: 275, refBase: "Shemonah_Kevatzim.8" }
   ]}
@@ -264,9 +272,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     
     if(cat === "tanach") {
       if(tMode === "parshiot") {
-          const chapters = PARASHA_CHAPTERS[k];
-          if (chapters && chapters.length > 0) return `${eng}.${chapters[0]}`;
-          return `${eng}.1`;
+          return PARASHA_MAP[k] || `${eng}.${k}`;
       }
       return `${eng}.${k}`;
     }
@@ -366,7 +372,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
   const [retryCount, setRetryCount] = useState(0);
   const [baseRef, setBaseRef] = useState("");
   
-  // States for in-app commentaries
   const [activeSegment, setActiveSegment] = useState(null);
   const [commData, setCommData] = useState([]);
   const [commLoading, setCommLoading] = useState(false);
@@ -387,7 +392,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
          return r.json();
       })
       .then(data => {
-        setBaseRef(data.ref); // Save the exact resolved base ref from Sefaria
+        setBaseRef(data.ref);
         
         const parseStructure = (heNode, enNode, prefix = "") => {
            let result = [];
@@ -406,7 +411,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
                  }
               }
            } else if (typeof heNode === 'string' || typeof enNode === 'string') {
-              result.push({ num: prefix || "1", he: heNode, en: enNode, idx: 1, fullIdx: "1" });
+              result.push({ num: prefix || "1", he: heNode, en: enNode, idx: 1, fullIdx: prefix || "1" });
            }
            return result;
         };
@@ -433,7 +438,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
       setActiveSegment(item.fullIdx);
       setCommLoading(true);
       try {
-          // Construct the exact line ref. Usually data.ref + ":" + idx works perfectly in Sefaria.
           const specificRef = `${baseRef.replace(/ /g, '_')}.${item.fullIdx}`;
           const r = await fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(specificRef)}?commentary=1&context=0`);
           const d = await r.json();
@@ -449,7 +453,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
     <Sheet show={show} onClose={()=>{onClose(); setRetryCount(0); setActiveSegment(null);}} title={title} T={T}>
       <div style={{minHeight: 200, maxHeight: '75vh', overflowY: 'auto', paddingRight: 8, direction: 'rtl'}}>
          
-         <div style={{display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center', justifyContent: 'space-between'}}>
+         <div style={{display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center', justifyContent: 'flex-start'}}>
             <div style={{display: 'flex', background: T.input, borderRadius: 8, overflow: 'hidden', border: `1px solid ${T.border}`}}>
                <button onClick={()=>setZoom(z => Math.max(14, z - 2))} style={{padding: '8px 14px', background: 'transparent', border: 'none', color: T.navy, cursor: 'pointer', fontSize: 18, fontWeight: 700}}>-</button>
                <div style={{width: 1, background: T.border}}></div>
@@ -511,10 +515,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
                )}
             </div>
          )})}
-         
-         {!loading && !error && content.length > 0 && (
-            <div style={{marginTop: 30, paddingTop: 14, borderTop: `1px solid ${T.border}`, fontSize: T.f(12), color: T.muted, textAlign: 'center'}}>טקסט ומפרשים באדיבות <a href={`https://www.sefaria.org.il/${sefariaRef}`} target="_blank" rel="noreferrer" style={{color: T.primary, fontWeight:700, textDecoration:'none'}}>Sefaria.org</a></div>
-         )}
       </div>
     </Sheet>
   );
@@ -599,7 +599,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
           });
       } else {
          const p = bk.p || 0;
-         if (bk.n === "מוסר אביך" || bk.n === "אמונות ודעות") arr.push({key:"הקדמה",label:"הקדמה"});
+         if (bk.n === "אמונות ודעות") arr.push({key:"הקדמה",label:"הקדמה"});
          for(let i=1;i<=p;i++) arr.push({key:i,label:toHeb(i)});
       }
     }
