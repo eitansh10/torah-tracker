@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
 /* ── FIREBASE CONFIGURATION ── */
 const firebaseConfig = {
@@ -14,6 +15,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -119,10 +121,15 @@ const MACHSHAVA = [
 ];
 
 const RAV_KOOK = [
-  { n: "אורות ארץ ישראל", g: "אורות", struct: [{ t: "אורות ארץ ישראל", p: 8, refBase: "Orot,_Lights_from_Darkness,_Land_of_Israel" }] },
-  { n: "אורות המלחמה", g: "אורות", struct: [{ t: "אורות המלחמה", p: 10, refBase: "Orot,_Lights_from_Darkness,_War" }] },
-  { n: "אורות התחיה", g: "אורות", struct: [{ t: "אורות התחיה", p: 72, refBase: "Orot,_Lights_from_Darkness,_Lights_of_Rebirth" }] },
-  { n: "אורות ישראל", g: "אורות", struct: [{ t: "פרק א'", p: 16, refBase: "Orot,_Orot_Yisrael.1" }, { t: "פרק ב'", p: 8, refBase: "Orot,_Orot_Yisrael.2" }, { t: "פרק ג'", p: 11, refBase: "Orot,_Orot_Yisrael.3" }, { t: "פרק ד'", p: 10, refBase: "Orot,_Orot_Yisrael.4" }, { t: "פרק ה'", p: 16, refBase: "Orot,_Orot_Yisrael.5" }, { t: "פרק ו'", p: 9, refBase: "Orot,_Orot_Yisrael.6" }, { t: "פרק ז'", p: 19, refBase: "Orot,_Orot_Yisrael.7" }, { t: "פרק ח'", p: 9, refBase: "Orot,_Orot_Yisrael.8" }, { t: "פרק ט'", p: 9, refBase: "Orot,_Orot_Yisrael.9" }] },
+  { n: "אורות", a: 'הראי"ה קוק', struct: [
+      { t: "אורות מאופל - ארץ ישראל", p: 8, refBase: "Orot,_Lights_from_Darkness,_Land_of_Israel" },
+      { t: "אורות מאופל - המלחמה", p: 10, refBase: "Orot,_Lights_from_Darkness,_War" },
+      { t: "אורות מאופל - ישראל ותחיתו", p: 32, refBase: "Orot,_Lights_from_Darkness,_Israel_and_its_Rebirth" },
+      { t: "אורות מאופל - אורות התחיה", p: 72, refBase: "Orot,_Lights_from_Darkness,_Lights_of_Rebirth" },
+      { t: "למהלך האידיאות בישראל", p: 6, refBase: "Orot,_The_Course_of_Ideals_in_Israel" },
+      { t: "זרעונים", p: 8, refBase: "Orot,_Seeds" },
+      { t: "אורות ישראל", p: 9, refBase: "Orot,_Orot_Yisrael" }
+  ] },
   { n: "אורות הקודש", g: "אורות הקודש", struct: [{ t: "חלק א'", p: 137, refBase: "Orot_HaKodesh_I" }, { t: "חלק ב'", p: 602, refBase: "Orot_HaKodesh_II" }, { t: "חלק ג'", p: 358, refBase: "Orot_HaKodesh_III" }] }, 
   { n: "מוסר אביך", g: "שונות", struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Musar_Avikha,_Introduction"}]}, { t: "פרקים", p: 6, refBase: "Musar_Avikha" }] },
   { n: "שמונה קבצים", g: "שמונה קבצים", struct: [
@@ -196,10 +203,13 @@ function perekMsKeys(masIdx, p) {
   return Array.from({length:cnt}, (_,i) => `${p}:${i+1}`);
 }
 
-function bkTotal(cat, i, custom) {
+function bkTotal(prog, cat, i, custom) {
   if(cat==="gemara") return GEMARA[i]?.d||0;
   if(cat==="mishna") return totalMs(i);
-  if(cat==="tanach") return TANACH[i]?.c||0;
+  if (cat === "tanach") {
+      const tMode = prog?.tmode?.[i] || "perakim";
+      return tMode === "parshiot" && i < 5 ? PARSHIOT[i].length : TANACH[i]?.c || 0;
+  }
   
   const src = {musar:MUSAR, ravKook:RAV_KOOK, machshava:MACHSHAVA}[cat];
   const bk = (src||[])[i];
@@ -213,7 +223,13 @@ function calcDone(prog, cat, i) {
   if (cat === "gemara") return Math.round((prog.gemara?.[i]?.done?.size || 0) / 2);
   if (cat === "mishna") return prog.mishna?.[i]?.done?.size || 0;
   if (cat === "custom") return prog.custom?.[i]?.done?.size || 0;
-  if (cat === "tanach") return prog.tanach?.[i]?.size || 0;
+  if (cat === "tanach") {
+     const tMode = prog?.tmode?.[i] || "perakim";
+     if (tMode === "parshiot" && i < 5) {
+         return prog.tanach_parshiot?.[i]?.size || 0;
+     }
+     return prog.tanach?.[i]?.size || 0;
+  }
   return prog[cat]?.[i]?.size || 0;
 }
 
@@ -284,11 +300,12 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
 /* ── STORAGE (SAFE METHODS) ── */
 function serProg(prog) {
   const p = prog || IP;
-  const o={gemara:{},mishna:{},tanach:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
+  const o={gemara:{},mishna:{},tanach:{},tanach_parshiot:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
   const sArr = (s) => Array.isArray(s) ? s : (s instanceof Set ? [...s] : []);
   for(const[k,v] of Object.entries(p.gemara||{})) o.gemara[k]={done:sArr(v?.done)};
   for(const[k,v] of Object.entries(p.mishna||{})) o.mishna[k]={done:sArr(v?.done)};
   for(const[k,v] of Object.entries(p.tanach||{})) o.tanach[k]=sArr(v);
+  for(const[k,v] of Object.entries(p.tanach_parshiot||{})) o.tanach_parshiot[k]=sArr(v);
   o.tmode={...(p.tmode||{})};
   for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(p[c]||{})) o[c][k]=sArr(v);
   o.custom=(Array.isArray(p.custom)?p.custom:[]).map(b=>({...b,done:sArr(b?.done)}));
@@ -298,11 +315,12 @@ function serProg(prog) {
 
 function desProg(data) {
   if(!data) return IP;
-  const o={gemara:{},mishna:{},tanach:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
+  const o={gemara:{},mishna:{},tanach:{},tanach_parshiot:{},tmode:{},musar:{},ravKook:{},machshava:{},custom:[],notes:{},chazara:{}};
   const toSet = (arr) => new Set(Array.isArray(arr) ? arr : []);
   for(const[k,v] of Object.entries(data.gemara||{})) o.gemara[k]={done:toSet(v?.done)};
   for(const[k,v] of Object.entries(data.mishna||{})) o.mishna[k]={done:toSet(v?.done)};
   for(const[k,v] of Object.entries(data.tanach||{})) o.tanach[k]=toSet(v);
+  for(const[k,v] of Object.entries(data.tanach_parshiot||{})) o.tanach_parshiot[k]=toSet(v);
   o.tmode={...(data.tmode||{})};
   for(const c of["musar","ravKook","machshava"]) for(const[k,v] of Object.entries(data[c]||{})) o[c][k]=toSet(v);
   o.custom=Array.isArray(data.custom) ? data.custom.map(b=>({...b,done:toSet(b?.done)})) : [];
@@ -353,11 +371,144 @@ function LegalSheet({show, onClose, type, T}) {
     <Sheet show={show} onClose={onClose} title={type === 'terms' ? T.UI.terms : T.UI.privacy} T={T}>
       <div style={{fontSize:T.f(13), color:T.muted, lineHeight:1.6, textAlign:"start"}}>
         {type === 'terms' ? (
-          <><p>ברוכים הבאים לאפליקציית אליבא.</p><p>השימוש באפליקציה זו מותנה בהסכמתך לתנאים הבאים. האפליקציה נועדה לסייע למשתמשים לעקוב אחר התקדמות הלימוד שלהם.</p><p>אנו שומרים לעצמנו את הזכות לעדכן או לשנות את האפליקציה בכל עת.</p></>
+          T.isEn ? (
+            <>
+              <p><strong>1. Introduction</strong><br/>Welcome to the Aliba app. By accessing or using our application, you agree to be bound by these Terms of Service. If you do not agree, please do not use the app.</p>
+              <p><strong>2. User Accounts</strong><br/>To use certain features, you must register for an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities under your account.</p>
+              <p><strong>3. Use of the App</strong><br/>Aliba is a tool designed to help users track their Torah study. You agree to use the app only for lawful purposes and in a way that does not infringe the rights of others.</p>
+              <p><strong>4. Intellectual Property</strong><br/>All content, features, and functionality of the app, including text, graphics, logos, and icons, are the exclusive property of Aliba and are protected by copyright laws. The Torah texts provided are courtesy of Sefaria.org.</p>
+              <p><strong>5. Limitation of Liability</strong><br/>The app is provided on an "AS IS" and "AS AVAILABLE" basis. We do not warrant that the app will be uninterrupted or error-free. In no event shall we be liable for any indirect, incidental, or consequential damages.</p>
+              <p><strong>6. Changes to Terms</strong><br/>We reserve the right to modify these terms at any time. Your continued use of the app following any changes constitutes your acceptance of the new terms.</p>
+            </>
+          ) : (
+            <>
+              <p><strong>1. מבוא</strong><br/>ברוכים הבאים לאפליקציית אליבא. השימוש באפליקציה, לרבות בתכנים ובשירותים המוצעים בה, מהווה את הסכמתך לתנאי שימוש אלה. אם אינך מסכים לתנאים, הנך מתבקש שלא לעשות שימוש באפליקציה.</p>
+              <p><strong>2. רישום וחשבון משתמש</strong><br/>השימוש בחלק משירותי האפליקציה דורש הרשמה ויצירת חשבון. הנך אחראי לשמור על סודיות פרטי החשבון שלך ועל כל פעולה שתתבצע תחתיו. אין למסור את פרטי הגישה לצד שלישי.</p>
+              <p><strong>3. שימוש באפליקציה</strong><br/>אליבא נועדה להוות כלי עזר אישי למעקב אחר התקדמות הלימוד התורני. הנך מתחייב להשתמש באפליקציה למטרות חוקיות בלבד, ולא לבצע כל פעולה שעלולה לפגוע בפעילותה התקינה או במשתמשים אחרים.</p>
+              <p><strong>4. קניין רוחני</strong><br/>כל זכויות הקניין הרוחני באפליקציה, לרבות עיצוב, קוד, לוגו וממשק המשתמש, שייכות למפתח האפליקציה. הטקסטים התורניים מוצגים באדיבות פרויקט Sefaria.org וכפופים לרישיונות שלהם.</p>
+              <p><strong>5. הגבלת אחריות</strong><br/>האפליקציה מסופקת כמות שהיא (AS IS). אנו לא נישא באחריות לכל נזק, ישיר או עקיף, שייגרם כתוצאה משימוש באפליקציה, אובדן נתונים, או אי-דיוקים בתוכן המוצג (לרבות זמני היום וטקסטים).</p>
+              <p><strong>6. עדכונים ושינויים</strong><br/>אנו שומרים את הזכות לשנות את תנאי השימוש מעת לעת, ללא הודעה מוקדמת. המשך השימוש באפליקציה לאחר ביצוע שינויים מהווה הסכמה לתנאים המעודכנים.</p>
+            </>
+          )
         ) : (
-          <><p>הפרטיות שלך חשובה לנו.</p><p>אנו אוספים את כתובת הדוא"ל שלך ואת שם המשתמש לצורך יצירת חשבון מאובטח בלבד.</p><p>נתוני הלימוד שאתה מזין נשמרים בענן כדי לאפשר לך גישה מכל מכשיר.</p></>
+          T.isEn ? (
+            <>
+              <p><strong>1. Information Collection</strong><br/>We collect information you provide directly to us, such as when you create an account (name, email address) and the study data you input into the app to track your progress.</p>
+              <p><strong>2. Use of Information</strong><br/>The information collected is used solely to provide, maintain, and improve the app's functionality, personalize your experience, and sync your data across your devices.</p>
+              <p><strong>3. Data Storage & Security</strong><br/>Your data is stored securely using cloud infrastructure (Firebase by Google). We implement reasonable security measures to protect your personal information from unauthorized access.</p>
+              <p><strong>4. Sharing of Information</strong><br/>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties. Your public dedications (if submitted) will be visible to other users.</p>
+              <p><strong>5. User Rights</strong><br/>You have the right to access, update, or delete your personal information at any time. If you wish to completely remove your account and data, please contact support.</p>
+            </>
+          ) : (
+            <>
+              <p><strong>1. איסוף מידע</strong><br/>אנו אוספים מידע שאתה מוסר לנו באופן ישיר, כגון בעת יצירת החשבון (שם, כתובת דוא"ל) ואת נתוני הלימוד, היעדים וההערות שאתה מזין באפליקציה.</p>
+              <p><strong>2. שימוש במידע</strong><br/>המידע שנאסף משמש בלבד לצורך תפעול תקין של האפליקציה, סנכרון הנתונים שלך בין מכשירים שונים (גיבוי בענן), ושיפור חווית המשתמש האישית שלך.</p>
+              <p><strong>3. אחסון ואבטחת נתונים</strong><br/>הנתונים שלך מאוחסנים בצורה מאובטחת על גבי שרתי הענן של Firebase (מבית Google). אנו נוקטים באמצעי אבטחה סבירים ומקובלים כדי להגן על המידע שלך מפני גישה בלתי מורשית.</p>
+              <p><strong>4. שיתוף מידע עם צדדים שלישיים</strong><br/>אנו מתחייבים שלא למכור, לסחור או להעביר את המידע האישי שלך לצדדים שלישיים. עם זאת, שים לב כי "הקדשות לימוד" שתבחר לפרסם יופיעו באופן פומבי לכלל המשתמשים.</p>
+              <p><strong>5. זכויות המשתמש (מחיקת מידע)</strong><br/>הנך זכאי לעיין במידע השמור עליך, לעדכן אותו או לבקש את מחיקתו. אם ברצונך למחוק את חשבונך לחלוטין משרתינו, תוכל לעשות זאת על ידי פנייה למפתח דרך כפתור התמיכה.</p>
+            </>
+          )
         )}
       </div>
+    </Sheet>
+  );
+}
+
+/* ── WELCOME / ONBOARDING PROMPT ── */
+function WelcomePrompt({ T }) {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const hasSeen = localStorage.getItem('hasSeenWelcomeAliba');
+    if (!hasSeen) {
+        const timer = setTimeout(() => setShow(true), 500);
+        return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleClose = () => {
+      setShow(false);
+      localStorage.setItem('hasSeenWelcomeAliba', '1');
+  };
+
+  if (!show) return null;
+
+  return (
+    <Sheet show={show} onClose={handleClose} title={T.isEn ? "Welcome to Aliba!" : "ברוכים הבאים לאליבא! 🎉"} T={T}>
+        <div style={{fontSize: T.f(14), color: T.navy, lineHeight: 1.6, textAlign: 'start'}}>
+            <p style={{marginBottom: 18, fontSize: T.f(15), fontWeight: 600}}>
+                {T.isEn ? "Your personal Torah study tracker." : "האפליקציה האישית שלך למעקב וניהול הלימוד התורני."}
+            </p>
+            <div style={{display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 24}}>
+                <div style={{display: 'flex', gap: 12, alignItems: 'flex-start', background: T.input, padding: '10px 12px', borderRadius: 10}}>
+                    <div style={{color: T.gold||"#C9A84C", marginTop: 2}}><IcoBook/></div>
+                    <div><strong style={{display: 'block', marginBottom: 2}}>{T.isEn ? "Track Progress" : "מעקב חכם ופשוט"}</strong> {T.isEn ? "Mark learned pages and chapters." : "סמנו דפים, פרקים ומשניות שלמדתם, ואפילו הוסיפו ספרים אישיים משלכם."}</div>
+                </div>
+                <div style={{display: 'flex', gap: 12, alignItems: 'flex-start', background: T.input, padding: '10px 12px', borderRadius: 10}}>
+                    <div style={{color: T.gold||"#C9A84C", marginTop: 2}}><IcoClock/></div>
+                    <div><strong style={{display: 'block', marginBottom: 2}}>{T.isEn ? "Set Goals" : "הצבת יעדים"}</strong> {T.isEn ? "Set personal targets and stay on pace." : "קבעו תאריכי יעד לסיים מסכתות וספרים, והאפליקציה תחשב עבורכם את הקצב היומי."}</div>
+                </div>
+                <div style={{display: 'flex', gap: 12, alignItems: 'flex-start', background: T.input, padding: '10px 12px', borderRadius: 10}}>
+                    <div style={{color: T.gold||"#C9A84C", marginTop: 2}}><IcoScroll/></div>
+                    <div><strong style={{display: 'block', marginBottom: 2}}>{T.isEn ? "Learn Anywhere" : "לימוד מכל מקום"}</strong> {T.isEn ? "Read texts and commentaries in-app." : "קראו את הטקסט המלא כולל כל המפרשים ישירות מתוך האפליקציה."}</div>
+                </div>
+            </div>
+            <PB T={T} onClick={handleClose} style={{background: T.primary}}>{T.isEn ? "Let's Start!" : "קדימה, נתחיל!"}</PB>
+        </div>
+    </Sheet>
+  );
+}
+
+/* ── INSTALL PROMPT COMPONENT ── */
+function InstallPrompt({ T, sett, setSett }) {
+  const [show, setShow] = useState(false);
+  const [dontShow, setDontShow] = useState(false);
+
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const localHide = localStorage.getItem('hideInstallAliba');
+    const sessionHide = sessionStorage.getItem('sessionHideInstallAliba');
+    
+    if (!isStandalone && !sett.hideInstallPrompt && !localHide && !sessionHide) {
+        const timer = setTimeout(() => setShow(true), 3000);
+        return () => clearTimeout(timer);
+    }
+  }, [sett.hideInstallPrompt]);
+
+  const handleClose = () => {
+      setShow(false);
+      sessionStorage.setItem('sessionHideInstallAliba', '1');
+      if (dontShow) {
+          setSett(s => ({ ...s, hideInstallPrompt: true }));
+          localStorage.setItem('hideInstallAliba', '1');
+      }
+  };
+
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+  if (!show) return null;
+
+  return (
+    <Sheet show={show} onClose={handleClose} title={T.isEn ? "Install App" : "התקן את האפליקציה"} T={T}>
+        <div style={{fontSize: T.f(14), color: T.muted, lineHeight: 1.6, textAlign: 'start'}}>
+            <p style={{marginBottom: 12}}>{T.isEn ? "To install the app on your home screen:" : "הוסף את אליבא למסך הבית שלך לחוויה מלאה (כמו אפליקציה רגילה):"}</p>
+            {isIOS ? (
+                <ul style={{paddingInlineStart: 20, marginBottom: 20}}>
+                    <li style={{marginBottom: 8}}>{T.isEn ? "Tap the Share icon at the bottom." : "1. לחץ על כפתור השיתוף (מרובע עם חץ למעלה) בתחתית המסך."}</li>
+                    <li>{T.isEn ? "Scroll down and tap 'Add to Home Screen'." : "2. גלול למטה ובחר ב-'הוסף למסך הבית' (Add to Home Screen)."}</li>
+                </ul>
+            ) : (
+                <ul style={{paddingInlineStart: 20, marginBottom: 20}}>
+                    <li style={{marginBottom: 8}}>{T.isEn ? "Tap the menu icon (3 dots) in your browser." : "1. לחץ על תפריט הדפדפן (3 נקודות למעלה)."}</li>
+                    <li>{T.isEn ? "Tap 'Add to Home Screen' or 'Install app'." : "2. בחר ב-'הוסף למסך הבית' או 'התקן אפליקציה'."}</li>
+                </ul>
+            )}
+            <label style={{display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', background: T.input, padding: '12px 14px', borderRadius: 10}}>
+                <input type="checkbox" checked={dontShow} onChange={e => setDontShow(e.target.checked)} style={{transform: 'scale(1.2)'}} />
+                <span style={{fontSize: T.f(13), fontWeight: 600, color: T.navy}}>{T.isEn ? "Don't show this again" : "אל תציג הודעה זו שוב"}</span>
+            </label>
+            <PB T={T} onClick={handleClose} style={{marginTop: 20, background: T.primary}}>{T.isEn ? "Got it, Close" : "הבנתי, סגור"}</PB>
+        </div>
     </Sheet>
   );
 }
@@ -525,7 +676,7 @@ function BookCard({cat, item, prog, T, cc, cl, onPress, custom}){
   if(!item) return null;
   const { isC, origIdx, i: idx } = item;
   const dn = isC ? (prog?.custom?.[origIdx]?.done?.size || 0) : calcDone(prog, cat, idx);
-  const tot = isC ? (prog?.custom?.[origIdx]?.chapters || 0) : bkTotal(cat, idx, custom);
+  const tot = isC ? (prog?.custom?.[origIdx]?.chapters || 0) : bkTotal(prog, cat, idx, custom);
   const col = cc[cat] || T.primary, p = pct(dn, tot), fin = dn >= tot && tot > 0;
   return (
     <div onClick={()=>onPress(item)} style={{background:T.card,borderRadius:14,padding:"13px 15px",marginBottom:8,cursor:"pointer",boxShadow:T.shadow,borderRight:`4px solid ${fin?col:"transparent"}`,boxSizing:"border-box"}}>
@@ -621,11 +772,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     if(cat==="gemara"){const g=prog?.gemara?.[idx];if(!g)return false;if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);return ak.length>0&&ak.every(k=>safeHas(g?.done, k));}return safeHas(g?.done, key);}
     if(cat==="mishna"){const m=prog?.mishna?.[idx];if(!m)return false;if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);return mk.length>0&&mk.every(k=>safeHas(m?.done, k));}return safeHas(m?.done, key);}
     if(cat==="tanach"){
-      if(typeof key==="string"){
-        const chapters=PARASHA_CHAPTERS[key];
-        if(!chapters) return false;
-        return chapters.length>0&&chapters.every(c=>safeHas(prog?.tanach?.[idx], c));
-      }
+      if(isParsh) return safeHas(prog?.tanach_parshiot?.[idx], key);
       return safeHas(prog?.tanach?.[idx], key);
     }
     return safeHas(prog?.[cat]?.[idx], key);
@@ -635,12 +782,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     if(isC) return false;
     if(cat==="gemara"&&String(key).startsWith("p")){const g=prog?.gemara?.[idx];if(!g)return false;const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const cnt=ak.filter(k=>safeHas(g?.done, k)).length;return cnt>0&&cnt<ak.length;}
     if(cat==="mishna"&&String(key).startsWith("pp")){const m=prog?.mishna?.[idx];if(!m)return false;const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const cnt=mk.filter(k=>safeHas(m?.done, k)).length;return cnt>0&&cnt<mk.length;}
-    if(cat==="tanach"&&typeof key==="string"){
-      const chapters=PARASHA_CHAPTERS[key];
-      if(!chapters) return false;
-      const marked=chapters.filter(c=>safeHas(prog?.tanach?.[idx], c)).length;
-      return marked>0&&marked<chapters.length;
-    }
+    if (cat === "tanach" && typeof key === "string") return false;
     return false;
   }
 
@@ -652,13 +794,15 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       if(cat==="gemara"){const g={...p.gemara},cur=g[idx]||{done:new Set()};let nd=new Set(cur.done);if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const allOn=ak.every(k=>nd.has(k));allOn?ak.forEach(k=>nd.delete(k)):ak.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}g[idx]={done:nd};return{...p,gemara:g};}
       if(cat==="mishna"){const mm={...p.mishna},cur=mm[idx]||{done:new Set()};let nd=new Set(cur.done);if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const allOn=mk.every(k=>nd.has(k));allOn?mk.forEach(k=>nd.delete(k)):mk.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}mm[idx]={done:nd};return{...p,mishna:mm};}
       if(cat==="tanach"){
-        const tp={...p.tanach},nd=new Set(tp[idx]||[]);
-        if(typeof key==="string"){
-          const chapters=PARASHA_CHAPTERS[key]||[];
-          const allOn=chapters.every(c=>nd.has(c));
-          allOn?chapters.forEach(c=>nd.delete(c)):chapters.forEach(c=>nd.add(c));
-        } else { nd.has(key)?nd.delete(key):nd.add(key); }
-        tp[idx]=nd; return{...p,tanach:tp};
+        if (isParsh) {
+            const tp = { ...p.tanach_parshiot }, nd = new Set(tp[idx] || []);
+            nd.has(key) ? nd.delete(key) : nd.add(key);
+            tp[idx] = nd; return { ...p, tanach_parshiot: tp };
+        } else {
+            const tp={...p.tanach},nd=new Set(tp[idx]||[]);
+            nd.has(key) ? nd.delete(key) : nd.add(key);
+            tp[idx]=nd; return{...p,tanach:tp};
+        }
       }
       const cp={...p[cat]},nd=new Set(cp[idx]||[]);nd.has(key)?nd.delete(key):nd.add(key);cp[idx]=nd;return{...p,[cat]:cp};
     });
@@ -674,7 +818,13 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       if (isC) { const arr = [...(p.custom || [])]; const nd = new Set(arr[origIdx]?.done || []); items.forEach(it => { if(!it.isHeader) nd.add(it.key); }); if (arr[origIdx]) arr[origIdx] = { ...arr[origIdx], done: nd }; return { ...p, custom: arr }; }
       if (cat === "gemara") { const g = { ...p.gemara }, cur = g[idx] || { done: new Set() }; const nd = new Set(cur.done); items.forEach(it => { if(it.isHeader) return; if (String(it.key).startsWith("p")) perekAmudKeys(idx, parseInt(String(it.key).slice(1))).forEach(k => nd.add(k)); else nd.add(it.key); }); g[idx] = { done: nd }; return { ...p, gemara: g }; }
       if (cat === "mishna") { const m = { ...p.mishna }, cur = m[idx] || { done: new Set() }; const nd = new Set(cur.done); items.forEach(it => { if(it.isHeader) return; if (String(it.key).startsWith("pp")) perekMsKeys(idx, parseInt(String(it.key).slice(2))).forEach(k => nd.add(k)); else nd.add(it.key); }); m[idx] = { done: nd }; return { ...p, mishna: m }; }
-      if (cat === "tanach") { const tp = { ...p.tanach }, nd = new Set(tp[idx] || []); items.forEach(it => { if(it.isHeader) return; if (typeof it.key === "string") PARASHA_CHAPTERS[it.key]?.forEach(c => nd.add(c)); else nd.add(it.key); }); tp[idx] = nd; return { ...p, tanach: tp }; }
+      if (cat === "tanach") { 
+          if(isParsh) {
+             const tp = { ...p.tanach_parshiot }, nd = new Set(tp[idx] || []); items.forEach(it => { if(!it.isHeader) nd.add(it.key); }); tp[idx] = nd; return { ...p, tanach_parshiot: tp };
+          } else {
+             const tp = { ...p.tanach }, nd = new Set(tp[idx] || []); items.forEach(it => { if(!it.isHeader) nd.add(it.key); }); tp[idx] = nd; return { ...p, tanach: tp };
+          }
+      }
       const cp = { ...p[cat] }, nd = new Set(cp[idx] || []); items.forEach(it => { if(!it.isHeader) nd.add(it.key); }); cp[idx] = nd; return { ...p, [cat]: cp };
     });
   }
@@ -686,13 +836,16 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
        if (isC) { const arr = [...(p.custom || [])]; if (arr[origIdx]) arr[origIdx] = { ...arr[origIdx], done: new Set() }; return { ...p, custom: arr }; }
        if (cat === "gemara") { const g = { ...p.gemara }; g[idx] = { done: new Set() }; return { ...p, gemara: g }; }
        if (cat === "mishna") { const m = { ...p.mishna }; m[idx] = { done: new Set() }; return { ...p, mishna: m }; }
-       if (cat === "tanach") { const tp = { ...p.tanach }; tp[idx] = new Set(); return { ...p, tanach: tp }; }
+       if (cat === "tanach") { 
+           if(isParsh) { const tp = { ...p.tanach_parshiot }; tp[idx] = new Set(); return { ...p, tanach_parshiot: tp }; }
+           else { const tp = { ...p.tanach }; tp[idx] = new Set(); return { ...p, tanach: tp }; }
+       }
        const cp = { ...p[cat] }; cp[idx] = new Set(); return { ...p, [cat]: cp };
     });
   }
 
-  const totForMode=isC?items.length:(cat==="tanach"?TANACH[idx]?.c||0:items.filter(it=>!it.isHeader).length);
-  const doneCnt=isC?(prog?.custom?.[origIdx]?.done?.size||0):(cat==="tanach"?(prog?.tanach?.[idx]?.size||0):items.filter(it=>!it.isHeader && isOn(it.key)).length);
+  const totForMode = isC ? items.length : items.filter(it=>!it.isHeader).length;
+  const doneCnt = isC ? (prog?.custom?.[origIdx]?.done?.size||0) : items.filter(it=>!it.isHeader && isOn(it.key)).length;
   const pVal=pct(doneCnt,totForMode);
 
   const nextUnlearned = useMemo(() => { try { return items.find(it => !it.isHeader && !isOn(it.key)); } catch(e){ return null; } }, [items, prog, isOn]);
@@ -773,7 +926,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
   
   const halacha=HALACHOT[new Date().getDate()%HALACHOT.length], dafYomi=useMemo(()=>getDafYomi(),[]);
   const S=useMemo(()=>({dapim:GEMARA.reduce((s,_,i)=>s+calcDone(prog,"gemara",i),0),mishna:MISHNA.reduce((s,_,i)=>s+calcDone(prog,"mishna",i),0),tanach:TANACH.reduce((s,_,i)=>s+calcDone(prog,"tanach",i),0),musar:MUSAR.reduce((s,t,i)=>s+calcDone(prog,"musar",i),0)+RAV_KOOK.reduce((s,t,i)=>s+calcDone(prog,"ravKook",i),0)+MACHSHAVA.reduce((s,t,i)=>s+calcDone(prog,"machshava",i),0)}),[prog]);
-  const rows=[{cat:"gemara",l:T.CAT_L.gemara,v:S.dapim,tot:TOTAL_DAPIM,unit:T.CAT_UNIT.gemara},{cat:"mishna",l:T.CAT_L.mishna,v:S.mishna,tot:MISHNA.reduce((s,_,i)=>s+totalMs(i),0),unit:T.CAT_UNIT.mishna},{cat:"tanach",l:T.CAT_L.tanach,v:S.tanach,tot:TANACH.reduce((s,t)=>s+t.c,0),unit:T.CAT_UNIT.tanach},{cat:"musar",l:T.CAT_L.musar,v:S.musar,tot:MUSAR.reduce((s,t)=>s+t.p,0)+RAV_KOOK.reduce((s,t)=>s+t.p,0)+MACHSHAVA.reduce((s,t)=>s+t.p,0),unit:T.CAT_UNIT.musar}];
+  const rows=[{cat:"gemara",l:T.CAT_L.gemara,v:S.dapim,tot:TOTAL_DAPIM,unit:T.CAT_UNIT.gemara},{cat:"mishna",l:T.CAT_L.mishna,v:S.mishna,tot:MISHNA.reduce((s,_,i)=>s+totalMs(i),0),unit:T.CAT_UNIT.mishna},{cat:"tanach",l:T.CAT_L.tanach,v:S.tanach,tot:TANACH.reduce((s,t,i)=>{const tMode=prog?.tmode?.[i]||"perakim";return s+(tMode==="parshiot"&&i<5?PARSHIOT[i].length:t.c);},0),unit:T.CAT_UNIT.tanach},{cat:"musar",l:T.CAT_L.musar,v:S.musar,tot:MUSAR.reduce((s,t,i)=>s+bkTotal(prog,"musar",i,prog?.custom),0)+RAV_KOOK.reduce((s,t,i)=>s+bkTotal(prog,"ravKook",i,prog?.custom),0)+MACHSHAVA.reduce((s,t,i)=>s+bkTotal(prog,"machshava",i,prog?.custom),0),unit:T.CAT_UNIT.musar}];
 
   return (
     <div style={{flex:1,overflow:"auto",background:T.bg}}>
@@ -866,7 +1019,7 @@ function GoalRow({g,prog,T,cc,onEdit,onDelete,custom}){
 
 function GoalsScreen({goals,setGoals,prog,T,cc}){
   const[showSheet,setShowSheet]=useState(false), [editingId, setEditingId]=useState(null), [cat,setCat]=useState("gemara"), [bookIdKey,setBookIdKey]=useState(""), [target,setTarget]=useState(""), [deadline,setDeadline]=useState(""), [otherName,setOtherName]=useState("");
-  const bkList=cat==="other"?[]:getBkList(cat,prog?.custom), selectedItem=bkList.find(b=>String(b.idKey)===bookIdKey), maxTot=cat==="other"?0:(selectedItem?(selectedItem.isC?prog?.custom?.[selectedItem.origIdx]?.chapters:bkTotal(cat,selectedItem.i,prog?.custom)):0);
+  const bkList=cat==="other"?[]:getBkList(cat,prog?.custom), selectedItem=bkList.find(b=>String(b.idKey)===bookIdKey), maxTot=cat==="other"?0:(selectedItem?(selectedItem.isC?prog?.custom?.[selectedItem.origIdx]?.chapters:bkTotal(prog,cat,selectedItem.i,prog?.custom)):0);
   function openNew(){ setEditingId(null); setCat("gemara"); setBookIdKey(""); setTarget(""); setDeadline(""); setOtherName(""); setShowSheet(true); }
   function save(){ if(!deadline||(cat==="other"&&!otherName))return; if(editingId) setGoals(prev=>(prev||[]).map(x=>x.id===editingId?{...x, cat, idx:selectedItem?selectedItem.i:0, isC:!!selectedItem?.isC, origIdx:selectedItem?selectedItem.origIdx:0, target:target?parseInt(target):maxTot, deadline, otherName}:x)); else setGoals(prev=>[...(prev||[]),{id:Date.now(), cat, idx:selectedItem?selectedItem.i:0, isC:!!selectedItem?.isC, origIdx:selectedItem?selectedItem.origIdx:0, target:target?parseInt(target):maxTot, deadline, startDate:todayKey(), otherName}]); setShowSheet(false); }
   return (
@@ -907,8 +1060,18 @@ export default function App(){
   const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
+  
   if(!user) return <div style={appSt}><AuthScreen onLogin={async(c)=>{try{if(c.method==="email") await signInWithEmailAndPassword(auth, c.email, c.pass); else if(c.method==="register") await createUserWithEmailAndPassword(auth, c.email, c.pass); else await signInWithPopup(auth, new GoogleAuthProvider());}catch(e){alert("שגיאה: "+e.message);}}} T={T}/></div>;
   if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
   const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
-  return (<div style={appSt}>{tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}{tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}{tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}{tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}<div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>{NAV.map(it=>(<button key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>{it.ico}{it.l}</button>))}</div></div>);
+  
+  return (<div style={appSt}>
+    <WelcomePrompt T={T} />
+    <InstallPrompt T={T} sett={sett} setSett={setSett} />
+    {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}
+    {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
+    {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
+    {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}
+    <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>{NAV.map(it=>(<button key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>{it.ico}{it.l}</button>))}</div>
+  </div>);
 }
