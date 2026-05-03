@@ -100,8 +100,18 @@ const MUSAR = [
   { n: "תומר דבורה", a: 'רמ"ק', struct: [{ t: "פרקים", p: 10, refBase: "Tomer_Devorah"}] },
   { n: "פלא יועץ", a: "ר' אליעזר פאפו", struct: [{ t: "מערכות", p: 22, refBase: "Pele_Yoetz"}] },
   { n: "חפץ חיים", a: "החפץ חיים", struct: [{ t: "הקדמות", items: [{k:"intro", l:"הקדמה", ref:"Chafetz_Chaim,_Introduction"}] }, { t: "איסור לשון הרע", p: 10, refBase: "Chafetz_Chaim,_Part_One,_The_Prohibition_Against_Lashon_Hara,_Principle" }, { t: "איסור רכילות", p: 9, refBase: "Chafetz_Chaim,_Part_Two,_The_Prohibition_Against_Rechilut,_Principle" }] },
-  { n: "שמירת הלשון", a: "החפץ חיים", p: 30 },
-  { n: "אהבת חסד", a: "החפץ חיים", p: 24 },
+  { n: "שמירת הלשון", a: "החפץ חיים", struct: [
+    { t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Shemirat_HaLashon,_Book_I,_Introduction"}] },
+    { t: "שער הזכירה", p: 18, refBase: "Shemirat_HaLashon,_Book_I,_Gate_of_Remembering" },
+    { t: "שער התבונה", p: 17, refBase: "Shemirat_HaLashon,_Book_I,_Gate_of_Intelligence" },
+    { t: "שער התורה", p: 12, refBase: "Shemirat_HaLashon,_Book_I,_Gate_of_Torah" },
+    { t: "חלק שני - חתימה", p: 7, refBase: "Shemirat_HaLashon,_Book_II" }
+  ]},
+  { n: "אהבת חסד", a: "החפץ חיים", struct: [
+    { t: "חלק א'", p: 20, refBase: "Ahavat_Chesed,_Part_I" },
+    { t: "חלק ב'", p: 24, refBase: "Ahavat_Chesed,_Part_II" },
+    { t: "חלק ג'", p: 8, refBase: "Ahavat_Chesed,_Part_III" }
+  ]},
   { n: 'ליקוטי מוהר"ן', a: "ר' נחמן מברסלב", struct: [{ t: "חלק א'", p: 286, refBase: "Likutei_Moharan" }, { t: "חלק ב'", p: 125, refBase: "Likutei_Moharan,_Part_II" }] },
   { n: "ספר המידות", a: "ר' נחמן מברסלב", p: 30 },
   { n: "ספר הישר", a: 'ר"ת', struct: [{ t: "שערים", p: 18, refBase: "Sefer_HaYashar"}] }
@@ -138,8 +148,125 @@ const RAV_KOOK = [
 ];
 
 const GEMARA = [{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",d:157,p:24},{n:"עירובין",s:"מועד",d:105,p:10},{n:"פסחים",s:"מועד",d:121,p:10},{n:"שקלים",s:"מועד",d:22,p:8},{n:"יומא",s:"מועד",d:88,p:8},{n:"סוכה",s:"מועד",d:56,p:5},{n:"ביצה",s:"מועד",d:40,p:5},{n:"ראש השנה",s:"מועד",d:35,p:4},{n:"תענית",s:"מועד",d:31,p:4},{n:"מגילה",s:"מועד",d:32,p:4},{n:"מועד קטן",s:"מועד",d:29,p:3},{n:"חגיגה",s:"מועד",d:27,p:3},{n:"יבמות",s:"נשים",d:122,p:16},{n:"כתובות",s:"נשים",d:112,p:13},{n:"נדרים",s:"נשים",d:91,p:11},{n:"נזיר",s:"נשים",d:66,p:9},{n:"סוטה",s:"נשים",d:49,p:9},{n:"גיטין",s:"נשים",d:90,p:9},{n:"קידושין",s:"נשים",d:82,p:4},{n:"בבא קמא",s:"נזיקין",d:119,p:10},{n:"בבא מציעא",s:"נזיקין",d:119,p:10},{n:"בבא בתרא",s:"נזיקין",d:176,p:10},{n:"סנהדרין",s:"נזיקין",d:113,p:11},{n:"מכות",s:"נזיקין",d:24,p:3},{n:"שבועות",s:"נזיקין",d:49,p:8},{n:"עבודה זרה",s:"נזיקין",d:76,p:5},{n:"הוריות",s:"נזיקין",d:14,p:3},{n:"זבחים",s:"קדשים",d:120,p:14},{n:"מנחות",s:"קדשים",d:110,p:13},{n:"חולין",s:"קדשים",d:142,p:12},{n:"בכורות",s:"קדשים",d:61,p:9},{n:"ערכין",s:"קדשים",d:34,p:9},{n:"תמורה",s:"קדשים",d:34,p:7},{n:"כריתות",s:"קדשים",d:28,p:6},{n:"מעילה",s:"קדשים",d:22,p:6},{n:"נידה",s:"טהרות",d:73,p:10}];
+
+const GEMARA_CHAP_NAMES = {
+  "ברכות": ["מאימתי", "היה קורא", "מי שמתו", "תפילת השחר", "אין עומדין", "כיצד מברכין", "שלושה שאכלו", "אלו דברים", "הרואה"],
+  "שבת": ["יציאות השבת", "במה מדליקין", "במה טומנין", "במה אשה", "במה בהמה", "במה אשה יוצאה", "כלל גדול", "המוציא יין", "אמר רבי עקיבא", "המצניע", "הזורק", "הבונה", "האורג", "שמונה שרצים", "אלו קשרים", "כל כתבי", "כל הכלים", "מפנין", "רבי אליעזר דמילה", "תולין", "נוטל", "חבית", "שואל", "מי שהחשיך"],
+  "עירובין": ["מבוי", "עושין פסין", "בכל מערבין", "מי שהוציאוהו", "כיצד מעברין", "הדר", "כיצד משתתפין", "כיצד צולין", "כל גגות", "המוצא תפילין"],
+  "פסחים": ["אור לארבעה עשר", "כל שעה", "אלו עוברין", "מקום שנהגו", "תמיד נשחט", "אלו דברים", "כיצד צולין", "האשה", "מה אלו", "ערבי פסחים"],
+  "יומא": ["שבעת ימים", "בראשונה", "אמר להם הממונה", "טרף בקלפי", "הוציאו לו", "שני שעירים", "בא לו כהן גדול", "יום הכפורים"],
+  "סוכה": ["סוכה", "הישן תחת המטה", "לולב הגזול", "לולב וערבה", "החליל"],
+  "ביצה": ["ביצה", "יום טוב", "אין צדין", "המביא", "משילין"],
+  "ראש השנה": ["ארבעה ראשי שנים", "אם אינן מכירין", "ראוהו בית דין", "יום טוב של ראש השנה"],
+  "תענית": ["מאימתי מזכירין", "סדר תעניות", "סדר תעניות אלו", "בשלושה פרקים"],
+  "מגילה": ["מגילה נקראת", "הקורא למפרע", "הקורא עומד", "בני העיר"],
+  "מועד קטן": ["משקין", "מי שהפך", "ואלו מגלחין"],
+  "חגיגה": ["הכל חייבין", "אין דורשין", "חומר בקדש"],
+  "יבמות": ["חמש עשרה נשים", "כיצד", "ארבעה אחין", "החולץ", "רבן גמליאל", "הבא על יבמתו", "אלמנה", "הערל", "יש מותרות", "האשה רבה", "נושאין על האנוסה", "מצות חליצה", "שומרת יבם", "חרש", "האשה שלום", "האשה בתרא"],
+  "כתובות": ["בתולה", "האשה שנתארמלה", "אלו נערות", "נערה", "אף על פי", "מציאת האשה", "המדיר", "האשה שנפלו", "הכותב", "מי שהיה נשוי", "אלמנה ניזונת", "הנושא", "שני דייני גזירות"],
+  "נדרים": ["כל כנויי", "ואלו מותרין", "ארבעה נדרים", "אין בין המודר", "השותפין", "הנודר מן המבושל", "הנודר מן הירק", "קונם יין", "רבי אליעזר", "נערה המאורסה", "ואלו נדרים"],
+  "גיטין": ["המביא גט", "המביא גט", "כל הגט", "השולח", "הניזקין", "האומר", "מי שאחזו", "הזורק", "המגרש"],
+  "קידושין": ["האשה נקנית", "האיש מקדש", "האומר", "עשרה יוחסין"],
+  "בבא קמא": ["ארבעה אבות", "כיצד הרגל", "המניח", "שור שנגח ארבעה", "שור שנגח את הפרה", "הכונס", "מרובה", "החובל", "הגוזל עצים", "הגוזל ומאכיל"],
+  "בבא מציעא": ["שנים אוחזין", "אלו מציאות", "המפקיד", "הזהב", "איזהו נשך", "השוכר את האומנין", "השוכר את הפועלים", "השואל", "המקבל", "הבית והעליה"],
+  "בבא בתרא": ["השותפין", "לא יחפור", "חזקת הבתים", "המוכר את הבית", "המוכר את הספינה", "המוכר פירות", "יש נוחלין", "גט פשוט", "מי שמת"],
+  "סנהדרין": ["דיני ממונות בשלשה", "כהן גדול", "זה בורר", "אחד דיני ממונות", "היו בודקין", "נגמר הדין", "ארבע מיתות", "בן סורר", "אלו הנשרפין", "אלו הן הנחנקין", "חלק"],
+  "מכות": ["כיצד העדים", "אלו הן הגולין", "אלו הן הלוקין"],
+  "שבועות": ["שבועות שתים", "ידיעות הטומאה", "שבועות שתים", "שבועת העדות", "שבועת הפקדון", "שבועת הדיינין", "כל הנשבעין", "ארבעה שומרים"],
+  "עבודה זרה": ["לפני אידיהן", "אין מעמידין", "כל הצלמים", "רבי ישמעאל", "השוכר את הפועל"],
+  "הוריות": ["הורו בית דין", "הורה כהן משיח", "כהן משיח"],
+  "זבחים": ["כל הזבחים", "כל הזבחים שנזבחו", "כל הפסולין", "איזהו מקומן", "קדשי קדשים", "קודש קדשים", "חטאת העוף", "כל הזבחים שקבלו", "המזבח מקדש", "דם חטאת", "התערובות", "טבול יום", "השוחט והמעלה", "פרת חטאת"],
+  "מנחות": ["כל המנחות", "הקומץ רבה", "הקומץ את המנחה", "התכלת", "כל המנחות באות מצה", "העומר", "שתי הלחם", "רבי ישמעאל אומר", "כל קרבנות צבור", "שתי מדות", "המנחות והנסכים", "כל המנחות באות עשר", "התנדב מנחה"],
+  "חולין": ["הכל שוחטין", "השוחט אחד בעוף", "אלו טריפות", "בהמה המקשה", "אותו ואת בנו", "כסוי הדם", "גיד הנשה", "כל הבשר", "העור והרוטב", "זרוע ולחיים", "ראשית הגז", "שלוח הקן"],
+  "בכורות": ["הלוקח עובר", "הלוקח בהמה", "יש בכור", "עד כמה", "כל פסולי", "כל הפסולין", "מומין אלו", "על אלו מומין", "יש בכור לנחלה", "מעשר בהמה"],
+  "ערכין": ["הכל מעריכין", "אין בערכין", "יש בערכין", "המקדיש שדהו", "שום היתומים", "הקדיש שדהו", "אין מקדישין", "המוכר שדהו", "מוכר אדם"],
+  "תמורה": ["הכל ממירין", "יש בקרבנות", "אלו קדשים", "ולד חטאת", "כיצד מערימין", "כל האסורין", "יש בקרבנות צבור"],
+  "כריתות": ["שלשים ושש", "ארבעה מביאין", "אמרו לו", "ספק אכל", "דם שחיטה", "המביא אשם"],
+  "מעילה": ["קדשי קדשים", "חטאת העוף", "ולד חטאת", "הנהנה מן ההקדש", "כל שקלים", "שליח שעשה"],
+  "נידה": ["שמאי אומר", "כל היד", "המפלת חתיכה", "בנות כותים", "יוצא דופן", "בא סימן", "דם הנדה", "רואה כתם", "האשה שהיא", "תינוקת"]
+};
+
+const GEMARA_PERAKIM_STARTS = [
+  [2, 13, 17, 26, 30, 35, 45, 51, 54], // ברכות
+  [2, 20, 36, 47, 52, 65, 69, 73, 80, 90, 95, 101, 105, 113, 115, 119, 123, 130, 137, 148, 150, 153, 155, 156], // שבת
+  [2, 18, 26, 41, 53, 65, 71, 82, 95, 100], // עירובין
+  [2, 21, 42, 49, 58, 66, 76, 86, 94, 99], // פסחים
+  [2, 6, 9, 12, 14, 16, 19, 21], // שקלים
+  [2, 21, 31, 39, 43, 53, 61, 73], // יומא
+  [2, 20, 30, 42, 51], // סוכה
+  [2, 15, 23, 28, 35], // ביצה
+  [2, 22, 25, 32], // ראש השנה
+  [2, 15, 26, 30], // תענית
+  [2, 17, 24, 28], // מגילה
+  [2, 11, 24], // מועד קטן
+  [2, 11, 22], // חגיגה
+  [2, 16, 26, 36, 46, 52, 60, 69, 84, 87, 97, 107, 112, 115, 119, 121], // יבמות
+  [2, 15, 29, 39, 41, 54, 65, 71, 83, 90, 95, 104, 108], // כתובות
+  [2, 13, 24, 36, 46, 50, 60, 66, 76, 83, 89], // נדרים
+  [2, 10, 15, 24, 31, 34, 40, 50, 59], // נזיר
+  [2, 14, 20, 24, 27, 32, 42, 44, 48], // סוטה
+  [2, 15, 24, 32, 49, 62, 74, 82, 86], // גיטין
+  [2, 41, 58, 69], // קידושין
+  [2, 17, 27, 36, 46, 56, 62, 87, 96, 111], // בבא קמא
+  [2, 21, 33, 43, 59, 74, 83, 94, 101, 105], // בבא מציעא
+  [2, 17, 28, 52, 73, 83, 95, 108, 133, 156], // בבא בתרא
+  [2, 18, 24, 32, 40, 42, 53, 71, 73, 84, 90], // סנהדרין
+  [2, 5, 13], // מכות
+  [2, 14, 20, 29, 38, 41, 45, 49], // שבועות
+  [2, 22, 40, 53, 62], // עבודה זרה
+  [2, 10, 12], // הוריות
+  [2, 15, 26, 46, 53, 56, 68, 83, 86, 97, 101, 106, 112, 115], // זבחים
+  [2, 11, 22, 29, 36, 52, 63, 72, 76, 87, 90, 100, 104], // מנחות
+  [2, 27, 42, 54, 84, 89, 93, 100, 109, 113, 130, 135], // חולין
+  [2, 13, 17, 26, 31, 37, 43, 51, 57], // בכורות
+  [2, 7, 10, 15, 18, 21, 24, 28, 31], // ערכין
+  [2, 13, 17, 21, 25, 28, 31], // תמורה
+  [2, 8, 11, 15, 19, 25], // כריתות
+  [2, 6, 9, 12, 15, 19], // מעילה
+  [2, 13, 21, 32, 40, 47, 56, 59, 66, 69] // נידה
+];
+
 const MISHNA = [{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
-const HALACHOT = [{ t: "קריאת שמע של ערבית — מצווה לקרוא קריאת שמע בלילה, ויש לקרוא את שלוש פרשיותיה.", s: "שולחן ערוך, אורח חיים רל״ה" },{ t: "תפילת שחרית — חייב אדם להתפלל שחרית בכוונה, ולא יתפלל כשהוא עייף או ישנוני.", s: "שולחן ערוך, אורח חיים פ״ט" },{ t: "ברכת המזון — חיוב דאורייתא לברך ברכת המזון אחר כל אכילת לחם בשיעור כביצה.", s: "שולחן ערוך, אורח חיים קפ״ד" },{ t: "מזוזה — כל פתח של בית חייב במזוזה, ויש לקבוע אותה בתוך שליש העליון של הפתח.", s: "שולחן ערוך, יורה דעה רפ״ט" },{ t: "שבת — מצוות עשה לזכור את יום השבת ולקדש אותו בדברים.", s: "שולחן ערוך, אורח חיים רע״א" },{ t: "כיבוד אב ואם — מצוות עשה לכבד אב ואם, ואיסור חמור לבזותם.", s: "שולחן ערוך, יורה דעה ר״מ" },{ t: "צדקה — חייב אדם לתת צדקה לפחות עשירית מהכנסותיו.", s: "שולחן ערוך, יורה דעה רמ״ט" },{ t: "לשון הרע — אסור מדאורייתא לדבר לשון הרע, אפילו אמת.", s: "חפץ חיים, הלכות איסור לשון הרע א" }];
+
+// 36 הלכות יסודיות (אחת לכל עשירית מהשנה בערך - רצות בלולאה על כל ימות השנה)
+const HALACHOT = [
+  { t: "מודה אני — מיד כשיעור משנתו, יאמר 'מודה אני' כדי לזכור את חסד השם שהחזיר לו את נשמתו.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "נטילת ידיים שחרית — יש ליטול ידיים מיד בבוקר שלוש פעמים לסירוגין כדי להעביר את רוח הרעה.", s: "שולחן ערוך, אורח חיים ד, ב" },
+  { t: "ברכות השחר — יש לברך ברכות השחר בכל יום, וראוי לברכן סמוך לקימה ככל האפשר.", s: "שולחן ערוך, אורח חיים מו, א" },
+  { t: "ציצית — מצוות עשה ללבוש בגד של ארבע כנפות ולהטיל בו ציצית, כדי לזכור את כל המצוות.", s: "שולחן ערוך, אורח חיים ח, א" },
+  { t: "תפילין — מצוות תפילין חמורה מאוד, וצריך להיזהר להיות בהן בגוף נקי ומחשבה טהורה.", s: "שולחן ערוך, אורח חיים כח, א" },
+  { t: "קריאת שמע של שחרית — זמנה מתחילת היום עד סוף שלוש שעות זמניות.", s: "שולחן ערוך, אורח חיים נח, א" },
+  { t: "תפילת עמידה — חייב אדם להתפלל בכוונה, לעמוד ברגליים צמודות ולכוון לבו לשמיים.", s: "שולחן ערוך, אורח חיים צה, א" },
+  { t: "תפילת מנחה — זמנה מ-6.5 שעות זמניות מתחילת היום, ויש להיזהר בה מאוד שכן אליהו נענה בה.", s: "שולחן ערוך, אורח חיים רלב, א" },
+  { t: "תפילת ערבית — זמנה מצאת הכוכבים, ויש לקרוא בה קריאת שמע של לילה עם שלוש פרשיותיה.", s: "שולחן ערוך, אורח חיים רלה, א" },
+  { t: "ברכת המזון — חיוב דאורייתא לברך אחר כל אכילת לחם בשיעור כזית ומעלה.", s: "שולחן ערוך, אורח חיים קפד, א" },
+  { t: "מזוזה — כל פתח של בית או חדר החייב במזוזה, יש לקבוע אותה בשליש העליון של הפתח מימין לנכנס.", s: "שולחן ערוך, יורה דעה רפט, א" },
+  { t: "כיבוד אב ואם — מצוות עשה לכבד אב ואם, ואיסור חמור לבזותם או לצערם.", s: "שולחן ערוך, יורה דעה רמ, א" },
+  { t: "צדקה — חייב אדם לתת צדקה מנכסיו, וראוי לתת עשירית מרווחיו (מעשר כספים).", s: "שולחן ערוך, יורה דעה רמט, א" },
+  { t: "לשון הרע — אסור מדאורייתא לדבר בגנות חברו, אפילו אם הדברים הם אמת לאמיתה.", s: "חפץ חיים, הלכות איסור לשון הרע א" },
+  { t: "שמירת שבת — מצוות עשה לזכור את יום השבת ולקדשו בדיבור (קידוש) ובמעשה.", s: "שולחן ערוך, אורח חיים רעא, א" },
+  { t: "מוקצה בשבת — אסור לטלטל כל כלי שמלאכתו לאיסור, אלא אם כן צריך לגופו או למקומו.", s: "שולחן ערוך, אורח חיים שח, א" },
+  { t: "בורר בשבת — אסור לברור פסולת מתוך אוכל, אלא יש לקחת את האוכל מתוך הפסולת, ביד, ולאלתר.", s: "שולחן ערוך, אורח חיים שיט, א" },
+  { t: "בישול בשבת — אין לבשל בשבת. חימום מאכל יבש שכבר מבושל מותר בתנאים מסוימים, אך לא נוזל שהתקרר.", s: "שולחן ערוך, אורח חיים שיח, א" },
+  { t: "הבדלה — מצווה להבדיל במוצאי שבת על הכוס, כדי להבדיל בין קודש לחול.", s: "שולחן ערוך, אורח חיים רצו, א" },
+  { t: "בשר וחלב — אסור מדאורייתא לאכול או לבשל בשר וחלב יחד. לאחר בשר יש להמתין 6 שעות לפני חלב.", s: "שולחן ערוך, יורה דעה פט, א" },
+  { t: "טבילת כלים — כלי סעודה הנקנים מגוי, חייבים טבילה במקווה כשר לפני השימוש הראשון.", s: "שולחן ערוך, יורה דעה קכ, א" },
+  { t: "ברכות הנהנין — אסור לאדם ליהנות מהעולם הזה ללא ברכה. לכן יש לברך לפני ואחרי כל אכילה ושתייה.", s: "שולחן ערוך, אורח חיים רי, א" },
+  { t: "ברכה אחרונה — אכל או שתה בשיעור כזית או רביעית, חייב בברכה אחרונה (מעין שלוש או בורא נפשות).", s: "שולחן ערוך, אורח חיים רי, א" },
+  { t: "השבת אבידה — הרואה אבידת ישראל, חייב להיטפל בה ולהשיבה לבעליה, ובלבד שיש בה סימן.", s: "שולחן ערוך, חושן משפט רנט, א" },
+  { t: "אונאת דברים — אסור לצער את חברו בדברים, כגון להזכיר לבעל תשובה את מעשיו הראשונים.", s: "שולחן ערוך, חושן משפט רכח, א" },
+  { t: "תלמוד תורה — קביעות עיתים לתורה היא חובה יומיומית, ואפילו עני או טרוד במלאכתו חייב לקבוע זמן.", s: "שולחן ערוך, יורה דעה רמו, א" },
+  { t: "ואהבת לרעך כמוך — מצווה לאהוב כל אחד מישראל כגופו, ולדאוג לשלומו ורכושו כשלו.", s: "רמב״ם, הלכות דעות ו, ג" },
+  { t: "הכנסת אורחים — מצווה גדולה להכניס אורחים לביתו, וגדולה היא מהקבלת פני השכינה.", s: "רמב״ם, הלכות אבל יד, ב" },
+  { t: "ביקור חולים — מצווה לבקר חולים ולעזור להם ככל הניתן, ולהתפלל לרפואתם.", s: "שולחן ערוך, יורה דעה שלג, א" },
+  { t: "לא תעמוד על דם רעך — הרואה את חברו בצרה ויכול להצילו, חייב לעשות הכל כדי להציל את חייו.", s: "שולחן ערוך, חושן משפט תכו, א" },
+  { t: "הלנת שכר — אסור להלין שכר שכיר, אלא יש לשלם לו בזמן שנקבע, שנאמר 'ביומו תיתן שכרו'.", s: "שולחן ערוך, חושן משפט שלט, א" },
+  { t: "נשיאת כפיים — מצוות עשה על הכהנים לברך את העם בכל יום, והציבור צריכים לעמוד בכוונה.", s: "שולחן ערוך, אורח חיים קכח, א" },
+  { t: "הפרשת חלה — הלש עיסה מ-5 מיני דגן בשיעור מסוים חייב להפריש ממנה חלה לפני האפייה.", s: "שולחן ערוך, יורה דעה שכד, א" },
+  { t: "ברכת הגומל — ארבעה צריכים להודות: יורדי הים, הולכי מדבריות, מי שהיה חולה ונתרפא, ומי שהיה חבוש בבית האסורים ויצא.", s: "שולחן ערוך, אורח חיים ריט, א" },
+  { t: "השכמת הבוקר — יתגבר כארי לעמוד בבוקר לעבודת בוראו, שיהא הוא מעורר השחר.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "ברכות הראייה — הרואה ברקים, שומע רעמים, או רואה קשת, חייב לברך 'עושה מעשה בראשית'.", s: "שולחן ערוך, אורח חיים רכז, א" }
+];
 
 const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
 const NAVY = "#1A3A6B", GOLD = "#C9A84C";
@@ -156,7 +283,7 @@ const SEFARIA_MAP = {
 };
 
 const COMPLEX_REFS = {
-  "שמירת הלשון": "Shemirat_HaLashon%2C_Book_II", "אהבת חסד": "Ahavat_Chesed%2C_Part_II", "ספר הישר": "Sefer_HaYashar"
+  "ספר הישר": "Sefer_HaYashar"
 };
 
 /* ── HELPER FUNCTIONS ── */
@@ -192,9 +319,23 @@ function totalMs(i) {
 }
 
 function perekAmudKeys(masIdx, p) {
-  const g = GEMARA[masIdx]; if(!g) return [];
-  const D=g.d, P=g.p, s=Math.round(2+(p-1)/P*D), e=Math.round(2+p/P*D);
-  const r=[]; for(let d=s; d<e&&d<=D; d++) r.push(`${d}a`,`${d}b`);
+  const g = GEMARA[masIdx]; 
+  if(!g) return [];
+
+  if (GEMARA_PERAKIM_STARTS[masIdx] && GEMARA_PERAKIM_STARTS[masIdx].length > 0) {
+    const starts = GEMARA_PERAKIM_STARTS[masIdx];
+    const startDaf = starts[p-1];
+    const endDaf = (p < starts.length) ? starts[p] - 1 : g.d;
+    const r = [];
+    for(let d = startDaf; d <= endDaf; d++) {
+      r.push(`${d}a`,`${d}b`);
+    }
+    return r;
+  }
+
+  const D = g.d, P = g.p, s = Math.round(2 + (p - 1) / P * D), e = Math.round(2 + p / P * D);
+  const r = []; 
+  for(let d = s; d < e && d <= D; d++) r.push(`${d}a`,`${d}b`);
   return r;
 }
 
@@ -220,14 +361,18 @@ function bkTotal(prog, cat, i, custom) {
 
 function calcDone(prog, cat, i) {
   if (!prog) return 0;
-  if (cat === "gemara") return Math.round((prog.gemara?.[i]?.done?.size || 0) / 2);
+  if (cat === "gemara") {
+      const s = prog.gemara?.[i]?.done;
+      if(!s) return 0;
+      let dCnt = 0;
+      s.forEach(k => { if(!String(k).startsWith('p')) dCnt++; });
+      return Math.round(dCnt/2);
+  }
   if (cat === "mishna") return prog.mishna?.[i]?.done?.size || 0;
   if (cat === "custom") return prog.custom?.[i]?.done?.size || 0;
   if (cat === "tanach") {
      const tMode = prog?.tmode?.[i] || "perakim";
-     if (tMode === "parshiot" && i < 5) {
-         return prog.tanach_parshiot?.[i]?.size || 0;
-     }
+     if (tMode === "parshiot" && i < 5) return prog.tanach_parshiot?.[i]?.size || 0;
      return prog.tanach?.[i]?.size || 0;
   }
   return prog[cat]?.[i]?.size || 0;
@@ -254,9 +399,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
                    const it = section.items.find(x => String(x.k) === actualKey || String(x.l) === actualKey);
                    if (it && it.ref) return it.ref;
                }
-               if (section.refBase) {
-                   return `${section.refBase}.${actualKey}`;
-               }
+               if (section.refBase) return `${section.refBase}.${actualKey}`;
            }
        }
        
@@ -273,7 +416,10 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     
     if(cat === "gemara") {
         if(k.startsWith("p")) {
-            const amudim = perekAmudKeys(masIdx, parseInt(k.slice(1)));
+            const pNum = parseInt(k.slice(1));
+            const starts = GEMARA_PERAKIM_STARTS[masIdx];
+            if (starts && starts.length > 0) return `${eng}.${starts[pNum-1]}a`;
+            const amudim = perekAmudKeys(masIdx, pNum);
             if (amudim.length > 0) return `${eng}.${amudim[0]}`;
             return `${eng}.2a`;
         }
@@ -287,9 +433,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     }
     
     if(cat === "tanach") {
-      if(tMode === "parshiot") {
-          return PARASHA_MAP[k] || `${eng}.${k}`;
-      }
+      if(tMode === "parshiot") return PARASHA_MAP[k] || `${eng}.${k}`;
       return `${eng}.${k}`;
     }
     
@@ -450,7 +594,7 @@ function WelcomePrompt({ T }) {
                 </div>
                 <div style={{display: 'flex', gap: 12, alignItems: 'flex-start', background: T.input, padding: '10px 12px', borderRadius: 10}}>
                     <div style={{color: T.gold||"#C9A84C", marginTop: 2}}><IcoScroll/></div>
-                    <div><strong style={{display: 'block', marginBottom: 2}}>{T.isEn ? "Learn Anywhere" : "לימוד מכל מקום"}</strong> {T.isEn ? "Read texts and commentaries in-app." : "קראו את הטקסט המלא כולל כל המפרשים ישירות מתוך האפליקציה."}</div>
+                    <div><strong style={{display: 'block', marginBottom: 2}}>{T.isEn ? "Learn Anywhere" : "לימוד מכל מקום"}</strong> {T.isEn ? "קראו את הטקסט מלא כולל כל המפרשים ישירות מתוך האפליקציה." : "קראו את הטקסט מלא כולל כל המפרשים ישירות מתוך האפליקציה."}</div>
                 </div>
             </div>
             <PB T={T} onClick={handleClose} style={{background: T.primary}}>{T.isEn ? "Let's Start!" : "קדימה, נתחיל!"}</PB>
@@ -513,7 +657,7 @@ function InstallPrompt({ T, sett, setSett }) {
   );
 }
 
-/* ── SEFARIA READER SHEET (UPGRADED WITH IN-APP MEFARSHIM) ── */
+/* ── SEFARIA READER SHEET ── */
 function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState([]);
@@ -522,7 +666,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
   const [showEn, setShowEn] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   const [baseRef, setBaseRef] = useState("");
-  
   const [activeSegment, setActiveSegment] = useState(null);
   const [commData, setCommData] = useState([]);
   const [commLoading, setCommLoading] = useState(false);
@@ -544,7 +687,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
       })
       .then(data => {
         setBaseRef(data.ref);
-        
         const parseStructure = (heNode, enNode, prefix = "") => {
            let result = [];
            if (Array.isArray(heNode) || Array.isArray(enNode)) {
@@ -603,14 +745,12 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
   return (
     <Sheet show={show} onClose={()=>{onClose(); setRetryCount(0); setActiveSegment(null);}} title={title} T={T}>
       <div style={{minHeight: 200, maxHeight: '75vh', overflowY: 'auto', paddingRight: 8, direction: 'rtl'}}>
-         
          <div style={{display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center', justifyContent: 'flex-start'}}>
             <div style={{display: 'flex', background: T.input, borderRadius: 8, overflow: 'hidden', border: `1px solid ${T.border}`}}>
                <button onClick={()=>setZoom(z => Math.max(14, z - 2))} style={{padding: '8px 14px', background: 'transparent', border: 'none', color: T.navy, cursor: 'pointer', fontSize: 18, fontWeight: 700}}>-</button>
                <div style={{width: 1, background: T.border}}></div>
                <button onClick={()=>setZoom(z => Math.min(36, z + 2))} style={{padding: '8px 14px', background: 'transparent', border: 'none', color: T.navy, cursor: 'pointer', fontSize: 18, fontWeight: 700}}>+</button>
             </div>
-            
             <button onClick={()=>setShowEn(!showEn)} style={{padding: '0 16px', height: '40px', borderRadius: 8, background: showEn ? T.primary : T.input, color: showEn ? '#fff' : T.navy, border: `1px solid ${T.border}`, fontWeight: 700, fontFamily: T.font, cursor: 'pointer'}}>
                {showEn ? "עברית בלבד" : "Hebrew / English"}
             </button>
@@ -642,7 +782,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
                    </p>
                )}
                
-               {/* תצוגת מפרשים בתוך האפליקציה */}
                {isActive && (
                    <div style={{background: T.dark ? '#1A2436' : '#F8F9FA', borderRadius: 12, padding: 16, marginTop: 16, cursor: 'default'}} onClick={e => e.stopPropagation()}>
                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
@@ -713,9 +852,11 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       if(viewMode==="amudim"){const D=GEMARA[idx]?.d||0;for(let d=2;d<=D;d++){arr.push({key:`${d}a`,label:`${toHeb(d)}.`});arr.push({key:`${d}b`,label:`${toHeb(d)}:`,});}}
       else if(viewMode==="perakim"){
           const P=GEMARA[idx]?.p||0;
+          const names = GEMARA_CHAP_NAMES[GEMARA[idx]?.n];
           for(let p=1;p<=P;p++) {
+              const nameLabel = names && names[p-1] ? ` - ${names[p-1]}` : "";
               const amudCount = perekAmudKeys(idx, p).length;
-              arr.push({key:`p${p}`,label:`${T.isEn?"Chap":""} ${toHeb(p)}`, sub: `${Math.ceil(amudCount/2)} ${T.isEn?"Dapim":"דפים"}`});
+              arr.push({key:`p${p}`,label:`${T.isEn?"Chap":""} ${toHeb(p)}${nameLabel}`, sub: `${Math.ceil(amudCount/2)} ${T.isEn?"Dapim":"דפים"}`});
           }
       }
     } else if(cat==="mishna"){
@@ -769,7 +910,16 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 
   function isOn(key){
     if(isC) return safeHas(prog?.custom?.[origIdx]?.done, key);
-    if(cat==="gemara"){const g=prog?.gemara?.[idx];if(!g)return false;if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);return ak.length>0&&ak.every(k=>safeHas(g?.done, k));}return safeHas(g?.done, key);}
+    if(cat==="gemara"){
+      const g=prog?.gemara?.[idx];
+      if(!g)return false;
+      if(String(key).startsWith("p")){
+        const pn=parseInt(String(key).slice(1));
+        const ak=perekAmudKeys(idx,pn);
+        return ak.length>0&&ak.every(k=>safeHas(g?.done, k));
+      }
+      return safeHas(g?.done, key); 
+    }
     if(cat==="mishna"){const m=prog?.mishna?.[idx];if(!m)return false;if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);return mk.length>0&&mk.every(k=>safeHas(m?.done, k));}return safeHas(m?.done, key);}
     if(cat==="tanach"){
       if(isParsh) return safeHas(prog?.tanach_parshiot?.[idx], key);
@@ -780,7 +930,14 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 
   function isPartial(key){
     if(isC) return false;
-    if(cat==="gemara"&&String(key).startsWith("p")){const g=prog?.gemara?.[idx];if(!g)return false;const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const cnt=ak.filter(k=>safeHas(g?.done, k)).length;return cnt>0&&cnt<ak.length;}
+    if(cat==="gemara"&&String(key).startsWith("p")){
+      const g=prog?.gemara?.[idx];
+      if(!g)return false;
+      const pn=parseInt(String(key).slice(1));
+      const ak=perekAmudKeys(idx,pn);
+      const cnt=ak.filter(k=>safeHas(g?.done, k)).length;
+      return cnt>0&&cnt<ak.length;
+    }
     if(cat==="mishna"&&String(key).startsWith("pp")){const m=prog?.mishna?.[idx];if(!m)return false;const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const cnt=mk.filter(k=>safeHas(m?.done, k)).length;return cnt>0&&cnt<mk.length;}
     if (cat === "tanach" && typeof key === "string") return false;
     return false;
@@ -791,18 +948,61 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     setProg(prev=>{
       const p = prev || IP;
       if(isC){const arr=[...(p.custom||[])],nd=new Set(arr[origIdx]?.done||[]);nd.has(key)?nd.delete(key):nd.add(key);if(arr[origIdx]) arr[origIdx]={...arr[origIdx],done:nd};return{...p,custom:arr};}
-      if(cat==="gemara"){const g={...p.gemara},cur=g[idx]||{done:new Set()};let nd=new Set(cur.done);if(String(key).startsWith("p")){const pn=parseInt(String(key).slice(1));const ak=perekAmudKeys(idx,pn);const allOn=ak.every(k=>nd.has(k));allOn?ak.forEach(k=>nd.delete(k)):ak.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}g[idx]={done:nd};return{...p,gemara:g};}
+      
+      if(cat==="gemara"){
+        const g={...p.gemara},cur=g[idx]||{done:new Set()};
+        let nd=new Set(cur.done);
+        if(String(key).startsWith("p")){
+          const pn=parseInt(String(key).slice(1));
+          const ak=perekAmudKeys(idx,pn);
+          const allOn=ak.every(k=>nd.has(k));
+          if (allOn) {
+            ak.forEach(k=>nd.delete(k));
+            nd.delete(key);
+          } else {
+            ak.forEach(k=>nd.add(k));
+            nd.add(key);
+          }
+        }else{
+          nd.has(key)?nd.delete(key):nd.add(key);
+        }
+        g[idx]={done:nd};return{...p,gemara:g};
+      }
+      
       if(cat==="mishna"){const mm={...p.mishna},cur=mm[idx]||{done:new Set()};let nd=new Set(cur.done);if(String(key).startsWith("pp")){const pn=parseInt(String(key).slice(2));const mk=perekMsKeys(idx,pn);const allOn=mk.every(k=>nd.has(k));allOn?mk.forEach(k=>nd.delete(k)):mk.forEach(k=>nd.add(k));}else{nd.has(key)?nd.delete(key):nd.add(key);}mm[idx]={done:nd};return{...p,mishna:mm};}
       if(cat==="tanach"){
+        const tp = { ...p.tanach }, tpp = { ...p.tanach_parshiot };
+        const ndPerek = new Set(tp[idx] || []);
+        const ndParsha = new Set(tpp[idx] || []);
+
         if (isParsh) {
-            const tp = { ...p.tanach_parshiot }, nd = new Set(tp[idx] || []);
-            nd.has(key) ? nd.delete(key) : nd.add(key);
-            tp[idx] = nd; return { ...p, tanach_parshiot: tp };
+            const isAdding = !ndParsha.has(key);
+            if (isAdding) ndParsha.add(key); else ndParsha.delete(key);
+
+            const chapters = PARASHA_CHAPTERS[key] || [];
+            chapters.forEach(c => isAdding ? ndPerek.add(c) : ndPerek.delete(c));
+
+            PARSHIOT[idx].forEach(parashaName => {
+               const chaps = PARASHA_CHAPTERS[parashaName] || [];
+               const allDone = chaps.length > 0 && chaps.every(c => ndPerek.has(c));
+               if (allDone) ndParsha.add(parashaName); else ndParsha.delete(parashaName);
+            });
         } else {
-            const tp={...p.tanach},nd=new Set(tp[idx]||[]);
-            nd.has(key) ? nd.delete(key) : nd.add(key);
-            tp[idx]=nd; return{...p,tanach:tp};
+            const isAdding = !ndPerek.has(key);
+            if (isAdding) ndPerek.add(key); else ndPerek.delete(key);
+
+            if (isTorah) {
+                PARSHIOT[idx].forEach(parashaName => {
+                    const chaps = PARASHA_CHAPTERS[parashaName] || [];
+                    const allDone = chaps.length > 0 && chaps.every(c => ndPerek.has(c));
+                    if (allDone) ndParsha.add(parashaName);
+                    else ndParsha.delete(parashaName);
+                });
+            }
         }
+
+        tp[idx] = ndPerek; tpp[idx] = ndParsha;
+        return { ...p, tanach: tp, tanach_parshiot: tpp };
       }
       const cp={...p[cat]},nd=new Set(cp[idx]||[]);nd.has(key)?nd.delete(key):nd.add(key);cp[idx]=nd;return{...p,[cat]:cp};
     });
@@ -816,14 +1016,36 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     setProg(prev => {
       const p = prev || IP;
       if (isC) { const arr = [...(p.custom || [])]; const nd = new Set(arr[origIdx]?.done || []); items.forEach(it => { if(!it.isHeader) nd.add(it.key); }); if (arr[origIdx]) arr[origIdx] = { ...arr[origIdx], done: nd }; return { ...p, custom: arr }; }
-      if (cat === "gemara") { const g = { ...p.gemara }, cur = g[idx] || { done: new Set() }; const nd = new Set(cur.done); items.forEach(it => { if(it.isHeader) return; if (String(it.key).startsWith("p")) perekAmudKeys(idx, parseInt(String(it.key).slice(1))).forEach(k => nd.add(k)); else nd.add(it.key); }); g[idx] = { done: nd }; return { ...p, gemara: g }; }
+      if (cat === "gemara") { 
+          const g = { ...p.gemara }, cur = g[idx] || { done: new Set() }; 
+          const nd = new Set(cur.done); 
+          items.forEach(it => { 
+             if(!it.isHeader) {
+                 if (String(it.key).startsWith("p")) {
+                     perekAmudKeys(idx, parseInt(String(it.key).slice(1))).forEach(k => nd.add(k));
+                     nd.add(it.key);
+                 } else {
+                     nd.add(it.key); 
+                 }
+             }
+          }); 
+          g[idx] = { done: nd }; return { ...p, gemara: g }; 
+      }
       if (cat === "mishna") { const m = { ...p.mishna }, cur = m[idx] || { done: new Set() }; const nd = new Set(cur.done); items.forEach(it => { if(it.isHeader) return; if (String(it.key).startsWith("pp")) perekMsKeys(idx, parseInt(String(it.key).slice(2))).forEach(k => nd.add(k)); else nd.add(it.key); }); m[idx] = { done: nd }; return { ...p, mishna: m }; }
       if (cat === "tanach") { 
-          if(isParsh) {
-             const tp = { ...p.tanach_parshiot }, nd = new Set(tp[idx] || []); items.forEach(it => { if(!it.isHeader) nd.add(it.key); }); tp[idx] = nd; return { ...p, tanach_parshiot: tp };
+          const tp = { ...p.tanach }, tpp = { ...p.tanach_parshiot };
+          const ndPerek = new Set(tp[idx] || []);
+          const ndParsha = new Set(tpp[idx] || []);
+          
+          if (isTorah) {
+             for(let i=1; i<=(TANACH[idx]?.c||0); i++) ndPerek.add(i);
+             PARSHIOT[idx].forEach(ps => ndParsha.add(ps));
           } else {
-             const tp = { ...p.tanach }, nd = new Set(tp[idx] || []); items.forEach(it => { if(!it.isHeader) nd.add(it.key); }); tp[idx] = nd; return { ...p, tanach: tp };
+             items.forEach(it => { if(!it.isHeader) ndPerek.add(it.key); });
           }
+          
+          tp[idx] = ndPerek; tpp[idx] = ndParsha;
+          return { ...p, tanach: tp, tanach_parshiot: tpp };
       }
       const cp = { ...p[cat] }, nd = new Set(cp[idx] || []); items.forEach(it => { if(!it.isHeader) nd.add(it.key); }); cp[idx] = nd; return { ...p, [cat]: cp };
     });
@@ -837,8 +1059,10 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
        if (cat === "gemara") { const g = { ...p.gemara }; g[idx] = { done: new Set() }; return { ...p, gemara: g }; }
        if (cat === "mishna") { const m = { ...p.mishna }; m[idx] = { done: new Set() }; return { ...p, mishna: m }; }
        if (cat === "tanach") { 
-           if(isParsh) { const tp = { ...p.tanach_parshiot }; tp[idx] = new Set(); return { ...p, tanach_parshiot: tp }; }
-           else { const tp = { ...p.tanach }; tp[idx] = new Set(); return { ...p, tanach: tp }; }
+           const tp = { ...p.tanach }, tpp = { ...p.tanach_parshiot };
+           tp[idx] = new Set();
+           tpp[idx] = new Set();
+           return { ...p, tanach: tp, tanach_parshiot: tpp };
        }
        const cp = { ...p[cat] }; cp[idx] = new Set(); return { ...p, [cat]: cp };
     });
@@ -918,13 +1142,26 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
   const[shabbatData,setShabbatData]=useState(null), [zmanim,setZmanim]=useState(null), [locName,setLocName]=useState(T.isEn?"Jerusalem":"ירושלים");
 
   useEffect(()=>{
-    fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=293397&m=50&lg=h").then(r=>r.json()).then(d=>{const parasha=d.items?.find(i=>i.category==="parashat"||i.category==="parasha"); if(parasha) setShabbatData({parasha:parasha.title.replace(/[\u0591-\u05C7]/g, '').trim()});}).catch(()=>{});
+    fetch("https://www.hebcal.com/shabbat?cfg=json&geonameid=293397&m=50&lg=h").then(r=>r.json()).then(d=>{
+      const parasha=d.items?.find(i=>i.category==="parashat"||i.category==="parasha"); 
+      if(parasha) {
+        let pName = parasha.title.replace(/[\u0591-\u05C7]/g, '').replace('פרשת ', '').trim();
+        const doubles = { "ויקהל פקודי": "ויקהל-פקודי", "ויקהלפקודי": "ויקהל-פקודי", "תזריע מצורע": "תזריע-מצורע", "תזריעמצורע": "תזריע-מצורע", "אחרי מות קדושים": "אחרי מות-קדושים", "אחרי מותקדושים": "אחרי מות-קדושים", "בהר בחקתי": "בהר-בחוקותי", "בהר בחוקותי": "בהר-בחוקותי", "בהרבחקתי": "בהר-בחוקותי", "בהרבחוקותי": "בהר-בחוקותי", "חוקת בלק": "חוקת-בלק", "חקת בלק": "חוקת-בלק", "מטות מסעי": "מטות-מסעי", "מטותמסעי": "מטות-מסעי", "נצבים וילך": "נצבים-וילך", "ניצבים וילך": "נצבים-וילך", "נצביםוילך": "נצבים-וילך" };
+        Object.keys(doubles).forEach(k => { if(pName === k || pName.includes(k)) pName = pName.replace(k, doubles[k]); });
+        if(!pName.includes('-') && pName.length > 8) pName = pName.replace(/(בהר)(בחוקותי)/, '$1-$2'); // Fallback
+        setShabbatData({parasha: pName});
+      }
+    }).catch(()=>{});
+    
     const fetchZmanim = (lat, lon, name) => { fetch(`https://www.hebcal.com/zmanim?cfg=json&latitude=${lat}&longitude=${lon}&tzid=Asia/Jerusalem&date=${todayKey()}`).then(r=>r.json()).then(d=>{setZmanim(d); setLocName(name);}).catch(()=>{}); };
     if ("geolocation" in navigator) navigator.geolocation.getCurrentPosition((pos) => fetchZmanim(pos.coords.latitude, pos.coords.longitude, T.isEn?"Current Location":"מיקום נוכחי"), () => fetchZmanim(31.769, 35.216, T.isEn?"Jerusalem":"ירושלים"));
     else fetchZmanim(31.769, 35.216, T.isEn?"Jerusalem":"ירושלים");
   },[T.isEn]);
   
-  const halacha=HALACHOT[new Date().getDate()%HALACHOT.length], dafYomi=useMemo(()=>getDafYomi(),[]);
+  const getDayOfYear = () => { const n = new Date(); const s = new Date(n.getFullYear(), 0, 0); return Math.floor((n - s) / 86400000); };
+  const halacha = useMemo(() => HALACHOT[getDayOfYear() % HALACHOT.length], []);
+  const dafYomi = useMemo(()=>getDafYomi(),[]);
+  
   const S=useMemo(()=>({dapim:GEMARA.reduce((s,_,i)=>s+calcDone(prog,"gemara",i),0),mishna:MISHNA.reduce((s,_,i)=>s+calcDone(prog,"mishna",i),0),tanach:TANACH.reduce((s,_,i)=>s+calcDone(prog,"tanach",i),0),musar:MUSAR.reduce((s,t,i)=>s+calcDone(prog,"musar",i),0)+RAV_KOOK.reduce((s,t,i)=>s+calcDone(prog,"ravKook",i),0)+MACHSHAVA.reduce((s,t,i)=>s+calcDone(prog,"machshava",i),0)}),[prog]);
   const rows=[{cat:"gemara",l:T.CAT_L.gemara,v:S.dapim,tot:TOTAL_DAPIM,unit:T.CAT_UNIT.gemara},{cat:"mishna",l:T.CAT_L.mishna,v:S.mishna,tot:MISHNA.reduce((s,_,i)=>s+totalMs(i),0),unit:T.CAT_UNIT.mishna},{cat:"tanach",l:T.CAT_L.tanach,v:S.tanach,tot:TANACH.reduce((s,t,i)=>{const tMode=prog?.tmode?.[i]||"perakim";return s+(tMode==="parshiot"&&i<5?PARSHIOT[i].length:t.c);},0),unit:T.CAT_UNIT.tanach},{cat:"musar",l:T.CAT_L.musar,v:S.musar,tot:MUSAR.reduce((s,t,i)=>s+bkTotal(prog,"musar",i,prog?.custom),0)+RAV_KOOK.reduce((s,t,i)=>s+bkTotal(prog,"ravKook",i,prog?.custom),0)+MACHSHAVA.reduce((s,t,i)=>s+bkTotal(prog,"machshava",i,prog?.custom),0),unit:T.CAT_UNIT.musar}];
 
@@ -937,7 +1174,15 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
           <div style={{fontSize:T.f(15),color:"rgba(255,255,255,0.9)",fontWeight:600,borderRight:T.isEn?"none":`3px solid ${GOLD}`,borderLeft:T.isEn?`3px solid ${GOLD}`:"none",paddingRight:T.isEn?0:12,paddingLeft:T.isEn?12:0,marginBottom:20,lineHeight:1.6,textAlign:"start"}}>{QUOTES[0]}</div>
           <div style={{display:"flex", gap:8}}>
             {dafYomi.masechet&&<div onClick={()=>{const list=getBkList("gemara",prog?.custom); const it=list.find(m=>m.n===dafYomi.masechet); if(it) setDetail({...it, autoOpenKey:`${dafYomi.daf}a`});}} style={{flex:1, background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.3)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoBook/> {T.UI.dafYomi}</div><div style={{fontSize:T.f(14),fontWeight:700,color:"#fff"}}>{dafYomi.masechet} {T.isEn?"Daf":"דף"} {dafYomi.dafHeb}</div></div>}
-            {shabbatData?.parasha&&<div onClick={()=>{const list=getBkList("tanach",prog?.custom); const bookIdx=PARSHIOT.findIndex(b=>b.includes(shabbatData.parasha.replace('פרשת ',''))); if(bookIdx!==-1) setDetail({...list[bookIdx], autoOpenKey: shabbatData.parasha.replace('פרשת ','')});}} style={{flex:1, background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.2)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoStar/> {T.UI.parasha}</div><div style={{fontSize:T.f(13),fontWeight:600,color:"#fff"}}>{shabbatData.parasha}</div></div>}
+            {shabbatData?.parasha&&<div onClick={()=>{
+                const list=getBkList("tanach",prog?.custom); 
+                let foundIdx = -1; let firstParasha = "";
+                for (let i = 0; i < 5; i++) {
+                    const match = PARSHIOT[i].find(p => shabbatData.parasha.includes(p) || shabbatData.parasha.includes(p.replace('ו', '')));
+                    if (match) { foundIdx = i; firstParasha = match; break; }
+                }
+                if(foundIdx !== -1) setDetail({...list[foundIdx], autoOpenKey: firstParasha});
+            }} style={{flex:1, background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.2)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoStar/> {T.UI.parasha}</div><div style={{fontSize:T.f(13),fontWeight:600,color:"#fff"}}>{shabbatData.parasha}</div></div>}
           </div>
         </div>
       </div>
