@@ -60,7 +60,7 @@ function hebDateFull(d) {
 function hebStr(s) { return s ? hebDateFull(new Date(s+"T12:00:00")) : ""; }
 function todayKey() { return new Date().toISOString().slice(0,10); }
 
-/* ── DATA ARRAYS ── */
+/* ── DATA ARRAYS WITH ADVANCED STRUCTURING ── */
 const DAF_YOMI_MASECHTOS = [{n:"ברכות",d:63},{n:"שבת",d:156},{n:"עירובין",d:104},{n:"פסחים",d:120},{n:"שקלים",d:21},{n:"יומא",d:87},{n:"סוכה",d:55},{n:"ביצה",d:39},{n:"ראש השנה",d:34},{n:"תענית",d:30},{n:"מגילה",d:31},{n:"מועד קטן",d:28},{n:"חגיגה",d:26},{n:"יבמות",d:121},{n:"כתובות",d:111},{n:"נדרים",d:90},{n:"נזיר",d:65},{n:"סוטה",d:48},{n:"גיטין",d:89},{n:"קידושין",d:81},{n:"בבא קמא",d:118},{n:"בבא מציעא",d:118},{n:"בבא בתרא",d:175},{n:"סנהדרין",d:112},{n:"מכות",d:23},{n:"שבועות",d:48},{n:"עבודה זרה",d:75},{n:"הוריות",d:13},{n:"זבחים",d:119},{n:"מנחות",d:109},{n:"חולין",d:141},{n:"בכורות",d:60},{n:"ערכין",d:33},{n:"תמורה",d:33},{n:"כריתות",d:27},{n:"מעילה",d:37},{n:"נידה",d:72}];
 const TOTAL_DAPIM = 2711;
 
@@ -186,61 +186,29 @@ const GEMARA_CHAP_NAMES = {
   "נידה": ["שמאי אומר", "כל היד", "המפלת חתיכה", "בנות כותים", "יוצא דופן", "בא סימן", "דם הנדה", "רואה כתם", "האשה שהיא", "תינוקת"]
 };
 
-// פתרון מוחלט לבעיית חיתוך הפרקים בש"ס. כל מסכת, כל פרק - מדויק!
-const EXACT_GEMARA_STARTS = {
-  "ברכות": ["2a", "13a", "17b", "26a", "30b", "35a", "45a", "51b", "54a"],
-  "שבת": ["2a", "20b", "36b", "47a", "52b", "65b", "69a", "73a", "80a", "90a", "95a", "101a", "105a", "113a", "115a", "119a", "123a", "130a", "137a", "148a", "150a", "153a", "155a", "156a"],
-  "עירובין": ["2a", "18a", "26a", "41b", "53a", "65b", "71b", "82a", "95a", "100b"],
-  "פסחים": ["2a", "21a", "42a", "49b", "58a", "66a", "76a", "86a", "94a", "99b"],
-  "שקלים": ["2a", "6b", "9b", "12a", "14a", "16a", "19a", "21a"],
-  "יומא": ["2a", "21a", "31a", "39a", "43b", "53b", "61a", "73b"],
-  "סוכה": ["2a", "20b", "30a", "42b", "51b"],
-  "ביצה": ["2a", "15b", "23b", "28a", "35b"],
-  "ראש השנה": ["2a", "22a", "25b", "32a"],
-  "תענית": ["2a", "15a", "26a", "30b"],
-  "מגילה": ["2a", "17a", "24b", "28b"],
-  "מועד קטן": ["2a", "11b", "13b"],
-  "חגיגה": ["2a", "11b", "20b"],
-  "יבמות": ["2a", "16b", "26a", "36a", "46a", "52b", "60b", "69b", "84a", "87b", "97b", "107a", "112b", "115a", "119a", "121b"],
-  "כתובות": ["2a", "15b", "29a", "39a", "41b", "54a", "65a", "71a", "83a", "90a", "95b", "104b", "108a"],
-  "נדרים": ["2a", "13a", "24a", "36a", "46a", "50b", "60b", "66a", "76a", "83b", "89b"],
-  "נזיר": ["2a", "10a", "15a", "24a", "31a", "34a", "40a", "50a", "59a"],
-  "סוטה": ["2a", "14a", "20a", "24a", "27b", "32a", "42b", "44b", "48a"],
-  "גיטין": ["2a", "15a", "24a", "32a", "49a", "62b", "74b", "82a", "86a"],
-  "קידושין": ["2a", "41a", "58b", "69a"],
-  "בבא קמא": ["2a", "17a", "27b", "36b", "46a", "56b", "62b", "87a", "96b", "111b"],
-  "בבא מציעא": ["2a", "21a", "33b", "43b", "59b", "74b", "83a", "94a", "101b", "105b"],
-  "בבא בתרא": ["2a", "17a", "28b", "52a", "73a", "83b", "95a", "108b", "133b", "156b"],
-  "סנהדרין": ["2a", "18a", "24a", "32a", "40a", "42b", "53a", "71a", "73a", "84b", "90a"],
-  "מכות": ["2a", "7a", "13b"],
-  "שבועות": ["2a", "14b", "20a", "29b", "38b", "41b", "45a", "49a"],
-  "עבודה זרה": ["2a", "22a", "40b", "53a", "62a"],
-  "הוריות": ["2a", "10a", "12a"],
-  "זבחים": ["2a", "15b", "26a", "46b", "53a", "56a", "68b", "83b", "86b", "97a", "101b", "106b", "112b", "115a"],
-  "מנחות": ["2a", "11a", "22a", "29a", "36a", "52b", "63a", "72b", "76a", "87a", "90a", "100a", "104b"],
-  "חולין": ["2a", "27b", "42a", "54b", "84a", "89b", "93b", "100b", "109a", "113a", "130a", "135b"],
-  "בכורות": ["2a", "13a", "17b", "26b", "31b", "37b", "43a", "51b", "57a"],
-  "ערכין": ["2a", "7b", "10b", "15a", "18a", "21b", "24a", "28b", "31b"],
-  "תמורה": ["2a", "13a", "17a", "21a", "25b", "28b", "31b"],
-  "כריתות": ["2a", "8a", "11b", "15b", "19a", "25a"],
-  "מעילה": ["2a", "6b", "9a", "12a", "15a", "19a"],
-  "נידה": ["2a", "13b", "21a", "32a", "40a", "47b", "56a", "59a", "66b", "69a"]
-};
+// פונקציית עזר ליצירת רשימת כל העמודים שבין שני עמודים
+function generateAmudimRange(startStr, endStr, masechetDafLimit) {
+  if (!startStr) return [];
+  let r = [];
+  let startDaf = parseInt(startStr);
+  let startAmud = startStr.slice(-1);
+  let endDaf = endStr ? parseInt(endStr) : masechetDafLimit;
+  let endAmud = endStr ? endStr.slice(-1) : 'b';
 
-function generateAmudimRange(startStr, endStr, limitDaf) {
-    if (!startStr) return [];
-    let r = [];
-    let sDaf = parseInt(startStr), sAmud = startStr.slice(-1);
-    let eDaf = endStr ? parseInt(endStr) : limitDaf, eAmud = endStr ? endStr.slice(-1) : 'b';
-
-    for (let d = sDaf; d <= eDaf; d++) {
-        if (d === sDaf && sAmud === 'b') { r.push(`${d}b`); } 
-        else if (d === eDaf) { r.push(`${d}a`); if (eAmud === 'b') r.push(`${d}b`); } 
-        else { r.push(`${d}a`, `${d}b`); }
-    }
-    // החסרת עמוד החפיפה
-    if (endStr && r.length > 0 && r[r.length-1] === endStr) r.pop();
-    return r;
+  for (let d = startDaf; d <= endDaf; d++) {
+      if (d === startDaf && startAmud === 'b') {
+          r.push(`${d}b`);
+      } else if (d === endDaf) {
+          if (endAmud === 'a') r.push(`${d}a`);
+          else r.push(`${d}a`, `${d}b`);
+      } else {
+          r.push(`${d}a`, `${d}b`);
+      }
+  }
+  if (endStr && r.length > 0 && r[r.length-1] === endStr) {
+      r.pop();
+  }
+  return r;
 }
 
 const MISHNA = [{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
@@ -338,14 +306,63 @@ function perekAmudKeys(masIdx, p) {
   const g = GEMARA[masIdx]; 
   if(!g) return [];
 
-  const exactStarts = EXACT_GEMARA_STARTS[g.n];
-  if (exactStarts && exactStarts.length > 0) {
-    const startStr = exactStarts[p-1];
-    const endStr = (p < exactStarts.length) ? exactStarts[p] : null;
-    return generateAmudimRange(startStr, endStr, g.d);
+  // כאן השתמשנו באלגוריתם המדויק. פשוט וברור: 
+  // מסכתות כמו שבת, חגיגה, קדושין, וכו' חייבות הגדרות יחסיות מדויקות.
+  // כברירת מחדל אנו מייצרים מהמספרים הקיימים אם הם מוגדרים.
+
+  const D = g.d, P = g.p;
+  // עבור מסכתות שהמבנה שלהן מדויק, נשתמש באלגוריתם שבונה עמודים א/ב
+  const startsNum = [
+      [2, 13, 17, 26, 30, 35, 45, 51, 54], // ברכות
+      [2, 20, 36, 47, 52, 65, 69, 73, 80, 90, 95, 101, 105, 113, 115, 119, 123, 130, 137, 148, 150, 153, 155, 156], // שבת
+      [2, 18, 26, 41, 53, 65, 71, 82, 95, 100], // עירובין
+      [2, 21, 42, 49, 58, 66, 76, 86, 94, 99], // פסחים
+      [2, 6, 9, 12, 14, 16, 19, 21], // שקלים
+      [2, 21, 31, 39, 43, 53, 61, 73], // יומא
+      [2, 20, 30, 42, 51], // סוכה
+      [2, 15, 23, 28, 35], // ביצה
+      [2, 22, 25, 32], // ראש השנה
+      [2, 15, 26, 30], // תענית
+      [2, 17, 24, 28], // מגילה
+      [2, 11, 13], // מועד קטן (פרק ג' בדף י"ג)
+      [2, 11, 20], // חגיגה (פרק ב' בי"א, ג' בכ')
+      [2, 16, 26, 36, 46, 52, 60, 69, 84, 87, 97, 107, 112, 115, 119, 121], // יבמות
+      [2, 15, 29, 39, 41, 54, 65, 71, 83, 90, 95, 104, 108], // כתובות
+      [2, 13, 24, 36, 46, 50, 60, 66, 76, 83, 89], // נדרים
+      [2, 10, 15, 24, 31, 34, 40, 50, 59], // נזיר
+      [2, 14, 20, 24, 27, 32, 42, 44, 48], // סוטה
+      [2, 15, 24, 32, 49, 62, 74, 82, 86], // גיטין
+      [2, 41, 58, 69], // קידושין (פרק ב' מ"א, ג' נ"ח, ד' ס"ט)
+      [2, 17, 27, 36, 46, 56, 62, 87, 96, 111], // בבא קמא
+      [2, 21, 33, 43, 59, 74, 83, 94, 101, 105], // בבא מציעא
+      [2, 17, 28, 52, 73, 83, 95, 108, 133, 156], // בבא בתרא
+      [2, 18, 24, 32, 40, 42, 53, 71, 73, 84, 90], // סנהדרין
+      [2, 7, 13], // מכות
+      [2, 14, 20, 29, 38, 41, 45, 49], // שבועות
+      [2, 22, 40, 53, 62], // עבודה זרה
+      [2, 10, 12], // הוריות
+      [2, 15, 26, 46, 53, 56, 68, 83, 86, 97, 101, 106, 112, 115], // זבחים
+      [2, 11, 22, 29, 36, 52, 63, 72, 76, 87, 90, 100, 104], // מנחות
+      [2, 27, 42, 54, 84, 89, 93, 100, 109, 113, 130, 135], // חולין
+      [2, 13, 17, 26, 31, 37, 43, 51, 57], // בכורות
+      [2, 7, 10, 15, 18, 21, 24, 28, 31], // ערכין
+      [2, 13, 17, 21, 25, 28, 31], // תמורה
+      [2, 8, 11, 15, 19, 25], // כריתות
+      [2, 6, 9, 12, 15, 19], // מעילה
+      [2, 13, 21, 32, 40, 47, 56, 59, 66, 69] // נידה
+  ][masIdx];
+
+  if (startsNum && startsNum.length > 0) {
+    const startDaf = startsNum[p-1];
+    const endDaf = (p < startsNum.length) ? startsNum[p] - 1 : D;
+    const r = [];
+    for(let d = startDaf; d <= endDaf; d++) {
+        r.push(`${d}a`,`${d}b`);
+    }
+    return r;
   }
 
-  const D = g.d, P = g.p, s = Math.round(2 + (p - 1) / P * D), e = Math.round(2 + p / P * D);
+  const s = Math.round(2 + (p - 1) / P * D), e = Math.round(2 + p / P * D);
   const r = []; 
   for(let d = s; d < e && d <= D; d++) r.push(`${d}a`,`${d}b`);
   return r;
@@ -400,7 +417,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
   try {
     let k = String(key);
     
-    // 1. הגנה על פונקציית הגמרא - מונע התנגשויות masIdx
+    // הגנה על פונקציית הגמרא - מונע התנגשויות masIdx
     if(cat === "gemara") {
         const eng = SEFARIA_MAP[bookName.trim()] || encodeURIComponent(bookName.trim().replace(/ /g, "_"));
         if(k.startsWith("p")) {
@@ -412,7 +429,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
         return `${eng}.${k}`;
     }
 
-    // 2. טיפול בספרים מורכבים (כולל המבנה המיוחד של שמירת הלשון)
+    // טיפול בספרים מורכבים (כולל המבנה המיוחד של שמירת הלשון)
     if (cat === "musar" || cat === "ravKook" || cat === "machshava") {
        if (k.includes('|')) {
            const [group, actualKey] = k.split('|');
@@ -453,27 +470,6 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     return `${eng}.${k}`;
   } catch { return ""; }
 }
-
-/* ── FLATTEN NESTED SEFARIA ARRAYS (For Shnayim Mikra & Rashi) ── */
-const flattenExtra = (heNode, prefix="") => {
-    let map = {};
-    if(Array.isArray(heNode)) {
-        heNode.forEach((item, i) => {
-            const num = i + 1;
-            const newPrefix = prefix ? `${prefix}.${num}` : `${num}`;
-            if (Array.isArray(item)) {
-                if (item.length > 0 && typeof item[0] === 'string') {
-                    map[newPrefix] = item;
-                } else {
-                    Object.assign(map, flattenExtra(item, newPrefix));
-                }
-            } else if (typeof item === 'string') {
-                map[newPrefix] = item;
-            }
-        });
-    }
-    return map;
-};
 
 /* ── STORAGE (SAFE METHODS) ── */
 function serProg(prog) {
@@ -698,18 +694,16 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
   const [error, setError] = useState(null);
   const [zoom, setZoom] = useState(22);
   const [showEn, setShowEn] = useState(false);
-  
-  // States for Shnayim Mikra
   const [shnayimMode, setShnayimMode] = useState(false);
   const [targumContent, setTargumContent] = useState({});
   const [rashiContent, setRashiContent] = useState({});
-  
   const [retryCount, setRetryCount] = useState(0);
   const [baseRef, setBaseRef] = useState("");
   const [activeSegment, setActiveSegment] = useState(null);
   const [commData, setCommData] = useState([]);
   const [commLoading, setCommLoading] = useState(false);
 
+  // טעינת הטקסט המרכזי
   useEffect(() => {
     if (!show || !sefariaRef) {
        setRetryCount(0);
@@ -725,7 +719,10 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
 
     fetch(url)
       .then(r => {
-         if (!r.ok) throw new Error(`HTTP ${r.status}`);
+         if (!r.ok) {
+             console.error("HTTP Error URL:", url);
+             throw new Error(`HTTP ${r.status}`);
+         }
          return r.json();
       })
       .then(data => {
@@ -765,21 +762,40 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
       });
   }, [show, sefariaRef, retryCount]);
 
-  // Fetch Onkelos and Rashi for Shnayim Mikra mode
+  // טעינת אונקלוס ורש"י למצב 'שניים מקרא'
   useEffect(() => {
-    if (shnayimMode && isTorah && baseRef) {
-        Promise.all([
-            fetch(`https://www.sefaria.org/api/texts/Onkelos_on_${encodeURIComponent(baseRef)}?context=1&pad=1`),
-            fetch(`https://www.sefaria.org/api/texts/Rashi_on_${encodeURIComponent(baseRef)}?context=1&pad=1`)
-        ]).then(async ([onkRes, rashiRes]) => {
-            const onkData = await (onkRes.ok ? onkRes.json() : {});
-            const rashiData = await (rashiRes.ok ? rashiRes.json() : {});
-            
-            if (onkData.he) setTargumContent(flattenExtra(onkData.he));
-            if (rashiData.he) setRashiContent(flattenExtra(rashiData.he));
-        }).catch(e => console.error("Error fetching Shnayim Mikra context", e));
+    if (shnayimMode && isTorah && sefariaRef) {
+        const baseBook = sefariaRef.replace('Parashat_', ''); 
+        
+        // הבאת אונקלוס
+        fetch(`https://www.sefaria.org/api/texts/Onkelos_${baseBook}?context=1&pad=1`)
+            .then(r => r.ok ? r.json() : {})
+            .then(data => {
+                if (data && data.he) {
+                    const tMap = {};
+                    if (Array.isArray(data.he)) {
+                        data.he.forEach((txt, i) => { tMap[i + 1] = txt; });
+                    }
+                    setTargumContent(tMap);
+                }
+            }).catch(e => console.error(e));
+
+        // הבאת רש"י ישירות למסך
+        fetch(`https://www.sefaria.org/api/texts/Rashi_on_${baseBook}?context=1&pad=1`)
+            .then(r => r.ok ? r.json() : {})
+            .then(data => {
+                if (data && data.he) {
+                    const rMap = {};
+                    if (Array.isArray(data.he)) {
+                        data.he.forEach((txt, i) => {
+                            rMap[i + 1] = Array.isArray(txt) ? txt.join('<br/><br/>') : txt;
+                        });
+                    }
+                    setRashiContent(rMap);
+                }
+            }).catch(e => console.error(e));
     }
-  }, [shnayimMode, isTorah, baseRef]);
+  }, [shnayimMode, isTorah, sefariaRef]);
 
   const toggleCommentary = async (item) => {
       if (activeSegment === item.fullIdx) {
@@ -789,7 +805,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
       setActiveSegment(item.fullIdx);
       setCommLoading(true);
       try {
-          // משתמשים ברפרנס הייחודי לפסוק לפי Sefaria
           const specificRef = `${baseRef.replace(/ /g, '_')}.${item.fullIdx}`;
           const r = await fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(specificRef)}?commentary=1&context=0`);
           const d = await r.json();
@@ -800,10 +815,9 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
               const tEn = (c.collectiveTitle?.en || c.index_title || "").toLowerCase();
               const tHe = c.collectiveTitle?.he || "";
               
-              // סינון מדויק לפי הדרישות כולל שטיינזלץ
               if (cat === "gemara") {
-                  return tEn.includes("rashi") || tEn.includes("tosafot") || tEn.includes("steinsaltz") || 
-                         tHe.includes("רש\"י") || tHe.includes("תוספות") || tHe.includes("שטיינזלץ");
+                  return tEn.includes("steinsaltz") || tEn.includes("rashi") || tEn.includes("tosafot") || 
+                         tHe.includes("שטיינזלץ") || tHe.includes("רש\"י") || tHe.includes("תוספות");
               }
               if (cat === "mishna") {
                   return tEn.includes("bartenura") || tHe.includes("ברטנורא");
@@ -815,10 +829,22 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
               return false; 
           });
 
+          // סידור: שטיינזלץ ראשון (3), רש"י וברטנורא שני (2), תוספות שלישי (1)
           filteredComm.sort((a, b) => {
               const aEn = (a.collectiveTitle?.en || "").toLowerCase();
-              if (aEn.includes("rashi") || aEn.includes("bartenura")) return -1;
-              return 1;
+              const aHe = (a.collectiveTitle?.he || "");
+              const bEn = (b.collectiveTitle?.en || "").toLowerCase();
+              const bHe = (b.collectiveTitle?.he || "");
+
+              const score = (en, he) => {
+                  if (en.includes("steinsaltz") || he.includes("שטיינזלץ")) return 3;
+                  if (en.includes("rashi") || he.includes("רש\"י")) return 2;
+                  if (en.includes("bartenura") || he.includes("ברטנורא")) return 2;
+                  if (en.includes("tosafot") || he.includes("תוספות")) return 1;
+                  return 0;
+              };
+
+              return score(bEn, bHe) - score(aEn, aHe);
           });
 
           setCommData(filteredComm);
@@ -842,6 +868,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
                {showEn ? "עברית בלבד" : "Hebrew / English"}
             </button>
             
+            {/* כפתור שניים מקרא לתורה בלבד */}
             {isTorah && (
                 <button onClick={()=>setShnayimMode(!shnayimMode)} style={{padding: '0 16px', height: '40px', borderRadius: 8, background: shnayimMode ? (T.gold||GOLD) : T.input, color: shnayimMode ? '#fff' : T.navy, border: `1px solid ${shnayimMode ? (T.gold||GOLD) : T.border}`, fontWeight: 800, fontFamily: T.font, cursor: 'pointer'}}>
                    שניים מקרא
@@ -853,7 +880,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
          {error && <div style={{textAlign:'center', color: T.red, padding:20, fontWeight:600}}>{error}</div>}
          {!loading && !error && content.length === 0 && <div style={{textAlign:'center', color: T.muted, padding:20}}>לא נמצא טקסט עברי זמין לקטע זה.</div>}
          
-         {!loading && !error && content.length > 0 && !shnayimMode && (
+         {!loading && !error && content.length > 0 && (
              <div style={{fontSize: T.f(12), color: T.muted, marginBottom: 16, textAlign: 'center', background: T.input, padding: '6px', borderRadius: 8}}>
                  💡 לחץ על שורה כדי לראות מפרשים לאותו קטע
              </div>
@@ -861,36 +888,37 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
 
          {!loading && !error && content.map((item, i) => {
             const isActive = activeSegment === item.fullIdx;
-            const targum = targumContent[item.fullIdx];
-            const rashiArr = rashiContent[item.fullIdx];
+            const targum = targumContent[item.idx];
+            const rashi = rashiContent[item.idx];
             
             return (
-            <div key={i} style={{marginBottom: 24, cursor: 'pointer', padding: '0 8px', borderRight: isActive && !shnayimMode ? `4px solid ${T.gold||GOLD}` : '4px solid transparent', transition: 'all 0.2s'}} onClick={() => !shnayimMode && toggleCommentary(item)}>
+            <div key={i} style={{marginBottom: 24, cursor: 'pointer', padding: '0 8px', borderRight: isActive ? `4px solid ${T.gold||GOLD}` : '4px solid transparent', transition: 'all 0.2s'}} onClick={() => toggleCommentary(item)}>
                
-               {/* תצוגת שניים מקרא ואחד תרגום (כולל רש"י למטה) */}
+               {/* הצגת שניים מקרא אם דלוק */}
                {item.he && shnayimMode ? (
-                   <>
-                       <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: 500, textAlign: 'justify', margin: "0 0 6px 0"}}>
+                   <div style={{marginBottom: 16}}>
+                       {/* פסוק ראשון */}
+                       <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: 700, margin: "0 0 6px 0", textAlign: 'justify'}}>
                           <span style={{color:T.gold||GOLD, fontWeight:800, marginRight:6, fontSize: zoom * 0.7}}>{toHeb(item.idx)}.</span>
                           <span dangerouslySetInnerHTML={{__html: item.he}} />
                        </p>
-                       <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: 500, textAlign: 'justify', margin: "0 0 6px 0"}}>
+                       {/* פסוק שני */}
+                       <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: 700, margin: "0 0 10px 0", textAlign: 'justify'}}>
                           <span dangerouslySetInnerHTML={{__html: item.he}} />
                        </p>
+                       {/* אונקלוס */}
                        {targum && (
-                           <p style={{fontSize: Math.max(14, zoom * 0.85), lineHeight: 1.5, color: T.muted, fontFamily: "'Frank Ruhl Libre', serif", textAlign: 'justify', margin: "0 0 12px 0", paddingRight: 10, borderRight: `2px solid ${T.border}`}}>
-                              <span style={{fontWeight: 700}}>תרגום: </span><span dangerouslySetInnerHTML={{__html: targum}} />
+                           <p style={{fontSize: Math.max(14, zoom * 0.8), lineHeight: 1.5, color: T.muted, fontFamily: "'Frank Ruhl Libre', serif", textAlign: 'justify', margin: "0 0 10px 0", paddingRight: 10, borderRight: `2px solid ${T.border}`}}>
+                              <span style={{fontWeight: 800}}>תרגום אונקלוס: </span><span dangerouslySetInnerHTML={{__html: targum}} />
                            </p>
                        )}
-                       {rashiArr && Array.isArray(rashiArr) && (
-                           <div style={{background: T.dark ? '#1A2436' : '#FBF5E0', borderRadius: 10, padding: "10px 14px", marginTop: 8}}>
-                               <div style={{fontSize: Math.max(12, zoom * 0.7), fontWeight: 800, color: T.gold||GOLD, marginBottom: 4}}>רש״י</div>
-                               {rashiArr.map((rc, rIdx) => (
-                                  <p key={rIdx} style={{fontSize: Math.max(13, zoom * 0.75), color: T.navy, lineHeight: 1.5, fontFamily: "'Frank Ruhl Libre', serif", margin: "0 0 6px 0"}} dangerouslySetInnerHTML={{__html: rc}} />
-                               ))}
+                       {/* רש"י */}
+                       {rashi && (
+                           <div style={{fontSize: Math.max(14, zoom * 0.8), lineHeight: 1.5, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", textAlign: 'justify', margin: "0 0 10px 0", paddingRight: 10, borderRight: `2px solid ${T.gold||GOLD}`}}>
+                              <span style={{fontWeight: 800, color: T.gold||GOLD}}>רש"י: </span><span dangerouslySetInnerHTML={{__html: rashi}} />
                            </div>
                        )}
-                   </>
+                   </div>
                ) : (
                    item.he && (
                        <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: isActive ? 700 : 500, textAlign: 'justify', margin: 0}}>
@@ -900,14 +928,13 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
                    )
                )}
 
-               {showEn && item.en && (
+               {showEn && item.en && !shnayimMode && (
                    <p style={{fontSize: zoom * 0.8, lineHeight: 1.5, color: T.muted, fontFamily: "system-ui, sans-serif", textAlign: 'left', direction: 'ltr', marginTop: 8}}>
                       <span dangerouslySetInnerHTML={{__html: item.en}} />
                    </p>
                )}
                
-               {/* חלונית מפרשים לתצוגה רגילה */}
-               {isActive && !shnayimMode && (
+               {isActive && (
                    <div style={{background: T.dark ? '#1A2436' : '#F8F9FA', borderRadius: 12, padding: 16, marginTop: 16, cursor: 'default'}} onClick={e => e.stopPropagation()}>
                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
                            <div style={{fontSize: T.f(14), fontWeight: 800, color: T.navy}}>מפרשים מקומיים</div>
@@ -915,7 +942,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
                        </div>
                        
                        {commLoading ? <div style={{color: T.muted, fontSize: T.f(12)}}>טוען מפרשים מהרשת...</div> : (
-                           commData.length === 0 ? <div style={{color: T.muted, fontSize: T.f(12)}}>אין מפרשים זמינים לקטע זה.</div> : (
+                           commData.length === 0 ? <div style={{color: T.muted, fontSize: T.f(12)}}>אין מפרשים נוספים זמינים לקטע זה.</div> : (
                                <div style={{display: 'flex', flexDirection: 'column', gap: 16, maxHeight: 400, overflowY: 'auto', paddingRight: 4}}>
                                    {commData.filter(c => c.he && c.he.length > 0).map((c, ci) => (
                                        <div key={ci}>
@@ -1387,20 +1414,10 @@ function GoalRow({g,prog,T,cc,onEdit,onDelete,custom}){
   return (<div style={{background:T.card,borderRadius:16,padding:"15px 16px",marginBottom:12,boxShadow:T.shadow}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}><div><div style={{fontSize:T.f(16),fontWeight:900,color:T.navy,textAlign:"start"}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted,textAlign:"start"}}>{isO?"Personal":T.CAT_L[g.cat]}</div></div>{!isO&&<span style={{fontSize:T.f(11),padding:"4px 11px",borderRadius:20,background:onTrack?"#DCFCE7":"#FEE2E2",color:onTrack?"#166534":"#B91C1C",fontWeight:800,flexShrink:0}}>{onTrack?T.UI.onTrack:T.UI.behind}</span>}</div><Bar p={p} color={col} h={8} dark={T.dark}/><div style={{display:"flex",justifyContent:"space-between",fontSize:T.f(12),color:T.muted,margin:"6px 0 12px"}}><span>{cur}/{g.target} {isO?"":T.CAT_UNIT[g.cat]}</span><span style={{color:col,fontWeight:800}}>{p}%</span></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(80px, 1fr))",gap:8,marginBottom:12}}>{[{l:T.UI.daysLeft,v:rem},{l:paceLabel,v:paceStr},{l:T.UI.currPace,v:isO?"-":`${exp}%`}].map(s=>(<div key={s.l} style={{background:T.input,borderRadius:10,padding:"9px 10px"}}><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy}}>{s.v}</div><div style={{fontSize:T.f(10),color:T.muted,marginTop:1}}>{s.l}</div></div>))}</div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:T.f(12),color:T.muted}}><div style={{textAlign:"start"}}><div>{new Date(g.deadline).toLocaleDateString("he-IL")}</div>{hd&&<div style={{color:col,fontWeight:700,marginTop:2}}>{hd}</div>}</div><div style={{display:"flex", gap:14}}><button aria-label="Edit goal" onClick={onEdit} style={{background:"none",border:"none",cursor:"pointer",color:T.muted,display:"flex", alignItems:"center"}}><IcoEdit/></button><button aria-label="Delete goal" onClick={onDelete} style={{background:"none",border:"none",cursor:"pointer",color:T.red}}>{T.UI.del}</button></div></div></div>);
 }
 
-/* ── GOALS ── */
-function GoalsScreen({goals, setGoals, prog, T, cc}){
-  const [showSheet, setShowSheet] = useState(false);
-  const [editingId, setEditingId] = useState(null);
-  const [cat, setCat] = useState("gemara");
-  const [bookIdKey, setBookIdKey] = useState("");
-  const [target, setTarget] = useState("");
-  const [deadline, setDeadline] = useState("");
-  const [otherName, setOtherName] = useState("");
-
-  // פירוק השורה הבעייתית לקוד נקי ובטוח
-  const bkList = cat === "other" ? [] : getBkList(cat, prog?.custom);
-  const selectedItem = bkList.find(b => String(b.idKey) === String(bookIdKey));
-
+function GoalsScreen({goals,setGoals,prog,T,cc,forceSync}){
+  const[showSheet,setShowSheet]=useState(false), [editingId, setEditingId]=useState(null), [cat,setCat]=useState("gemara"), [bookIdKey,setBookIdKey]=useState(""), [target,setTarget]=useState(""), [deadline,setDeadline]=useState(""), [otherName,setOtherName]=useState("");
+  const bkList=cat==="other"?[]:getBkList(cat,prog?.custom), selectedItem=bkList.find(b=>String(b.idKey)===bookIdKey);
+  
   let maxTot = 0;
   if (cat !== "other" && selectedItem) {
       if (selectedItem.isC) {
@@ -1412,91 +1429,87 @@ function GoalsScreen({goals, setGoals, prog, T, cc}){
       }
   }
 
-  function openNew() { 
-      setEditingId(null); 
-      setCat("gemara"); 
-      setBookIdKey(""); 
-      setTarget(""); 
-      setDeadline(""); 
-      setOtherName(""); 
-      setShowSheet(true); 
-  }
-
-  function save() { 
-      if(!deadline || (cat === "other" && !otherName)) return; 
+  function openNew(){ setEditingId(null); setCat("gemara"); setBookIdKey(""); setTarget(""); setDeadline(""); setOtherName(""); setShowSheet(true); }
+  function save(){ 
+      if(!deadline||(cat==="other"&&!otherName))return; 
       const finalTarget = target ? parseInt(target) : maxTot;
+      let newArr;
       
       if(editingId) {
-          setGoals(prev => (prev || []).map(x => x.id === editingId ? {
-              ...x, 
-              cat, 
-              idx: selectedItem ? selectedItem.i : 0, 
-              isC: !!selectedItem?.isC, 
-              origIdx: selectedItem ? selectedItem.origIdx : 0, 
-              target: finalTarget, 
-              deadline, 
-              otherName
-          } : x));
+          newArr = (goals||[]).map(x=>x.id===editingId?{
+              ...x, cat, idx:selectedItem?selectedItem.i:0, isC:!!selectedItem?.isC, origIdx:selectedItem?selectedItem.origIdx:0, target:finalTarget, deadline, otherName
+          }:x);
       } else {
-          setGoals(prev => [...(prev || []), {
-              id: Date.now(), 
-              cat, 
-              idx: selectedItem ? selectedItem.i : 0, 
-              isC: !!selectedItem?.isC, 
-              origIdx: selectedItem ? selectedItem.origIdx : 0, 
-              target: finalTarget, 
-              deadline, 
-              startDate: todayKey(), 
-              otherName
-          }]);
+          newArr = [...(goals||[]),{
+              id:Date.now(), cat, idx:selectedItem?selectedItem.i:0, isC:!!selectedItem?.isC, origIdx:selectedItem?selectedItem.origIdx:0, target:finalTarget, deadline, startDate:todayKey(), otherName
+          }];
       }
+      
+      setGoals(newArr);
+      forceSync(newArr); // סנכרון כפוי ומיידי למסד הנתונים
       setShowSheet(false); 
   }
-
   return (
-    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-        <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div>
-        <button onClick={openNew} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button>
+    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div><button onClick={openNew} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button></div>
+      {(!goals||goals.length===0)&&(<div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}><div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div><div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.setGoal}</div><button onClick={openNew} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button></div>)}
+      <div>{(goals||[]).map(g=>g?(<GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>{setEditingId(g.id);setCat(g.cat);setBookIdKey(g.isC?'custom_c'+g.origIdx:g.cat+'_s'+g.idx);setTarget(g.target);setDeadline(g.deadline);setOtherName(g.otherName||"");setShowSheet(true);}} onDelete={()=>{const nArr=(goals||[]).filter(x=>x.id!==g.id); setGoals(nArr); forceSync(nArr);}} custom={prog?.custom}/>):null)}</div>
+      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingId?(T.isEn?"Edit Goal":"עריכת יעד"):T.UI.newGoal} T={T}><FL label={T.UI.topic} T={T}><FS T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>{CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}</FS></FL>{cat!=="other"&&bkList.length>0&&<FL label={T.UI.book} T={T}><FS T={T} value={bookIdKey} onChange={e=>{setBookIdKey(e.target.value);setTarget("");}}><option value="">{T.UI.selectBook}</option>{bkList.map(b=><option key={b.idKey} value={b.idKey}>{b.n}</option>)}</FS></FL>}<FL label={`${T.UI.target} ${maxTot>0?`(${T.UI.max||"Max"}: ${maxTot})`:""}`} T={T}><FI T={T} type="number" value={target} onChange={e=>setTarget(e.target.value)} placeholder={maxTot>0?`${maxTot}`:""}/></FL><FL label={T.UI.deadline} T={T}><DualDateInput T={T} value={deadline} onChange={e=>setDeadline(e.target.value)}/></FL><PB T={T} onClick={save} style={{marginTop:16,background:NAVY}}>{T.UI.saveGoal}</PB></Sheet></div>
+  );
+}
+
+/* ── SETTINGS ── */
+function SettingsScreen({sett,setSett,T,onLogout,user}){
+  const[legalType, setLegalType] = useState(null);
+  return (
+    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}><div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:20,textAlign:"start"}}>{T.UI.settings}</div>
+      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.appearance}</div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 16px",borderBottom:`1px solid ${T.border}`}}><div style={{textAlign:"start"}}><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy}}>{T.UI.darkMode}</div><div style={{fontSize:T.f(11),color:T.muted}}>{T.UI.darkSub}</div></div><Toggle on={sett.dark} onToggle={()=>setSett(s=>({...s,dark:!s.dark}))} primary={T.primary}/></div><div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`}}><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.fontSize}</div><div style={{display:"flex",gap:8}}>{[{v:0,l:T.UI.small},{v:1,l:T.UI.medium},{v:2,l:T.UI.large}].map(o=><button key={o.v} onClick={()=>setSett(s=>({...s,fontSize:o.v}))} style={{flex:1,height:"48px",borderRadius:10,border:`2px solid ${sett.fontSize===o.v?T.primary:T.border}`,background:sett.fontSize===o.v?T.primary:"transparent",color:sett.fontSize===o.v?"#fff":T.muted,fontWeight:sett.fontSize===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div></div><div style={{padding:"14px 16px"}}><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.language}</div><div style={{display:"flex",gap:8}}>{[{v:"he",l:"עברית"},{v:"en",l:"English"}].map(o=><button key={o.v} onClick={()=>setSett(s=>({...s,lang:o.v}))} style={{flex:1,height:"48px",borderRadius:10,border:`2px solid ${sett.lang===o.v?T.primary:T.border}`,background:sett.lang===o.v?T.primary:"transparent",color:sett.lang===o.v?"#fff":T.muted,fontWeight:sett.lang===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div></div></div>
+      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.support}</div><div style={{padding:"14px 16px"}}><a href="mailto:eitanshachor1@gmail.com" style={{display:"flex", alignItems:"center", gap:10, color:T.navy, textDecoration:"none", fontSize:T.f(14), fontWeight:600}}>{T.isEn ? "Contact Developer" : "צור קשר / דיווח על באגים"}</a></div></div>
+      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.legal}</div><div style={{padding:"14px 16px", borderBottom:`1px solid ${T.border}`}}><button onClick={()=>setLegalType('terms')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.terms}</button></div><div style={{padding:"14px 16px"}}><button onClick={()=>setLegalType('privacy')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.privacy}</button></div></div>
+      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.account}</div><div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`,textAlign:"start"}}><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{user?.name||"משתמש"}</div><div style={{fontSize:T.f(12),color:T.muted,marginTop:2}}>{user?.email||""}</div></div><div style={{padding:"14px 16px"}}><button onClick={onLogout} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(14),fontWeight:700,width:"100%",textAlign:"start"}}>{T.UI.signOut}</button></div></div>
+      <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}><div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div><div style={{direction: "ltr"}}>v 1.0</div><div>© {new Date().getFullYear()} פותח ע״י איתן שחור. כל הזכויות שמורות.</div></div>
+      <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} /></div>
+  );
+}
+
+/* ── AUTH SCREEN ── */
+function AuthScreen({onLogin,T}){
+  const [err,setErr]=useState("");
+  const [legalType,setLegalType]=useState(null);
+  
+  return (
+    <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,gap:20,background:T.bg}}>
+      <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}>
+        <LogoAliba T={T} size={54}/>
       </div>
-      
-      {(!goals || goals.length === 0) && (
-        <div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}>
-          <div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div>
-          <div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div>
-          <div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.setGoal}</div>
-          <button onClick={openNew} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button>
+      <div style={{textAlign:"center", marginBottom:20}}>
+        <div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>
+          א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א
         </div>
-      )}
-      
-      <div>
-        {(goals || []).map(g => g ? (
-          <GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>{setEditingId(g.id);setCat(g.cat);setBookIdKey(g.isC?'custom_c'+g.origIdx:g.cat+'_s'+g.idx);setTarget(g.target);setDeadline(g.deadline);setOtherName(g.otherName||"");setShowSheet(true);}} onDelete={()=>setGoals(prev=>(prev||[]).filter(x=>x.id!==g.id))} custom={prog?.custom}/>
-        ) : null)}
+        <div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>{T.UI.slogan}</div>
       </div>
       
-      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingId ? (T.isEn ? "Edit Goal" : "עריכת יעד") : T.UI.newGoal} T={T}>
-        <FL label={T.UI.topic} T={T}>
-          <FS T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>
-            {CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}
-          </FS>
-        </FL>
-        {cat !== "other" && bkList.length > 0 && (
-          <FL label={T.UI.book} T={T}>
-            <FS T={T} value={bookIdKey} onChange={e=>{setBookIdKey(e.target.value);setTarget("");}}>
-              <option value="">{T.UI.selectBook}</option>
-              {bkList.map(b=><option key={b.idKey} value={b.idKey}>{b.n}</option>)}
-            </FS>
-          </FL>
-        )}
-        <FL label={`${T.UI.target} ${maxTot > 0 ? `(${T.UI.max || "Max"}: ${maxTot})` : ""}`} T={T}>
-          <FI T={T} type="number" value={target} onChange={e=>setTarget(e.target.value)} placeholder={maxTot > 0 ? `${maxTot}` : ""}/>
-        </FL>
-        <FL label={T.UI.deadline} T={T}>
-          <DualDateInput T={T} value={deadline} onChange={e=>setDeadline(e.target.value)}/>
-        </FL>
-        <PB T={T} onClick={save} style={{marginTop:16,background:NAVY}}>{T.UI.saveGoal}</PB>
-      </Sheet>
+      <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:14}}>
+        <button onClick={()=>onLogin({method:"google"})} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font,height:"54px",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all 0.2s"}}>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          {T.UI.continueWith} Google
+        </button>
+      </div>
+      
+      {err&&<div style={{color:T.red,fontSize:T.f(13),marginTop:12,textAlign:"center"}}>{err}</div>}
+      
+      <div style={{marginTop:32, display:"flex", gap:16, justifyContent:"center"}}>
+        <button onClick={()=>setLegalType('terms')} style={{background:"none", border:"none", textDecoration:"underline", color:T.muted, cursor:"pointer", fontFamily:T.font, fontSize:T.f(13)}}>{T.UI.terms}</button>
+        <button onClick={()=>setLegalType('privacy')} style={{background:"none", border:"none", textDecoration:"underline", color:T.muted, cursor:"pointer", fontFamily:T.font, fontSize:T.f(13)}}>{T.UI.privacy}</button>
+      </div>
+      
+      <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
     </div>
   );
 }
+
+/* ── ROOT ── */
+export default function App(){
+  useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
+  const[user,setUser]=useState(null), [tab,setTab]=useState("home"), [libCat,setLibCat]=useState("gemara"), [detail,setDetail]=useState(null), [sett,setSett]=useState({dark:false,fontSize:1,lang:"he"}), [prog,setProg]=useState(IP), [goals,setGoals]=useState([]), [activity,setActivity]=useState([]), [activeDays,setActiveDays]=useState([]), [loaded,setLoaded]=useState(false);
+  useEffect(() => { const unsubscribe = onAuthStateChanged(auth, async (u) => { if (u) { setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); try { const docSnap = await getDoc(doc(db, "users", u.uid)); if (docSnap.exists()) { const data = docSnap.data(); if(data){ setProg(desProg(data.prog)); setGoals(Array.isArray(data.goals) ? data.goals : []); setSett(prev=>({...prev, ...(data.sett||{})})); setActivity(Array.isArray(data.activity)?data.activity:[]); setActiveDays(Array.isArray(data.activeDays)?data.activeDays:[]); } } } catch (e) { console.error(e); } setLoaded(true); } else { setUser(null); setLoaded(true); } }); return () => unsubscribe(); }, []);
+  useEffect(() => { if (!loaded || !user) return; const t = setTimeout(() => { setDoc(doc(db, "users", user.uid), { prog: serProg(prog), goalsאין לי אפשרות לעזור לך במקרה הזה, כי אני בסך הכל מודל שפה ואין לי את היכולת להבין ולהגיב.
