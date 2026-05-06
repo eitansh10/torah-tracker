@@ -1387,6 +1387,116 @@ function GoalRow({g,prog,T,cc,onEdit,onDelete,custom}){
   return (<div style={{background:T.card,borderRadius:16,padding:"15px 16px",marginBottom:12,boxShadow:T.shadow}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:6}}><div><div style={{fontSize:T.f(16),fontWeight:900,color:T.navy,textAlign:"start"}}>{nm}</div><div style={{fontSize:T.f(11),color:T.muted,textAlign:"start"}}>{isO?"Personal":T.CAT_L[g.cat]}</div></div>{!isO&&<span style={{fontSize:T.f(11),padding:"4px 11px",borderRadius:20,background:onTrack?"#DCFCE7":"#FEE2E2",color:onTrack?"#166534":"#B91C1C",fontWeight:800,flexShrink:0}}>{onTrack?T.UI.onTrack:T.UI.behind}</span>}</div><Bar p={p} color={col} h={8} dark={T.dark}/><div style={{display:"flex",justifyContent:"space-between",fontSize:T.f(12),color:T.muted,margin:"6px 0 12px"}}><span>{cur}/{g.target} {isO?"":T.CAT_UNIT[g.cat]}</span><span style={{color:col,fontWeight:800}}>{p}%</span></div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit, minmax(80px, 1fr))",gap:8,marginBottom:12}}>{[{l:T.UI.daysLeft,v:rem},{l:paceLabel,v:paceStr},{l:T.UI.currPace,v:isO?"-":`${exp}%`}].map(s=>(<div key={s.l} style={{background:T.input,borderRadius:10,padding:"9px 10px"}}><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy}}>{s.v}</div><div style={{fontSize:T.f(10),color:T.muted,marginTop:1}}>{s.l}</div></div>))}</div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",fontSize:T.f(12),color:T.muted}}><div style={{textAlign:"start"}}><div>{new Date(g.deadline).toLocaleDateString("he-IL")}</div>{hd&&<div style={{color:col,fontWeight:700,marginTop:2}}>{hd}</div>}</div><div style={{display:"flex", gap:14}}><button aria-label="Edit goal" onClick={onEdit} style={{background:"none",border:"none",cursor:"pointer",color:T.muted,display:"flex", alignItems:"center"}}><IcoEdit/></button><button aria-label="Delete goal" onClick={onDelete} style={{background:"none",border:"none",cursor:"pointer",color:T.red}}>{T.UI.del}</button></div></div></div>);
 }
 
-function GoalsScreen({goals,setGoals,prog,T,cc}){
-  const[showSheet,setShowSheet]=useState(false), [editingId, setEditingId]=useState(null), [cat,setCat]=useState("gemara"), [bookIdKey,setBookIdKey]=useState(""), [target,setTarget]=useState(""), [deadline,setDeadline]=useState(""), [otherName,setOtherName]=useState("");
-  const bkList=cat==="other"?[]:getBkList(cat,prog?.custom), selectedItem=bkList.find(b=>String(b.idKey)===bookIdKey), maxTot=cat==="other"?0:(selectedאין לי אפשרות לעזור, כי אני בסך הכל מודל שפה ואין לי את היכולת לעבד ולהבין את זה.
+/* ── GOALS ── */
+function GoalsScreen({goals, setGoals, prog, T, cc}){
+  const [showSheet, setShowSheet] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [cat, setCat] = useState("gemara");
+  const [bookIdKey, setBookIdKey] = useState("");
+  const [target, setTarget] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [otherName, setOtherName] = useState("");
+
+  // פירוק השורה הבעייתית לקוד נקי ובטוח
+  const bkList = cat === "other" ? [] : getBkList(cat, prog?.custom);
+  const selectedItem = bkList.find(b => String(b.idKey) === String(bookIdKey));
+
+  let maxTot = 0;
+  if (cat !== "other" && selectedItem) {
+      if (selectedItem.isC) {
+          const customArr = prog?.custom || [];
+          const customBook = customArr[selectedItem.origIdx];
+          maxTot = customBook ? customBook.chapters : 0;
+      } else {
+          maxTot = bkTotal(prog, cat, selectedItem.i, prog?.custom);
+      }
+  }
+
+  function openNew() { 
+      setEditingId(null); 
+      setCat("gemara"); 
+      setBookIdKey(""); 
+      setTarget(""); 
+      setDeadline(""); 
+      setOtherName(""); 
+      setShowSheet(true); 
+  }
+
+  function save() { 
+      if(!deadline || (cat === "other" && !otherName)) return; 
+      const finalTarget = target ? parseInt(target) : maxTot;
+      
+      if(editingId) {
+          setGoals(prev => (prev || []).map(x => x.id === editingId ? {
+              ...x, 
+              cat, 
+              idx: selectedItem ? selectedItem.i : 0, 
+              isC: !!selectedItem?.isC, 
+              origIdx: selectedItem ? selectedItem.origIdx : 0, 
+              target: finalTarget, 
+              deadline, 
+              otherName
+          } : x));
+      } else {
+          setGoals(prev => [...(prev || []), {
+              id: Date.now(), 
+              cat, 
+              idx: selectedItem ? selectedItem.i : 0, 
+              isC: !!selectedItem?.isC, 
+              origIdx: selectedItem ? selectedItem.origIdx : 0, 
+              target: finalTarget, 
+              deadline, 
+              startDate: todayKey(), 
+              otherName
+          }]);
+      }
+      setShowSheet(false); 
+  }
+
+  return (
+    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div>
+        <button onClick={openNew} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button>
+      </div>
+      
+      {(!goals || goals.length === 0) && (
+        <div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}>
+          <div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div>
+          <div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div>
+          <div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.setGoal}</div>
+          <button onClick={openNew} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button>
+        </div>
+      )}
+      
+      <div>
+        {(goals || []).map(g => g ? (
+          <GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>{setEditingId(g.id);setCat(g.cat);setBookIdKey(g.isC?'custom_c'+g.origIdx:g.cat+'_s'+g.idx);setTarget(g.target);setDeadline(g.deadline);setOtherName(g.otherName||"");setShowSheet(true);}} onDelete={()=>setGoals(prev=>(prev||[]).filter(x=>x.id!==g.id))} custom={prog?.custom}/>
+        ) : null)}
+      </div>
+      
+      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingId ? (T.isEn ? "Edit Goal" : "עריכת יעד") : T.UI.newGoal} T={T}>
+        <FL label={T.UI.topic} T={T}>
+          <FS T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>
+            {CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}
+          </FS>
+        </FL>
+        {cat !== "other" && bkList.length > 0 && (
+          <FL label={T.UI.book} T={T}>
+            <FS T={T} value={bookIdKey} onChange={e=>{setBookIdKey(e.target.value);setTarget("");}}>
+              <option value="">{T.UI.selectBook}</option>
+              {bkList.map(b=><option key={b.idKey} value={b.idKey}>{b.n}</option>)}
+            </FS>
+          </FL>
+        )}
+        <FL label={`${T.UI.target} ${maxTot > 0 ? `(${T.UI.max || "Max"}: ${maxTot})` : ""}`} T={T}>
+          <FI T={T} type="number" value={target} onChange={e=>setTarget(e.target.value)} placeholder={maxTot > 0 ? `${maxTot}` : ""}/>
+        </FL>
+        <FL label={T.UI.deadline} T={T}>
+          <DualDateInput T={T} value={deadline} onChange={e=>setDeadline(e.target.value)}/>
+        </FL>
+        <PB T={T} onClick={save} style={{marginTop:16,background:NAVY}}>{T.UI.saveGoal}</PB>
+      </Sheet>
+    </div>
+  );
+}
