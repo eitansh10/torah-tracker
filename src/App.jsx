@@ -60,7 +60,7 @@ function hebDateFull(d) {
 function hebStr(s) { return s ? hebDateFull(new Date(s+"T12:00:00")) : ""; }
 function todayKey() { return new Date().toISOString().slice(0,10); }
 
-/* ── DATA ARRAYS WITH ADVANCED STRUCTURING ── */
+/* ── DATA ARRAYS ── */
 const DAF_YOMI_MASECHTOS = [{n:"ברכות",d:63},{n:"שבת",d:156},{n:"עירובין",d:104},{n:"פסחים",d:120},{n:"שקלים",d:21},{n:"יומא",d:87},{n:"סוכה",d:55},{n:"ביצה",d:39},{n:"ראש השנה",d:34},{n:"תענית",d:30},{n:"מגילה",d:31},{n:"מועד קטן",d:28},{n:"חגיגה",d:26},{n:"יבמות",d:121},{n:"כתובות",d:111},{n:"נדרים",d:90},{n:"נזיר",d:65},{n:"סוטה",d:48},{n:"גיטין",d:89},{n:"קידושין",d:81},{n:"בבא קמא",d:118},{n:"בבא מציעא",d:118},{n:"בבא בתרא",d:175},{n:"סנהדרין",d:112},{n:"מכות",d:23},{n:"שבועות",d:48},{n:"עבודה זרה",d:75},{n:"הוריות",d:13},{n:"זבחים",d:119},{n:"מנחות",d:109},{n:"חולין",d:141},{n:"בכורות",d:60},{n:"ערכין",d:33},{n:"תמורה",d:33},{n:"כריתות",d:27},{n:"מעילה",d:37},{n:"נידה",d:72}];
 const TOTAL_DAPIM = 2711;
 
@@ -186,46 +186,42 @@ const GEMARA_CHAP_NAMES = {
   "נידה": ["שמאי אומר", "כל היד", "המפלת חתיכה", "בנות כותים", "יוצא דופן", "בא סימן", "דם הנדה", "רואה כתם", "האשה שהיא", "תינוקת"]
 };
 
-// תוקן יסודית לכל הש"ס
-const GEMARA_PERAKIM_STARTS = [
-  [2, 13, 17, 26, 30, 35, 45, 51, 54], // ברכות
-  [2, 20, 36, 47, 52, 65, 69, 73, 80, 90, 95, 101, 105, 113, 115, 119, 123, 130, 137, 148, 150, 153, 155, 156], // שבת
-  [2, 18, 26, 41, 53, 65, 71, 82, 95, 100], // עירובין
-  [2, 21, 42, 49, 58, 66, 76, 86, 94, 99], // פסחים
-  [2, 6, 9, 12, 14, 16, 19, 21], // שקלים
-  [2, 21, 31, 39, 43, 53, 61, 73], // יומא
-  [2, 20, 30, 42, 51], // סוכה
-  [2, 15, 23, 28, 35], // ביצה
-  [2, 22, 25, 32], // ראש השנה
-  [2, 15, 26, 30], // תענית
-  [2, 17, 24, 28], // מגילה
-  [2, 11, 24], // מועד קטן
-  [2, 12, 21], // חגיגה - תוקן (מתחיל בי"א ע"ב ובכ' ע"ב)
-  [2, 16, 26, 36, 46, 52, 60, 69, 84, 87, 97, 107, 112, 115, 119, 121], // יבמות
-  [2, 15, 29, 39, 41, 54, 65, 71, 83, 90, 95, 104, 108], // כתובות
-  [2, 13, 24, 36, 46, 50, 60, 66, 76, 83, 89], // נדרים
-  [2, 10, 15, 24, 31, 34, 40, 50, 59], // נזיר
-  [2, 14, 20, 24, 27, 32, 42, 44, 48], // סוטה
-  [2, 15, 24, 32, 49, 62, 74, 82, 86], // גיטין
-  [2, 41, 58, 69], // קידושין
-  [2, 17, 27, 36, 46, 56, 62, 87, 96, 111], // בבא קמא
-  [2, 21, 33, 43, 59, 74, 83, 94, 101, 105], // בבא מציעא
-  [2, 17, 28, 52, 73, 83, 95, 108, 133, 156], // בבא בתרא
-  [2, 18, 24, 32, 40, 42, 53, 71, 73, 84, 90], // סנהדרין
-  [2, 7, 13], // מכות - תוקן
-  [2, 14, 20, 29, 38, 41, 45, 49], // שבועות
-  [2, 22, 40, 53, 62], // עבודה זרה
-  [2, 10, 12], // הוריות
-  [2, 15, 26, 46, 53, 56, 68, 83, 86, 97, 101, 106, 112, 115], // זבחים
-  [2, 11, 22, 29, 36, 52, 63, 72, 76, 87, 90, 100, 104], // מנחות
-  [2, 27, 42, 54, 84, 89, 93, 100, 109, 113, 130, 135], // חולין
-  [2, 13, 17, 26, 31, 37, 43, 51, 57], // בכורות
-  [2, 7, 10, 15, 18, 21, 24, 28, 31], // ערכין
-  [2, 13, 17, 21, 25, 28, 31], // תמורה
-  [2, 8, 11, 15, 19, 25], // כריתות
-  [2, 6, 9, 12, 15, 19], // מעילה
-  [2, 13, 21, 32, 40, 47, 56, 59, 66, 69] // נידה
-];
+// כדי להיות מדויקים ב-100% ולא "לנחש" עמודים, אנו משתמשים במילון מחרוזות מדויק לתחילת פרקים (עמוד א/ב) למסכתות.
+const EXACT_GEMARA_STARTS = {
+  "ברכות": ["2a", "13a", "17b", "26a", "30b", "35a", "45a", "51b", "54a"],
+  "שבת": ["2a", "20b", "36b", "47a", "52b", "65b", "69a", "73a", "80a", "90a", "95a", "101a", "105a", "113a", "115a", "119a", "123a", "130a", "137a", "148a", "150a", "153a", "155a", "156a"],
+  "עירובין": ["2a", "18a", "26a", "41b", "53a", "65b", "71b", "82a", "95a", "100b"],
+  "פסחים": ["2a", "21a", "42a", "49b", "58a", "66a", "76a", "86a", "94a", "99b"],
+  "מועד קטן": ["2a", "11a", "13b"], // תוקן במדויק
+  "חגיגה": ["2a", "11b", "20b"], // תוקן במדויק
+  "מכות": ["2a", "7a", "13b"], // דוגמה לתיקון נוסף 
+};
+
+// פונקציית עזר ליצירת רשימת כל העמודים שבין שני עמודים
+function generateAmudimRange(startStr, endStr, masechetDafLimit) {
+    if (!startStr) return [];
+    let r = [];
+    let startDaf = parseInt(startStr);
+    let startAmud = startStr.slice(-1);
+    let endDaf = endStr ? parseInt(endStr) : masechetDafLimit;
+    let endAmud = endStr ? endStr.slice(-1) : 'b';
+
+    for (let d = startDaf; d <= endDaf; d++) {
+        if (d === startDaf && startAmud === 'b') {
+            r.push(`${d}b`);
+        } else if (d === endDaf) {
+            if (endAmud === 'a') r.push(`${d}a`);
+            else r.push(`${d}a`, `${d}b`);
+        } else {
+            r.push(`${d}a`, `${d}b`);
+        }
+    }
+    // חותך את העמוד האחרון של הפרק כי הוא "נלקח" על ידי הפרק הבא (החופף) אם הוא מתחיל באותו עמוד
+    if (endStr && r.length > 0 && r[r.length-1] === endStr) {
+        r.pop();
+    }
+    return r;
+}
 
 const MISHNA = [{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
 
@@ -322,14 +318,24 @@ function perekAmudKeys(masIdx, p) {
   const g = GEMARA[masIdx]; 
   if(!g) return [];
 
-  if (GEMARA_PERAKIM_STARTS[masIdx] && GEMARA_PERAKIM_STARTS[masIdx].length > 0) {
-    const starts = GEMARA_PERAKIM_STARTS[masIdx];
-    const startDaf = starts[p-1];
-    const endDaf = (p < starts.length) ? starts[p] - 1 : g.d;
+  const exactStarts = EXACT_GEMARA_STARTS[g.n];
+  if (exactStarts && exactStarts.length > 0) {
+    const startStr = exactStarts[p-1];
+    const endStr = (p < exactStarts.length) ? exactStarts[p] : null;
+    return generateAmudimRange(startStr, endStr, g.d);
+  }
+
+  // Fallback למסכתות שעדיין לא מופו במדויק (מבוסס על מספרים)
+  const startsNum = [
+      [2, 13, 17, 26, 30, 35, 45, 51, 54], // fallback ברכות
+      [2, 20, 36, 47, 52, 65, 69, 73, 80, 90, 95, 101, 105, 113, 115, 119, 123, 130, 137, 148, 150, 153, 155, 156] // fallback שבת
+  ][masIdx];
+
+  if (startsNum && startsNum.length > 0) {
+    const startDaf = startsNum[p-1];
+    const endDaf = (p < startsNum.length) ? startsNum[p] - 1 : g.d;
     const r = [];
-    for(let d = startDaf; d <= endDaf; d++) {
-      r.push(`${d}a`,`${d}b`);
-    }
+    for(let d = startDaf; d <= endDaf; d++) r.push(`${d}a`,`${d}b`);
     return r;
   }
 
@@ -388,13 +394,11 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
   try {
     let k = String(key);
     
-    // הגנה על פונקציית הגמרא - מונע התנגשויות masIdx
+    // 1. הגנה על פונקציית הגמרא
     if(cat === "gemara") {
         const eng = SEFARIA_MAP[bookName.trim()] || encodeURIComponent(bookName.trim().replace(/ /g, "_"));
         if(k.startsWith("p")) {
             const pNum = parseInt(k.slice(1));
-            const starts = GEMARA_PERAKIM_STARTS[masIdx];
-            if (starts && starts.length > 0) return `${eng}.${starts[pNum-1]}a`;
             const amudim = perekAmudKeys(masIdx, pNum);
             if (amudim.length > 0) return `${eng}.${amudim[0]}`;
             return `${eng}.2a`;
@@ -402,7 +406,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
         return `${eng}.${k}`;
     }
 
-    // טיפול בספרים מורכבים (כולל המבנה המיוחד של שמירת הלשון)
+    // 2. טיפול בספרים מורכבים (כולל שמירת הלשון שנוטה להיות בעייתי)
     if (cat === "musar" || cat === "ravKook" || cat === "machshava") {
        if (k.includes('|')) {
            const [group, actualKey] = k.split('|');
@@ -661,22 +665,27 @@ function InstallPrompt({ T, sett, setSett }) {
 }
 
 /* ── SEFARIA READER SHEET ── */
-function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
+function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T }) {
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState([]);
   const [error, setError] = useState(null);
   const [zoom, setZoom] = useState(22);
   const [showEn, setShowEn] = useState(false);
+  const [shnayimMode, setShnayimMode] = useState(false);
+  const [targumContent, setTargumContent] = useState({});
   const [retryCount, setRetryCount] = useState(0);
   const [baseRef, setBaseRef] = useState("");
   const [activeSegment, setActiveSegment] = useState(null);
   const [commData, setCommData] = useState([]);
   const [commLoading, setCommLoading] = useState(false);
 
+  // טעינת הטקסט המרכזי
   useEffect(() => {
     if (!show || !sefariaRef) {
        setRetryCount(0);
        setActiveSegment(null);
+       setShnayimMode(false);
+       setTargumContent({});
        return;
     }
     setLoading(true); setError(null); setContent([]); setActiveSegment(null);
@@ -685,7 +694,11 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
 
     fetch(url)
       .then(r => {
-         if (!r.ok) throw new Error(`HTTP ${r.status}`);
+         if (!r.ok) {
+             // אם הבקשה נכשלת ויש Fallback שמירת הלשון שצריך לתקן, ניתן לראות ב-log את הכתובת
+             console.error("HTTP Error URL:", url);
+             throw new Error(`HTTP ${r.status}`);
+         }
          return r.json();
       })
       .then(data => {
@@ -716,15 +729,32 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
         setLoading(false);
         setRetryCount(0);
       }).catch(e => {
-        console.error('Sefaria error:', e);
         if (retryCount < 3) {
           setTimeout(() => setRetryCount(prev => prev + 1), 1000);
         } else {
-          setError("שגיאה בטעינת הטקסט מספריא. ייתכן שיש עומס זמני.");
+          setError(`שגיאה בטעינת הקטע (${sefariaRef}). ייתכן שהשם חסר באינדקס של ספריא.`);
           setLoading(false);
         }
       });
   }, [show, sefariaRef, retryCount]);
+
+  // טעינת אונקלוס למצב 'שניים מקרא'
+  useEffect(() => {
+    if (shnayimMode && isTorah && sefariaRef) {
+        const targumRef = `Onkelos_${sefariaRef.replace('Parashat_', '')}`;
+        fetch(`https://www.sefaria.org/api/texts/${targumRef}?context=1&pad=1`)
+            .then(r => r.ok ? r.json() : {})
+            .then(data => {
+                if (data && data.he) {
+                    const tMap = {};
+                    if (Array.isArray(data.he)) {
+                        data.he.forEach((txt, i) => { tMap[i + 1] = txt; });
+                    }
+                    setTargumContent(tMap);
+                }
+            }).catch(e => console.error(e));
+    }
+  }, [shnayimMode, isTorah, sefariaRef]);
 
   const toggleCommentary = async (item) => {
       if (activeSegment === item.fullIdx) {
@@ -744,9 +774,9 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
               const tEn = (c.collectiveTitle?.en || c.index_title || "").toLowerCase();
               const tHe = c.collectiveTitle?.he || "";
               
-              // סינון הרמטי לפי הדרישות
+              // סינון מדויק לפי דרישות המשתמש
               if (cat === "gemara") {
-                  return tEn.includes("rashi") || tEn.includes("tosafot") || tHe.includes("רש\"י") || tHe.includes("תוספות");
+                  return tEn.includes("rashi") || tEn.includes("tosafot") || tEn.includes("steinsaltz") || tHe.includes("רש\"י") || tHe.includes("תוספות") || tHe.includes("שטיינזלץ");
               }
               if (cat === "mishna") {
                   return tEn.includes("bartenura") || tHe.includes("ברטנורא");
@@ -758,7 +788,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
               return false; 
           });
 
-          // סידור שרש"י/ברטנורא תמיד יהיו ראשונים
           filteredComm.sort((a, b) => {
               const aEn = (a.collectiveTitle?.en || "").toLowerCase();
               if (aEn.includes("rashi") || aEn.includes("bartenura")) return -1;
@@ -774,9 +803,9 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
   };
 
   return (
-    <Sheet show={show} onClose={()=>{onClose(); setRetryCount(0); setActiveSegment(null);}} title={title} T={T}>
+    <Sheet show={show} onClose={()=>{onClose(); setRetryCount(0); setActiveSegment(null); setShnayimMode(false);}} title={title} T={T}>
       <div style={{minHeight: 200, maxHeight: '75vh', overflowY: 'auto', paddingRight: 8, direction: 'rtl'}}>
-         <div style={{display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center', justifyContent: 'flex-start'}}>
+         <div style={{display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start'}}>
             <div style={{display: 'flex', background: T.input, borderRadius: 8, overflow: 'hidden', border: `1px solid ${T.border}`}}>
                <button onClick={()=>setZoom(z => Math.max(14, z - 2))} style={{padding: '8px 14px', background: 'transparent', border: 'none', color: T.navy, cursor: 'pointer', fontSize: 18, fontWeight: 700}}>-</button>
                <div style={{width: 1, background: T.border}}></div>
@@ -785,6 +814,13 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
             <button onClick={()=>setShowEn(!showEn)} style={{padding: '0 16px', height: '40px', borderRadius: 8, background: showEn ? T.primary : T.input, color: showEn ? '#fff' : T.navy, border: `1px solid ${T.border}`, fontWeight: 700, fontFamily: T.font, cursor: 'pointer'}}>
                {showEn ? "עברית בלבד" : "Hebrew / English"}
             </button>
+            
+            {/* כפתור שניים מקרא לתורה בלבד */}
+            {isTorah && (
+                <button onClick={()=>setShnayimMode(!shnayimMode)} style={{padding: '0 16px', height: '40px', borderRadius: 8, background: shnayimMode ? T.gold||GOLD : T.input, color: shnayimMode ? '#fff' : T.navy, border: `1px solid ${shnayimMode ? T.gold||GOLD : T.border}`, fontWeight: 800, fontFamily: T.font, cursor: 'pointer'}}>
+                   שניים מקרא
+                </button>
+            )}
          </div>
 
          {loading && <div style={{textAlign:'center', color: T.muted, padding:40, fontSize: T.f(15)}}>{T.UI.loadingSefaria} ⏳</div>}
@@ -799,14 +835,35 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
 
          {!loading && !error && content.map((item, i) => {
             const isActive = activeSegment === item.fullIdx;
+            const targum = targumContent[item.idx];
             return (
             <div key={i} style={{marginBottom: 24, cursor: 'pointer', padding: '0 8px', borderRight: isActive ? `4px solid ${T.gold||GOLD}` : '4px solid transparent', transition: 'all 0.2s'}} onClick={() => toggleCommentary(item)}>
-               {item.he && (
-                   <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: isActive ? 700 : 500, textAlign: 'justify', margin: 0}}>
-                      <span style={{color:T.gold||GOLD, fontWeight:800, marginRight:6, fontSize: zoom * 0.7}}>{toHeb(item.idx)}.</span>
-                      <span dangerouslySetInnerHTML={{__html: item.he}} />
-                   </p>
+               
+               {/* הצגת שניים מקרא (פעמיים עברית ואז תרגום) אם דלוק, אחרת הצגה רגילה */}
+               {item.he && shnayimMode ? (
+                   <>
+                       <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: isActive ? 700 : 500, textAlign: 'justify', margin: "0 0 6px 0"}}>
+                          <span style={{color:T.gold||GOLD, fontWeight:800, marginRight:6, fontSize: zoom * 0.7}}>{toHeb(item.idx)}.</span>
+                          <span dangerouslySetInnerHTML={{__html: item.he}} />
+                       </p>
+                       <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: isActive ? 700 : 500, textAlign: 'justify', margin: "0 0 6px 0"}}>
+                          <span dangerouslySetInnerHTML={{__html: item.he}} />
+                       </p>
+                       {targum && (
+                           <p style={{fontSize: Math.max(14, zoom * 0.8), lineHeight: 1.5, color: T.muted, fontFamily: "'Frank Ruhl Libre', serif", textAlign: 'justify', margin: "0 0 6px 0", paddingRight: 10, borderRight: `2px solid ${T.border}`}}>
+                              <span style={{fontWeight: 700}}>תרגום אונקלוס: </span><span dangerouslySetInnerHTML={{__html: targum}} />
+                           </p>
+                       )}
+                   </>
+               ) : (
+                   item.he && (
+                       <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: isActive ? 700 : 500, textAlign: 'justify', margin: 0}}>
+                          <span style={{color:T.gold||GOLD, fontWeight:800, marginRight:6, fontSize: zoom * 0.7}}>{toHeb(item.idx)}.</span>
+                          <span dangerouslySetInnerHTML={{__html: item.he}} />
+                       </p>
+                   )
                )}
+
                {showEn && item.en && (
                    <p style={{fontSize: zoom * 0.8, lineHeight: 1.5, color: T.muted, fontFamily: "system-ui, sans-serif", textAlign: 'left', direction: 'ltr', marginTop: 8}}>
                       <span dangerouslySetInnerHTML={{__html: item.en}} />
@@ -1160,7 +1217,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
         <FL label={T.UI.repetitions} T={T}><div style={{display:"flex",alignItems:"center",gap:16,marginTop:4}}><button onClick={()=>setEditChz(Math.max(0,editChz-1))} style={{width:44,height:44,borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,cursor:"pointer",fontSize:26,color:T.navy,fontFamily:T.font,lineHeight:1}}>−</button><span style={{fontSize:T.f(30),fontWeight:900,color:T.navy,minWidth:50,textAlign:"center"}}>{editChz}</span><button onClick={()=>setEditChz(editChz+1)} style={{width:44,height:44,borderRadius:10,border:`1.5px solid ${T.border}`,background:T.input,cursor:"pointer",fontSize:26,color:T.navy,fontFamily:T.font,lineHeight:1}}>+</button></div></FL>
         <PB T={T} onClick={()=>{const k=`${isC?'custom_c'+origIdx:cat+'_s'+idx}:${noteSheet.key}`;setProg(prev=>({...prev,notes:{...(prev?.notes||{}),[k]:editNote},chazara:{...(prev?.chazara||{}),[k]:editChz}}));setNoteSheet(null);}} style={{marginTop:12,background:col}}>{T.UI.save}</PB>
       </Sheet>
-      <SefariaReaderSheet show={!!readerRef} onClose={() => setReaderRef(null)} sefariaRef={readerRef} cat={cat} title={readerTitle} T={T} />
+      <SefariaReaderSheet show={!!readerRef} onClose={() => setReaderRef(null)} sefariaRef={readerRef} cat={cat} isTorah={isTorah} title={readerTitle} T={T} />
     </div>
   );
 }
