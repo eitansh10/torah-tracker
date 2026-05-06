@@ -19,7 +19,7 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const IP = { gemara: {}, mishna: {}, tanach: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
+const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
 
 /* ── ICONS & LOGO ── */
 const IcoBook = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
@@ -102,9 +102,9 @@ const MUSAR = [
   { n: "חפץ חיים", a: "החפץ חיים", struct: [{ t: "הקדמות", items: [{k:"intro", l:"הקדמה", ref:"Chafetz_Chaim,_Introduction"}] }, { t: "איסור לשון הרע", p: 10, refBase: "Chafetz_Chaim,_Part_One,_The_Prohibition_Against_Lashon_Hara,_Principle" }, { t: "איסור רכילות", p: 9, refBase: "Chafetz_Chaim,_Part_Two,_The_Prohibition_Against_Rechilut,_Principle" }] },
   { n: "שמירת הלשון", a: "החפץ חיים", struct: [
     { t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Shemirat_HaLashon,_Book_I,_Introduction"}] },
-    { t: "שער הזכירה", p: 18, refBase: "Shemirat_HaLashon,_Book_I,_Gate_of_Remembering" },
-    { t: "שער התבונה", p: 17, refBase: "Shemirat_HaLashon,_Book_I,_Gate_of_Intelligence" },
-    { t: "שער התורה", p: 12, refBase: "Shemirat_HaLashon,_Book_I,_Gate_of_Torah" },
+    { t: "שער הזכירה", p: 18, refBase: "Shemirat_HaLashon,_Book_I,_Shaar_HaZechirah" },
+    { t: "שער התבונה", p: 17, refBase: "Shemirat_HaLashon,_Book_I,_Shaar_HaTevunah" },
+    { t: "שער התורה", p: 12, refBase: "Shemirat_HaLashon,_Book_I,_Shaar_HaTorah" },
     { t: "חלק שני - חתימה", p: 7, refBase: "Shemirat_HaLashon,_Book_II" }
   ]},
   { n: "אהבת חסד", a: "החפץ חיים", struct: [
@@ -186,7 +186,7 @@ const GEMARA_CHAP_NAMES = {
   "נידה": ["שמאי אומר", "כל היד", "המפלת חתיכה", "בנות כותים", "יוצא דופן", "בא סימן", "דם הנדה", "רואה כתם", "האשה שהיא", "תינוקת"]
 };
 
-// פתרון מדויק לעמודים בגמרא
+// מיפוי עמודים מדויק למניעת חירטוטים בגמרא
 const EXACT_GEMARA_STARTS = {
   "ברכות": ["2a", "13a", "17b", "26a", "30b", "35a", "45a", "51b", "54a"],
   "שבת": ["2a", "20b", "36b", "47a", "52b", "65b", "69a", "73a", "80a", "90a", "95a", "101a", "105a", "113a", "115a", "119a", "123a", "130a", "137a", "148a", "150a", "153a", "155a", "156a"],
@@ -422,6 +422,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
        if (clean === "אורות הקודש") return `Orot_HaKodesh_I.1.${k}`;
        if (clean === "שמונה קבצים") return `Shemonah_Kevatzim.1.${k}`;
        if (clean === "ליקוטי מוהר\"ן") return `Likutei_Moharan.${k}`;
+       if (clean === "שמירת הלשון") return `Shemirat_HaLashon,_Book_I,_Introduction.${k}`; // גיבוי למקרה של תקלה ב-struct
        
        const bRef = COMPLEX_REFS[clean];
        if (bRef) return `${bRef}.${k}`;
@@ -676,7 +677,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
   const [commData, setCommData] = useState([]);
   const [commLoading, setCommLoading] = useState(false);
 
-  // טעינת הטקסט המרכזי
   useEffect(() => {
     if (!show || !sefariaRef) {
        setRetryCount(0);
@@ -732,19 +732,16 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
       });
   }, [show, sefariaRef, retryCount]);
 
-  // טעינת אונקלוס ורש"י למצב 'שניים מקרא'
   useEffect(() => {
     if (shnayimMode && isTorah && baseRef) {
-        const bookStr = baseRef.split('.')[0]; 
+        const bookStr = baseRef.split('.')[0].replace('Parashat_', ''); 
         const chapStr = baseRef.split('.')[1];
         if (bookStr && chapStr) {
-            // טעינת אונקלוס
             fetch(`https://www.sefaria.org/api/texts/Onkelos_${bookStr}.${chapStr}?context=0`)
                 .then(r => r.json())
                 .then(d => setTargumContent(Array.isArray(d.he) ? d.he : (d.text || [])))
                 .catch(e => console.error(e));
             
-            // טעינת רש"י (נמשך לפי פרק שלם ומאורגן במערך)
             fetch(`https://www.sefaria.org/api/texts/Rashi_on_${bookStr}.${chapStr}?context=0`)
                 .then(r => r.json())
                 .then(d => setRashiContent(Array.isArray(d.he) ? d.he : (d.text || [])))
@@ -775,29 +772,27 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
               const tHe = c.collectiveTitle?.he || "";
               
               if (cat === "gemara") {
-                  return tEn.includes("rashi") || tEn.includes("tosafot") || tEn.includes("steinsaltz") || 
-                         tHe.includes("רש\"י") || tHe.includes("תוספות") || tHe.includes("שטיינזלץ");
+                  return tEn.startsWith("rashi") || tEn.startsWith("tosafot") || tEn.startsWith("steinsaltz") || 
+                         tHe.startsWith("רש\"י") || tHe.startsWith("תוספות") || tHe.startsWith("ביאור שטיינזלץ") || tHe.startsWith("שטיינזלץ");
               }
               if (cat === "mishna") {
-                  return tEn.includes("bartenura") || tHe.includes("ברטנורא");
+                  return tEn.startsWith("bartenura") || tHe.startsWith("ברטנורא");
               }
               if (cat === "tanach") {
-                  return tEn.includes("rashi") || tEn.includes("onkelos") || 
-                         tHe.includes("רש\"י") || tHe.includes("אונקלוס");
+                  return tEn.startsWith("rashi") || tEn.startsWith("onkelos") || tEn.startsWith("targum onkelos") || 
+                         tHe.startsWith("רש\"י") || tHe.startsWith("אונקלוס") || tHe.startsWith("תרגום אונקלוס");
               }
               
               return false; 
           });
 
-          // סידור: שטיינזלץ ראשון -> רש"י/ברטנורא שני -> תוספות
           filteredComm.sort((a, b) => {
               const aEn = (a.collectiveTitle?.en || "").toLowerCase();
               const bEn = (b.collectiveTitle?.en || "").toLowerCase();
-              
               const score = (name) => {
-                  if (name.includes("steinsaltz")) return 3;
-                  if (name.includes("rashi") || name.includes("bartenura")) return 2;
-                  if (name.includes("tosafot")) return 1;
+                  if (name.startsWith("steinsaltz")) return 3;
+                  if (name.startsWith("rashi") || name.startsWith("bartenura")) return 2;
+                  if (name.startsWith("tosafot")) return 1;
                   return 0;
               };
               return score(bEn) - score(aEn);
@@ -843,11 +838,13 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
 
          {!loading && !error && content.map((item, i) => {
             const isActive = activeSegment === item.fullIdx;
+            // הגישה הנכונה למערכי האונקלוס/רש"י היא לפי ה-idx של הפסוק פחות 1
+            const targum = targumContent[item.idx - 1];
+            const rashi = rashiContent[item.idx - 1];
             
             return (
             <div key={i} style={{marginBottom: 24, cursor: 'pointer', padding: '0 8px', borderRight: isActive ? `4px solid ${T.gold||GOLD}` : '4px solid transparent', transition: 'all 0.2s'}} onClick={() => toggleCommentary(item)}>
                
-               {/* תצוגת שניים מקרא ואחד תרגום + רש"י */}
                {item.he && shnayimMode ? (
                    <div style={{marginBottom: 16, paddingBottom: 16, borderBottom: `1px dashed ${T.border}`}}>
                        <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: isActive ? 700 : 500, textAlign: 'justify', margin: "0 0 6px 0"}}>
@@ -857,16 +854,16 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
                        <p style={{fontSize: zoom, lineHeight: 1.6, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", fontWeight: isActive ? 700 : 500, textAlign: 'justify', margin: "0 0 12px 0"}}>
                           <span dangerouslySetInnerHTML={{__html: item.he}} />
                        </p>
-                       {targumContent[i] && (
+                       {targum && (
                            <p style={{fontSize: Math.max(14, zoom * 0.8), lineHeight: 1.5, color: T.muted, fontFamily: "'Frank Ruhl Libre', serif", textAlign: 'justify', margin: "0 0 12px 0", paddingRight: 10, borderRight: `3px solid ${T.border}`}}>
                               <span style={{fontWeight: 700, color: T.navy}}>אונקלוס: </span>
-                              <span dangerouslySetInnerHTML={{__html: targumContent[i]}} />
+                              <span dangerouslySetInnerHTML={{__html: Array.isArray(targum) ? targum.join('<br/>') : targum}} />
                            </p>
                        )}
-                       {rashiContent[i] && (
+                       {rashi && (
                            <div style={{fontSize: Math.max(14, zoom * 0.8), lineHeight: 1.5, color: T.navy, fontFamily: "'Frank Ruhl Libre', serif", textAlign: 'justify', margin: "0 0 6px 0", background: T.dark ? '#1A2436' : '#F8F9FA', padding: 12, borderRadius: 8}}>
                               <span style={{fontWeight: 800, color: T.primary}}>רש"י: </span>
-                              <span dangerouslySetInnerHTML={{__html: Array.isArray(rashiContent[i]) ? rashiContent[i].join('<br/>') : rashiContent[i]}} />
+                              <span dangerouslySetInnerHTML={{__html: Array.isArray(rashi) ? rashi.join('<br/>') : rashi}} />
                            </div>
                        )}
                    </div>
@@ -1111,7 +1108,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     });
     if(!wasOn) {
         const itemLabel = forceLabel || items.find(i=>i.key===key)?.label || String(key);
-        onActivity({cat,bk:item?.n||"",label:itemLabel});
+        onActivity({cat, bk: item?.n || "", label: itemLabel || ""});
     }
   }
 
@@ -1469,7 +1466,7 @@ function GoalsScreen({goals, setGoals, prog, T, cc}){
               origIdx: selectedItem ? selectedItem.origIdx : 0, 
               target: finalTarget, 
               deadline, 
-              otherName
+              otherName: otherName || ""
           } : x));
       } else {
           setGoals(prev => [...(prev || []), {
@@ -1481,7 +1478,7 @@ function GoalsScreen({goals, setGoals, prog, T, cc}){
               target: finalTarget, 
               deadline, 
               startDate: todayKey(), 
-              otherName
+              otherName: otherName || ""
           }]);
       }
       setShowSheet(false); 
@@ -1628,12 +1625,12 @@ export default function App(){
       return () => unsubscribe(); 
   }, []);
 
-  // נכתב מחדש כדי למנוע את קריסת שרת הבנייה
   useEffect(() => { 
       if (!loaded || !user) return; 
       
       const saveTimer = setTimeout(() => { 
-          const dataToSave = { 
+          // התיקון הקריטי: יצירת אובייקט נקי ללא undefined שגורם לקריסת השמירה ב-Firebase
+          const rawData = { 
               prog: serProg(prog), 
               goals: goals || [], 
               sett: sett, 
@@ -1641,10 +1638,12 @@ export default function App(){
               activeDays: (activeDays || []).slice(-60) 
           };
           
-          setDoc(doc(db, "users", user.uid), dataToSave, { merge: true })
-            .catch(e => console.error(e)); 
+          const safeDataToSave = JSON.parse(JSON.stringify(rawData)); // מוחק כל זכר ל-undefined הרסני
+          
+          setDoc(doc(db, "users", user.uid), safeDataToSave, { merge: true })
+            .catch(e => console.error("Firebase Save Error:", e)); 
             
-      }, 2000); 
+      }, 500); 
       
       return () => clearTimeout(saveTimer); 
   }, [prog, goals, sett, activity, activeDays, loaded, user]);
