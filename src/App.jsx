@@ -199,7 +199,7 @@ const GEMARA_PERAKIM_STARTS = [
   [2, 15, 26, 30], // תענית
   [2, 17, 24, 28], // מגילה
   [2, 11, 24], // מועד קטן
-  [2, 11, 22], // חגיגה
+  [2, 12, 21], // חגיגה - מתוקן
   [2, 16, 26, 36, 46, 52, 60, 69, 84, 87, 97, 107, 112, 115, 119, 121], // יבמות
   [2, 15, 29, 39, 41, 54, 65, 71, 83, 90, 95, 104, 108], // כתובות
   [2, 13, 24, 36, 46, 50, 60, 66, 76, 83, 89], // נדרים
@@ -283,14 +283,7 @@ const SEFARIA_MAP = {
 };
 
 const COMPLEX_REFS = {
-  "ספר הישר": "Sefer_HaYashar",
-  "מסילת ישרים": "Mesilat_Yesharim",
-  "שערי תשובה": "Shaarei_Teshuvah",
-  "תומר דבורה": "Tomer_Devorah",
-  "ספר המידות": "Sefer_HaMiddot",
-  "נפש החיים": "Nefesh_HaChaim",
-  "אורחות צדיקים": "Orchot_Tzadikim",
-  "פלא יועץ": "Pele_Yoetz"
+  "ספר הישר": "Sefer_HaYashar"
 };
 
 /* ── HELPER FUNCTIONS ── */
@@ -395,8 +388,8 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
   try {
     let k = String(key);
     
-    // 1. טיפול בגמרא בנפרד (מניעת התנגשות אינדקסים)
-    if (cat === "gemara") {
+    // 1. הגנה על פונקציית הגמרא - מונע התנגשויות masIdx
+    if(cat === "gemara") {
         const eng = SEFARIA_MAP[bookName.trim()] || encodeURIComponent(bookName.trim().replace(/ /g, "_"));
         if(k.startsWith("p")) {
             const pNum = parseInt(k.slice(1));
@@ -409,7 +402,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
         return `${eng}.${k}`;
     }
 
-    // 2. טיפול בספרי מחשבה/מוסר/ראי"ה (שימוש ב-struct ישירות)
+    // 2. טיפול בספרים מורכבים בעלי מבנה (struct) כמו שמירת הלשון, חובת הלבבות, ושמונה קבצים
     if (cat === "musar" || cat === "ravKook" || cat === "machshava") {
        if (k.includes('|')) {
            const [group, actualKey] = k.split('|');
@@ -421,21 +414,20 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
                    const it = section.items.find(x => String(x.k) === actualKey || String(x.l) === actualKey);
                    if (it && it.ref) return it.ref;
                }
-               // שליפה ישירה של ה-refBase מתוך המבנה של הספר! (פותר את הבאג)
                if (section.refBase) return `${section.refBase}.${actualKey}`;
            }
        }
        
        const clean = bookName.trim();
-       if (clean === "אורות הקודש") return `Orot_HaKodesh.1.1.${k.replace('p','')}`;
-       if (clean === "שמונה קבצים") return `Shemonah_Kevatzim.1.${k.replace('p','')}`;
-       if (clean === "ליקוטי מוהר\"ן") return `Likutei_Moharan.${k.replace('p','')}`;
+       if (clean === "אורות הקודש") return `Orot_HaKodesh_I.1.${k}`; // תיקון בייס לאורות הקודש
+       if (clean === "שמונה קבצים") return `Shemonah_Kevatzim.1.${k}`;
+       if (clean === "ליקוטי מוהר\"ן") return `Likutei_Moharan.${k}`;
+       if (clean === "שמירת הלשון") return `Shemirat_HaLashon,_Book_I,_Introduction.${k}`; // גיבוי לשמירת הלשון
        
-       const bRef = COMPLEX_REFS[clean] || SEFARIA_MAP[clean];
-       if (bRef) return `${bRef}.${k.replace('p', '')}`;
+       const bRef = COMPLEX_REFS[clean];
+       if (bRef) return `${bRef}.${k}`;
     }
 
-    // 3. טיפול כללי (תנ"ך, משנה)
     const eng = SEFARIA_MAP[bookName.trim()] || encodeURIComponent(bookName.trim().replace(/ /g, "_"));
     
     if(cat === "mishna") {
@@ -746,7 +738,33 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, T }) {
           const specificRef = `${baseRef.replace(/ /g, '_')}.${item.fullIdx}`;
           const r = await fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(specificRef)}?commentary=1&context=0`);
           const d = await r.json();
-          setCommData(d.commentary || []);
+          
+          let filteredComm = (d.commentary || []).filter(c => {
+              if (!c.he || c.he.length === 0) return false;
+              
+              const tEn = (c.collectiveTitle?.en || c.index_title || "").toLowerCase();
+              const tHe = c.collectiveTitle?.he || "";
+              
+              if (cat === "gemara") {
+                  return tEn.includes("rashi") || tEn.includes("tosafot") || tHe.includes("רש\"י") || tHe.includes("תוספות");
+              }
+              if (cat === "mishna") {
+                  return tEn.includes("bartenura") || tHe.includes("ברטנורא");
+              }
+              if (cat === "tanach") {
+                  return tEn.includes("rashi") || tEn.includes("onkelos") || tHe.includes("רש\"י") || tHe.includes("אונקלוס");
+              }
+              
+              return false; 
+          });
+
+          filteredComm.sort((a, b) => {
+              const aEn = (a.collectiveTitle?.en || "").toLowerCase();
+              if (aEn.includes("rashi") || aEn.includes("bartenura")) return -1;
+              return 1;
+          });
+
+          setCommData(filteredComm);
       } catch (e) {
           console.error("Failed to load commentaries", e);
       } finally {
@@ -1277,47 +1295,13 @@ function GoalRow({g,prog,T,cc,onEdit,onDelete,custom}){
 function GoalsScreen({goals,setGoals,prog,T,cc}){
   const[showSheet,setShowSheet]=useState(false), [editingId, setEditingId]=useState(null), [cat,setCat]=useState("gemara"), [bookIdKey,setBookIdKey]=useState(""), [target,setTarget]=useState(""), [deadline,setDeadline]=useState(""), [otherName,setOtherName]=useState("");
   const bkList=cat==="other"?[]:getBkList(cat,prog?.custom), selectedItem=bkList.find(b=>String(b.idKey)===bookIdKey), maxTot=cat==="other"?0:(selectedItem?(selectedItem.isC?prog?.custom?.[selectedItem.origIdx]?.chapters:bkTotal(prog,cat,selectedItem.i,prog?.custom)):0);
-  
   function openNew(){ setEditingId(null); setCat("gemara"); setBookIdKey(""); setTarget(""); setDeadline(""); setOtherName(""); setShowSheet(true); }
-  
-  function save(){ 
-      if(!deadline||(cat==="other"&&!otherName)) return; 
-      if(cat!=="other"&&!selectedItem) return; // הגנה: חובה לבחור ספר תקין
-      
-      const finalTarget = (target === "" || target === null || target === undefined) ? maxTot : parseInt(target, 10);
-      
-      if(editingId) {
-          setGoals(prev=>(prev||[]).map(x=>x.id===editingId?{
-              ...x, 
-              cat, 
-              idx: selectedItem ? selectedItem.i : x.idx, 
-              isC: selectedItem ? !!selectedItem.isC : x.isC, 
-              origIdx: selectedItem ? selectedItem.origIdx : x.origIdx, 
-              target: finalTarget, 
-              deadline, 
-              otherName: cat === "other" ? otherName : ""
-          } : x));
-      } else { 
-          setGoals(prev=>[...(prev||[]),{
-              id: Date.now(), 
-              cat, 
-              idx: selectedItem ? selectedItem.i : 0, 
-              isC: !!selectedItem?.isC, 
-              origIdx: selectedItem ? selectedItem.origIdx : 0, 
-              target: finalTarget, 
-              deadline, 
-              startDate: todayKey(), 
-              otherName: cat === "other" ? otherName : ""
-          }]); 
-      } 
-      setShowSheet(false); 
-  }
-
+  function save(){ if(!deadline||(cat==="other"&&!otherName))return; if(editingId) setGoals(prev=>(prev||[]).map(x=>x.id===editingId?{...x, cat, idx:selectedItem?selectedItem.i:0, isC:!!selectedItem?.isC, origIdx:selectedItem?selectedItem.origIdx:0, target:target?parseInt(target):maxTot, deadline, otherName}:x)); else setGoals(prev=>[...(prev||[]),{id:Date.now(), cat, idx:selectedItem?selectedItem.i:0, isC:!!selectedItem?.isC, origIdx:selectedItem?selectedItem.origIdx:0, target:target?parseInt(target):maxTot, deadline, startDate:todayKey(), otherName}]); setShowSheet(false); }
   return (
     <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div><button onClick={openNew} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button></div>
       {(!goals||goals.length===0)&&(<div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}><div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div><div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div><div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.setGoal}</div><button onClick={openNew} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button></div>)}
       <div>{(goals||[]).map(g=>g?(<GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>{setEditingId(g.id);setCat(g.cat);setBookIdKey(g.isC?'custom_c'+g.origIdx:g.cat+'_s'+g.idx);setTarget(g.target);setDeadline(g.deadline);setOtherName(g.otherName||"");setShowSheet(true);}} onDelete={()=>setGoals(prev=>(prev||[]).filter(x=>x.id!==g.id))} custom={prog?.custom}/>):null)}</div>
-      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingId?(T.isEn?"Edit Goal":"עריכת יעד"):T.UI.newGoal} T={T}><FL label={T.UI.topic} T={T}><FS T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>{CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}<option value="other">{T.isEn?"Other":"אחר"}</option></FS></FL>{cat==="other"&&<FL label={T.isEn?"Goal Name":"שם היעד"} T={T}><FI T={T} value={otherName} onChange={e=>setOtherName(e.target.value)}/></FL>}{cat!=="other"&&bkList.length>0&&<FL label={T.UI.book} T={T}><FS T={T} value={bookIdKey} onChange={e=>{setBookIdKey(e.target.value);setTarget("");}}><option value="">{T.UI.selectBook}</option>{bkList.map(b=><option key={b.idKey} value={b.idKey}>{b.n}</option>)}</FS></FL>}<FL label={`${T.UI.target} ${maxTot>0?`(${T.UI.max||"מקסימום"}: ${maxTot})`:""}`} T={T}><FI T={T} type="number" value={target} onChange={e=>setTarget(e.target.value)} placeholder={maxTot>0?`${maxTot}`:""}/></FL><FL label={T.UI.deadline} T={T}><DualDateInput T={T} value={deadline} onChange={e=>setDeadline(e.target.value)}/></FL><PB T={T} onClick={save} style={{marginTop:16,background:NAVY}}>{T.UI.saveGoal}</PB></Sheet></div>
+      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingId?(T.isEn?"Edit Goal":"עריכת יעד"):T.UI.newGoal} T={T}><FL label={T.UI.topic} T={T}><FS T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>{CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}</FS></FL>{cat!=="other"&&bkList.length>0&&<FL label={T.UI.book} T={T}><FS T={T} value={bookIdKey} onChange={e=>{setBookIdKey(e.target.value);setTarget("");}}><option value="">{T.UI.selectBook}</option>{bkList.map(b=><option key={b.idKey} value={b.idKey}>{b.n}</option>)}</FS></FL>}<FL label={`${T.UI.target} ${maxTot>0?`(${T.UI.max||"Max"}: ${maxTot})`:""}`} T={T}><FI T={T} type="number" value={target} onChange={e=>setTarget(e.target.value)} placeholder={maxTot>0?`${maxTot}`:""}/></FL><FL label={T.UI.deadline} T={T}><DualDateInput T={T} value={deadline} onChange={e=>setDeadline(e.target.value)}/></FL><PB T={T} onClick={save} style={{marginTop:16,background:NAVY}}>{T.UI.saveGoal}</PB></Sheet></div>
   );
 }
 
@@ -1330,4 +1314,68 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.support}</div><div style={{padding:"14px 16px"}}><a href="mailto:eitanshachor1@gmail.com" style={{display:"flex", alignItems:"center", gap:10, color:T.navy, textDecoration:"none", fontSize:T.f(14), fontWeight:600}}>{T.isEn ? "Contact Developer" : "צור קשר / דיווח על באגים"}</a></div></div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.legal}</div><div style={{padding:"14px 16px", borderBottom:`1px solid ${T.border}`}}><button onClick={()=>setLegalType('terms')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.terms}</button></div><div style={{padding:"14px 16px"}}><button onClick={()=>setLegalType('privacy')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.privacy}</button></div></div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.account}</div><div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`,textAlign:"start"}}><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{user?.name||"משתמש"}</div><div style={{fontSize:T.f(12),color:T.muted,marginTop:2}}>{user?.email||""}</div></div><div style={{padding:"14px 16px"}}><button onClick={onLogout} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(14),fontWeight:700,width:"100%",textAlign:"start"}}>{T.UI.signOut}</button></div></div>
-      <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}><div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>Sorry, something went wrong. Please try your request again.
+      <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}><div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div><div style={{direction: "ltr"}}>v 1.0</div><div>© {new Date().getFullYear()} פותח ע״י איתן שחור. כל הזכויות שמורות.</div></div>
+      <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} /></div>
+  );
+}
+
+/* ── AUTH SCREEN ── */
+function AuthScreen({onLogin,T}){
+  const [err,setErr]=useState("");
+  const [legalType,setLegalType]=useState(null);
+  
+  return (
+    <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,gap:20,background:T.bg}}>
+      <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}>
+        <LogoAliba T={T} size={54}/>
+      </div>
+      <div style={{textAlign:"center", marginBottom:20}}>
+        <div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>
+          א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א
+        </div>
+        <div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>{T.UI.slogan}</div>
+      </div>
+      
+      <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:14}}>
+        <button onClick={()=>onLogin({method:"google"})} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font,height:"54px",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all 0.2s"}}>
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          {T.UI.continueWith} Google
+        </button>
+      </div>
+      
+      {err&&<div style={{color:T.red,fontSize:T.f(13),marginTop:12,textAlign:"center"}}>{err}</div>}
+      
+      <div style={{marginTop:32, display:"flex", gap:16, justifyContent:"center"}}>
+        <button onClick={()=>setLegalType('terms')} style={{background:"none", border:"none", textDecoration:"underline", color:T.muted, cursor:"pointer", fontFamily:T.font, fontSize:T.f(13)}}>{T.UI.terms}</button>
+        <button onClick={()=>setLegalType('privacy')} style={{background:"none", border:"none", textDecoration:"underline", color:T.muted, cursor:"pointer", fontFamily:T.font, fontSize:T.f(13)}}>{T.UI.privacy}</button>
+      </div>
+      
+      <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
+    </div>
+  );
+}
+
+/* ── ROOT ── */
+export default function App(){
+  useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
+  const[user,setUser]=useState(null), [tab,setTab]=useState("home"), [libCat,setLibCat]=useState("gemara"), [detail,setDetail]=useState(null), [sett,setSett]=useState({dark:false,fontSize:1,lang:"he"}), [prog,setProg]=useState(IP), [goals,setGoals]=useState([]), [activity,setActivity]=useState([]), [activeDays,setActiveDays]=useState([]), [loaded,setLoaded]=useState(false);
+  useEffect(() => { const unsubscribe = onAuthStateChanged(auth, async (u) => { if (u) { setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); try { const docSnap = await getDoc(doc(db, "users", u.uid)); if (docSnap.exists()) { const data = docSnap.data(); if(data){ setProg(desProg(data.prog)); setGoals(Array.isArray(data.goals) ? data.goals : []); setSett(prev=>({...prev, ...(data.sett||{})})); setActivity(Array.isArray(data.activity)?data.activity:[]); setActiveDays(Array.isArray(data.activeDays)?data.activeDays:[]); } } } catch (e) { console.error(e); } setLoaded(true); } else { setUser(null); setLoaded(true); } }); return () => unsubscribe(); }, []);
+  useEffect(() => { if (!loaded || !user) return; const t = setTimeout(() => { setDoc(doc(db, "users", user.uid), { prog: serProg(prog), goals: goals||[], sett, activity: (activity||[]).slice(0, 50), activeDays: (activeDays||[]).slice(-60) }, { merge: true }).catch(e => console.error(e)); }, 2000); return () => clearTimeout(t); }, [prog, goals, sett, activity, activeDays, loaded, user]);
+  const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
+  const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
+  const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
+  
+  if(!user) return <div style={appSt}><AuthScreen onLogin={async()=>{try{await signInWithPopup(auth, new GoogleAuthProvider());}catch(e){alert("שגיאה: "+e.message);}}} T={T}/></div>;
+  if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
+  const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
+  
+  return (<div style={appSt}>
+    <WelcomePrompt T={T} />
+    <InstallPrompt T={T} sett={sett} setSett={setSett} />
+    {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}
+    {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
+    {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
+    {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}
+    <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>{NAV.map(it=>(<button key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>{it.ico}{it.l}</button>))}</div>
+  </div>);
+}
