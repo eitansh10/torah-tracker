@@ -1,15 +1,9 @@
 {
-  "short_name": "אליבא",
   "name": "אליבא - מרכז הלימוד שלך",
-  "icons": [
-    {
-      "src": "/logo.png",
-      "sizes": "192x192 512x512",
-      "type": "image/png"
-    }
-  ],
+  "short_name": "אליבא",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#001F3F",
-  "background_color": "#ffffff"
+  "background_color": "#FAF7EE",
+  "theme_color": "#1A3A6B",
+  "description": "מעקב וניהול לימוד תורה אישי"
 }
