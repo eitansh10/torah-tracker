@@ -31,10 +31,6 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// WKWebView ITP Fix: Use IndexedDB instead of LocalStorage to survive redirects
-setPersistence(auth, indexedDBLocalPersistence)
-  .catch(e => console.warn("IndexedDB persistence unavailable:", e));
-
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
 
 /* ── ICONS & LOGO ── */
@@ -1630,6 +1626,14 @@ export default function App(){
       let unsubscribe = () => {};
 
       (async () => {
+        // Step 1: Set persistence (WKWebView Fix)
+        try {
+          await setPersistence(auth, indexedDBLocalPersistence);
+        } catch (e) {
+          console.warn("[Auth] IndexedDB persistence unavailable, using default:", e.code);
+        }
+
+        // Step 2: Handle redirect result
         try {
           const result = await getRedirectResult(auth);
           if (result?.user) {
@@ -1641,6 +1645,7 @@ export default function App(){
           }
         }
 
+        // Step 3: Listen for auth state
         unsubscribe = onAuthStateChanged(auth, async (u) => { 
             if (u) { 
                 setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); 
@@ -1705,6 +1710,15 @@ export default function App(){
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   
+  if (!loaded) return (
+    <div style={{...appSt, alignItems:"center", justifyContent:"center"}}>
+      <div style={{color: NAVY, fontSize: 32, fontWeight: 900, letterSpacing: 1}}>
+        א<span style={{color:GOLD}}>ל</span>י<span style={{color:GOLD}}>ב</span>א
+      </div>
+      <div style={{color:"#6B7280", fontSize: 14, marginTop: 12}}>{T.isEn ? "Loading..." : "טוען..."}</div>
+    </div>
+  );
+
   if(!user) return <div style={appSt}><AuthScreen onLogin={async({method, email, password})=>{
       try {
         if (method === "email") {
