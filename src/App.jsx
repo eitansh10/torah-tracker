@@ -1622,18 +1622,27 @@ export default function App(){
   const [activeDays, setActiveDays] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
+  // Safety net: Force UI to load after 8 seconds no matter what.
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 8000);
+    return () => clearTimeout(t);
+  }, []);
+
   useEffect(() => { 
       let unsubscribe = () => {};
 
       (async () => {
-        // Step 1: Set persistence (WKWebView Fix)
+        // Step 1: Set persistence with a race condition timeout to prevent infinite hang in WKWebView
         try {
-          await setPersistence(auth, indexedDBLocalPersistence);
+          await Promise.race([
+            setPersistence(auth, indexedDBLocalPersistence),
+            new Promise(resolve => setTimeout(resolve, 1500)) 
+          ]);
         } catch (e) {
-          console.warn("[Auth] IndexedDB persistence unavailable, using default:", e.code);
+          console.warn("[Auth] Persistence setup skipped:", e.code || e.message);
         }
 
-        // Step 2: Handle redirect result
+        // Step 2: Handle redirect result safely
         try {
           const result = await getRedirectResult(auth);
           if (result?.user) {
