@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect, getRedirectResult, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
@@ -1611,6 +1611,14 @@ export default function App(){
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => { 
+      getRedirectResult(auth).then((result) => {
+          if (result) {
+              console.log("Successfully logged in via redirect!");
+          }
+      }).catch((error) => {
+          console.error("Redirect login error:", error);
+      });
+
       const unsubscribe = onAuthStateChanged(auth, async (u) => { 
           if (u) { 
               setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); 
