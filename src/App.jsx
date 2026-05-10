@@ -1617,13 +1617,22 @@ export default function App(){
                           setActivity(Array.isArray(data.activity) ? data.activity : []); 
                           setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
                       } 
-                  } 
+                  } else {
+                      setProg(IP);
+                      setGoals([]);
+                      setActivity([]);
+                      setActiveDays([]);
+                  }
               } catch (e) { 
                   console.error(e); 
               } 
               setLoaded(true); 
           } else { 
               setUser(null); 
+              setProg(IP);
+              setGoals([]);
+              setActivity([]);
+              setActiveDays([]);
               setLoaded(true); 
           } 
       }); 
