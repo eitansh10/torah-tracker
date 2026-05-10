@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
@@ -1679,7 +1679,7 @@ export default function App(){
           await signInWithEmailAndPassword(auth, email, password);
         } else {
           const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-          await signInWithPopup(auth, provider);
+          await signInWithRedirect(auth, provider);
         }
       } catch(e) {
         alert("שגיאה: " + e.message);
