@@ -1,6 +1,18 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithRedirect, getRedirectResult, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  signOut, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signInWithRedirect, 
+  getRedirectResult, 
+  OAuthProvider, 
+  signInWithEmailAndPassword,
+  setPersistence,
+  indexedDBLocalPersistence
+} from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
@@ -18,6 +30,10 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+// WKWebView ITP Fix: Use IndexedDB instead of LocalStorage to survive redirects
+setPersistence(auth, indexedDBLocalPersistence)
+  .catch(e => console.warn("IndexedDB persistence unavailable:", e));
 
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
 
@@ -1611,47 +1627,55 @@ export default function App(){
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => { 
-      getRedirectResult(auth).then((result) => {
-          if (result) {
-              console.log("Successfully logged in via redirect!");
-          }
-      }).catch((error) => {
-          console.error("Redirect login error:", error);
-      });
+      let unsubscribe = () => {};
 
-      const unsubscribe = onAuthStateChanged(auth, async (u) => { 
-          if (u) { 
-              setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); 
-              try { 
-                  const docSnap = await getDoc(doc(db, "users", u.uid)); 
-                  if (docSnap.exists()) { 
-                      const data = docSnap.data(); 
-                      if(data){ 
-                          setProg(desProg(data.prog)); 
-                          setGoals(Array.isArray(data.goals) ? data.goals : []); 
-                          setSett(prev => ({...prev, ...(data.sett || {})})); 
-                          setActivity(Array.isArray(data.activity) ? data.activity : []); 
-                          setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
-                      } 
-                  } else {
-                      setProg(IP);
-                      setGoals([]);
-                      setActivity([]);
-                      setActiveDays([]);
-                  }
-              } catch (e) { 
-                  console.error(e); 
-              } 
-              setLoaded(true); 
-          } else { 
-              setUser(null); 
-              setProg(IP);
-              setGoals([]);
-              setActivity([]);
-              setActiveDays([]);
-              setLoaded(true); 
-          } 
-      }); 
+      (async () => {
+        try {
+          const result = await getRedirectResult(auth);
+          if (result?.user) {
+            console.log("[Auth] Redirect result captured:", result.user.email);
+          }
+        } catch (e) {
+          if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
+            console.error("[Auth] Redirect result error:", e.code, e.message);
+          }
+        }
+
+        unsubscribe = onAuthStateChanged(auth, async (u) => { 
+            if (u) { 
+                setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); 
+                try { 
+                    const docSnap = await getDoc(doc(db, "users", u.uid)); 
+                    if (docSnap.exists()) { 
+                        const data = docSnap.data(); 
+                        if(data){ 
+                            setProg(desProg(data.prog)); 
+                            setGoals(Array.isArray(data.goals) ? data.goals : []); 
+                            setSett(prev => ({...prev, ...(data.sett || {})})); 
+                            setActivity(Array.isArray(data.activity) ? data.activity : []); 
+                            setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
+                        } 
+                    } else {
+                        setProg(IP);
+                        setGoals([]);
+                        setActivity([]);
+                        setActiveDays([]);
+                    }
+                } catch (e) { 
+                    console.error("[Firestore] Load error:", e); 
+                } 
+                setLoaded(true); 
+            } else { 
+                setUser(null); 
+                setProg(IP);
+                setGoals([]);
+                setActivity([]);
+                setActiveDays([]);
+                setLoaded(true); 
+            } 
+        });
+      })();
+
       return () => unsubscribe(); 
   }, []);
 
@@ -1685,12 +1709,29 @@ export default function App(){
       try {
         if (method === "email") {
           await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-          await signInWithRedirect(auth, provider);
+          return;
+        }
+
+        const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
+        
+        try {
+          await signInWithPopup(auth, provider);
+        } catch (popupErr) {
+          const isBlockedByBrowser =
+            popupErr.code === "auth/popup-blocked" ||
+            popupErr.code === "auth/popup-closed-by-user" ||
+            popupErr.code === "auth/cancelled-popup-request" ||
+            popupErr.code === "auth/operation-not-supported-in-this-environment";
+
+          if (isBlockedByBrowser) {
+            console.warn("[Auth] Popup blocked, falling back to redirect...");
+            await signInWithRedirect(auth, provider);
+          } else {
+            throw popupErr;
+          }
         }
       } catch(e) {
-        alert("שגיאה: " + e.message);
+        alert("שגיאה בהתחברות: " + (e.message || e.code));
       }
     }} T={T}/></div>;
     
