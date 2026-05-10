@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
+import { getAuth, signInWithPopup, OAuthProvider } from "firebase/auth";
 
 /* ── FIREBASE CONFIGURATION ── */
 const firebaseConfig = {
