@@ -21,7 +21,7 @@ const db = getFirestore(app);
 
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
 
-/* ── SAFE STORAGE (מונע קריסה של המסך באייפון אם אפל חוסמת עוגיות) ── */
+/* ── SAFE STORAGE FIX FOR IOS WEBVIEW ── */
 const safeStorage = {
   getItem: (key) => { try { return localStorage.getItem(key); } catch(e) { return null; } },
   setItem: (key, val) => { try { localStorage.setItem(key, val); } catch(e) {} },
@@ -877,7 +877,7 @@ function BookCard({cat, item, prog, T, cc, cl, onPress, custom}){
 function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   const { cat, i: idx, isC, origIdx, autoOpenKey } = detail;
   const list = getBkList(cat, prog?.custom);
-  const item = list.find(l => l.idKey === (isC ? 'custom_c'+origIdx : cat+'_s'+idx));
+  const item = list.find(l => String(l.idKey) === String(isC ? 'custom_c'+origIdx : cat+'_s'+idx));
   const col=cc[cat]||T.primary,lightCol=cl[cat]||"#E8EFF8";
   const[viewMode,setViewMode]=useState(cat==="gemara"?"amudim":cat==="mishna"?"mishna":"perakim");
   const[noteSheet,setNoteSheet]=useState(null), [editNote,setEditNote]=useState(""), [editChz,setEditChz]=useState(0), [readerRef, setReaderRef]=useState(null), [readerTitle, setReaderTitle]=useState(""), [hasAutoOpened, setHasAutoOpened]=useState(false);
@@ -912,7 +912,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       }
     } else if(cat==="tanach"){
       if(isParsh) { 
-          PARSHIOT[idx].forEach(ps=>arr.push({key:ps,label:ps, sub: `${PARASHA_VERSES[ps]||0} ${T.isEn?"Verses":"פסוקים"}`})); 
+          (PARSHIOT[idx]||[]).forEach(ps=>arr.push({key:ps,label:ps, sub: `${PARASHA_VERSES[ps]||0} ${T.isEn?"Verses":"פסוקים"}`})); 
       } 
       else { for(let i=1;i<=(TANACH[idx]?.c||0);i++) arr.push({key:i,label:`${T.isEn?"Chap":""} ${toHeb(i)}`}); }
     } else {
@@ -1024,7 +1024,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
             const chapters = PARASHA_CHAPTERS[key] || [];
             chapters.forEach(c => isAdding ? ndPerek.add(c) : ndPerek.delete(c));
 
-            PARSHIOT[idx].forEach(parashaName => {
+            (PARSHIOT[idx]||[]).forEach(parashaName => {
                const chaps = PARASHA_CHAPTERS[parashaName] || [];
                const allDone = chaps.length > 0 && chaps.every(c => ndPerek.has(c));
                if (allDone) ndParsha.add(parashaName); else ndParsha.delete(parashaName);
@@ -1034,7 +1034,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
             if (isAdding) ndPerek.add(key); else ndPerek.delete(key);
 
             if (isTorah) {
-                PARSHIOT[idx].forEach(parashaName => {
+                (PARSHIOT[idx]||[]).forEach(parashaName => {
                     const chaps = PARASHA_CHAPTERS[parashaName] || [];
                     const allDone = chaps.length > 0 && chaps.every(c => ndPerek.has(c));
                     if (allDone) ndParsha.add(parashaName);
@@ -1081,7 +1081,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
           
           if (isTorah) {
              for(let i=1; i<=(TANACH[idx]?.c||0); i++) ndPerek.add(i);
-             PARSHIOT[idx].forEach(ps => ndParsha.add(ps));
+             (PARSHIOT[idx]||[]).forEach(ps => ndParsha.add(ps));
           } else {
              items.forEach(it => { if(!it.isHeader) ndPerek.add(it.key); });
           }
@@ -1559,11 +1559,12 @@ export default function App(){
   const [goals, setGoals] = useState([]);
   const [activity, setActivity] = useState([]);
   const [activeDays, setActiveDays] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => { 
       const unsubscribe = onAuthStateChanged(auth, async (u) => { 
           if (u) { 
-              // 1. הגנה מפני קריסה (שגרמה למסך הלבן באייפון) - טיפול באימייל מוסתר
+              // 1. הגנה מפני קריסה כשהאימייל חסר (Apple Sign-In)
               const safeEmail = u.email || "";
               const safeName = u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש");
               
@@ -1589,19 +1590,21 @@ export default function App(){
               } catch (e) { 
                   console.error(e); 
               } 
+              setLoaded(true); 
           } else { 
               setUser(null); 
               setProg(IP);
               setGoals([]);
               setActivity([]);
               setActiveDays([]);
+              setLoaded(true); 
           } 
       }); 
       return () => unsubscribe(); 
   }, []);
 
   useEffect(() => { 
-      if (!user) return; 
+      if (!loaded || !user) return; 
       
       const saveTimer = setTimeout(() => { 
           const rawData = { 
@@ -1620,41 +1623,40 @@ export default function App(){
       }, 500); 
       
       return () => clearTimeout(saveTimer); 
-  }, [prog, goals, sett, activity, activeDays, user]);
+  }, [prog, goals, sett, activity, activeDays, loaded, user]);
 
   const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   
+  if(!user) return <div style={appSt}><AuthScreen onLogin={async({method, email, password})=>{
+      try {
+        if (method === "email") {
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
+          try {
+             await signInWithPopup(auth, provider);
+          } catch(err) {
+             // 3. הגנה במקרה של חסימת פופ-אפ באפליקציה, במקום קריסה ו-Redirect
+             if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
+                alert("אפל חוסמת התחברות דרך חלון קופץ. אנא התחבר עם אימייל וסיסמה, או היכנס דרך ספארי.");
+             } else {
+                throw err;
+             }
+          }
+        }
+      } catch(e) {
+        alert("שגיאה: " + e.message);
+      }
+    }} T={T}/></div>;
+    
+  if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
   const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
   
-  const content = () => {
-    if(!user) return <AuthScreen onLogin={async({method, email, password})=>{
-        try {
-          if (method === "email") {
-            await signInWithEmailAndPassword(auth, email, password);
-          } else {
-            const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-            try {
-              await signInWithPopup(auth, provider);
-            } catch(e) {
-              // 2. הודעה מותאמת במידה ואפל חוסמים התחברות דרך חלון קופץ
-              if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') {
-                alert("אפל חוסמת התחברות דרך חלונות קופצים באפליקציה זו. אנא התחבר עם אימייל וסיסמה, או השתמש בדפדפן ספארי.");
-              } else {
-                alert("שגיאה: " + e.message);
-              }
-            }
-          }
-        } catch(e) {
-          alert("שגיאה: " + e.message);
-        }
-      }} T={T}/>;
-      
-    if(detail) return <DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/>;
-    
-    return (
-      <>
+  return (
+    <ErrorBoundary>
+      <div style={appSt}>
         <WelcomePrompt T={T} />
         <InstallPrompt T={T} sett={sett} setSett={setSett} />
         {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}
@@ -1662,16 +1664,7 @@ export default function App(){
         {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
         {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}
         <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>{NAV.map(it=>(<button key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>{it.ico}{it.l}</button>))}</div>
-      </>
-    );
-  };
-
-  // 3. עטיפה מלאה של האפליקציה בתוך ה-ErrorBoundary כדי למנוע מסך כחול
-  return (
-    <div style={appSt}>
-      <ErrorBoundary>
-        {content()}
-      </ErrorBoundary>
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }
