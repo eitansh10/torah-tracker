@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, signInWithRedirect, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
@@ -20,34 +20,6 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
-
-/* ── ERROR BOUNDARY (מונע מסך לבן במקרה של קריסה) ── */
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, errorInfo: null, error: null };
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-  componentDidCatch(error, errorInfo) {
-    console.error("React Crash:", error, errorInfo);
-    this.setState({ errorInfo });
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{padding: 20, textAlign: 'left', direction: 'ltr', background: '#FEE2E2', color: '#B91C1C', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
-          <h2 style={{marginTop: 0}}>UI Crash Detected</h2>
-          <p><strong>Error:</strong> {this.state.error?.toString()}</p>
-          <pre style={{fontSize: 11, whiteSpace: 'pre-wrap', background: 'rgba(0,0,0,0.05)', padding: 10, borderRadius: 8}}>{this.state.errorInfo?.componentStack}</pre>
-          <button onClick={() => window.location.reload()} style={{padding: '12px 20px', background: '#B91C1C', color: '#fff', border: 'none', borderRadius: 8, marginTop: 20, fontSize: 16, fontWeight: 'bold'}}>Reload App</button>
-        </div>
-      );
-    }
-    return this.props.children; 
-  }
-}
 
 /* ── ICONS & LOGO ── */
 const IcoBook = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
@@ -248,6 +220,72 @@ function generateAmudimRange(startStr, endStr, masechetDafLimit) {
         r.pop();
     }
     return r;
+}
+
+const MISHNA = [{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
+
+const HALACHOT = [
+  { t: "מודה אני — מיד כשיעור משנתו, יאמר 'מודה אני' כדי לזכור את חסד השם שהחזיר לו את נשמתו.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "נטילת ידיים שחרית — יש ליטול ידיים מיד בבוקר שלוש פעמים לסירוגין כדי להעביר את רוח הרעה.", s: "שולחן ערוך, אורח חיים ד, ב" },
+  { t: "ברכות השחר — יש לברך ברכות השחר בכל יום, וראוי לברכן סמוך לקימה ככל האפשר.", s: "שולחן ערוך, אורח חיים מו, א" },
+  { t: "ציצית — מצוות עשה ללבוש בגד של ארבע כנפות ולהטיל בו ציצית, כדי לזכור את כל המצוות.", s: "שולחן ערוך, אורח חיים ח, א" },
+  { t: "תפילין — מצוות תפילין חמורה מאוד, וצריך להיזהר להיות בהן בגוף נקי ומחשבה טהורה.", s: "שולחן ערוך, אורח חיים כח, א" },
+  { t: "קריאת שמע של שחרית — זמנה מתחילת היום עד סוף שלוש שעות זמניות.", s: "שולחן ערוך, אורח חיים נח, א" },
+  { t: "תפילת עמידה — חייב אדם להתפלל בכוונה, לעמוד ברגליים צמודות ולכוון לבו לשמיים.", s: "שולחן ערוך, אורח חיים צה, א" },
+  { t: "תפילת מנחה — זמנה מ-6.5 שעות זמניות מתחילת היום, ויש להיזהר בה מאוד שכן אליהו נענה בה.", s: "שולחן ערוך, אורח חיים רלב, א" },
+  { t: "תפילת ערבית — זמנה מצאת הכוכבים, ויש לקרוא בה קריאת שמע של לילה עם שלוש פרשיותיה.", s: "שולחן ערוך, אורח חיים רלה, א" },
+  { t: "ברכת המזון — חיוב דאורייתא לברך אחר כל אכילת לחם בשיעור כזית ומעלה.", s: "שולחן ערוך, אורח חיים קפד, א" },
+  { t: "מזוזה — כל פתח של בית או חדר החייב במזוזה, יש לקבוע אותה בשליש העליון של הפתח מימין לנכנס.", s: "שולחן ערוך, יורה דעה רפט, א" },
+  { t: "כיבוד אב ואם — מצוות עשה לכבד אב ואם, ואיסור חמור לבזותם או לצערם.", s: "שולחן ערוך, יורה דעה רמ, א" },
+  { t: "צדקה — חייב אדם לתת צדקה מנכסיו, וראוי לתת עשירית מרווחיו (מעשר כספים).", s: "שולחן ערוך, יורה דעה רמט, א" },
+  { t: "לשון הרע — אסור מדאורייתא לדבר בגנות חברו, אפילו אם הדברים הם אמת לאמיתה.", s: "חפץ חיים, הלכות איסור לשון הרע א" },
+  { t: "שמירת שבת — מצוות עשה לזכור את יום השבת ולקדשו בדיבור (קידוש) ובמעשה.", s: "שולחן ערוך, אורח חיים רעא, א" },
+  { t: "מוקצה בשבת — אסור לטלטל כל כלי שמלאכתו לאיסור, אלא אם כן צריך לגופו או למקומו.", s: "שולחן ערוך, אורח חיים שח, א" },
+  { t: "בורר בשבת — אסור לברור פסולת מתוך אוכל, אלא יש לקחת את האוכל מתוך הפסולת, ביד, ולאלתר.", s: "שולחן ערוך, אורח חיים שיט, א" },
+  { t: "בישול בשבת — אין לבשל בשבת. חימום מאכל יבש שכבר מבושל מותר בתנאים מסוימים, אך לא נוזל שהתקרר.", s: "שולחן ערוך, אורח חיים שיח, א" },
+  { t: "הבדלה — מצווה להבדיל במוצאי שבת על הכוס, כדי להבדיל בין קודש לחול.", s: "שולחן ערוך, אורח חיים רצו, א" },
+  { t: "בשר וחלב — אסור מדאורייתא לאכול או לבשל בשר וחלב יחד. לאחר בשר יש להמתין 6 שעות לפני חלב.", s: "שולחן ערוך, יורה דעה פט, א" },
+  { t: "טבילת כלים — כלי סעודה הנקנים מגוי, חייבים טבילה במקווה כשר לפני השימוש הראשון.", s: "שולחן ערוך, יורה דעה קכ, א" },
+  { t: "ברכות הנהנין — אסור לאדם ליהנות מהעולם הזה ללא ברכה. לכן יש לברך לפני ואחרי כל אכילה ושתייה.", s: "שולחן ערוך, אורח חיים רי, א" },
+  { t: "ברכה אחרונה — אכל או שתה בשיעור כזית או רביעית, חייב בברכה אחרונה (מעין שלוש או בורא נפשות).", s: "שולחן ערוך, אורח חיים רי, א" },
+  { t: "השבת אבידה — הרואה אבידת ישראל, חייב להיטפל בה ולהשיבה לבעליה, ובלבד שיש בה סימן.", s: "שולחן ערוך, חושן משפט רנט, א" },
+  { t: "אונאת דברים — אסור לצער את חברו בדברים, כגון להזכיר לבעל תשובה את מעשיו הראשונים.", s: "שולחן ערוך, חושן משפט רכח, א" },
+  { t: "תלמוד תורה — קביעות עיתים לתורה היא חובה יומיומית, ואפילו עני או טרוד במלאכתו חייב לקבוע זמן.", s: "שולחן ערוך, יורה דעה רמו, א" },
+  { t: "ואהבת לרעך כמוך — מצווה לאהוב כל אחד מישראל כגופו, ולדאוג לשלומו ורכושו כשלו.", s: "רמב״ם, הלכות דעות ו, ג" },
+  { t: "הכנסת אורחים — מצווה גדולה להכניס אורחים לביתו, וגדולה היא מהקבלת פני השכינה.", s: "רמב״ם, הלכות אבל יד, ב" },
+  { t: "ביקור חולים — מצווה לבקר חולים ולעזור להם ככל הניתן, ולהתפלל לרפואתם.", s: "שולחן ערוך, יורה דעה שלג, א" },
+  { t: "לא תעמוד על דם רעך — הרואה את חברו בצרה ויכול להצילו, חייב לעשות הכל כדי להציל את חייו.", s: "שולחן ערוך, חושן משפט תכו, א" },
+  { t: "הלנת שכר — אסור להלין שכר שכיר, אלא יש לשלם לו בזמן שנקבע, שנאמר 'ביומו תיתן שכרו'.", s: "שולחן ערוך, חושן משפט שלט, א" },
+  { t: "נשיאת כפיים — מצוות עשה על הכהנים לברך את העם בכל יום, והציבור צריכים לעמוד בכוונה.", s: "שולחן ערוך, אורח חיים קכח, א" },
+  { t: "הפרשת חלה — הלש עיסה מ-5 מיני דגן בשיעור מסוים חייב להפריש ממנה חלה לפני האפייה.", s: "שולחן ערוך, יורה דעה שכד, א" },
+  { t: "ברכת הגומל — ארבעה צריכים להודות: יורדי הים, הולכי מדבריות, מי שהיה חולה ונתרפא, ומי שהיה חבוש בבית האסורים ויצא.", s: "שולחן ערוך, אורח חיים ריט, א" },
+  { t: "השכמת הבוקר — יתגבר כארי לעמוד בבוקר לעבודת בוראו, שיהא הוא מעורר השחר.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "ברכות הראייה — הרואה ברקים, שומע רעמים, או רואה קשת, חייב לברך 'עושה מעשה בראשית'.", s: "שולחן ערוך, אורח חיים רכז, א" }
+];
+
+const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
+const NAVY = "#1A3A6B", GOLD = "#C9A84C";
+const CC_L = {gemara:NAVY,mishna:"#0A5757",tanach:"#7A4818",musar:"#1A5C2E",ravKook:"#1A2B6B",machshava:"#4A1A5C",custom:"#444"};
+const CL_L = {gemara:"#E8EFF8",mishna:"#E3F6F6",tanach:"#FDF3E3",musar:"#E3F5EC",ravKook:"#E8EBF8",machshava:"#F5E8FC",custom:"#F0F0F0"};
+const CC_D = {gemara:"#93C5FD",mishna:"#5EEAD4",tanach:"#FCD34D",musar:"#6EE7B7",ravKook:"#A5B4FC",machshava:"#F9A8D4",custom:"#D1D5DB"};
+const CL_D = {gemara:"#1E3A5F",mishna:"#1A3A38",tanach:"#3D2800",musar:"#1A3A28",ravKook:"#1A2A5F",machshava:"#3A1A48",custom:"#374151"};
+const QUOTES = ["״לא עליך המלאכה לגמור, ולא אתה בן חורין ליבטל ממנה״ (אבות ב, טז)"];
+
+const SEFARIA_MAP = {
+  "ברכות": "Berakhot", "שבת": "Shabbat", "עירובין": "Eruvin", "פסחים": "Pesachim", "שקלים": "Shekalim", "יומא": "Yoma", "סוכה": "Sukkah", "ביצה": "Beitzah", "ראש השנה": "Rosh_Hashanah", "תענית": "Taanit", "מגילה": "Megillah", "מועד קטן": "Moed_Katan", "חגיגה": "Chagigah", "יבמות": "Yevamot", "כתובות": "Ketubot", "נדרים": "Nedarim", "נזיר": "Nazir", "סוטה": "Sotah", "גיטין": "Gittin", "קידושין": "Kiddushin", "בבא קמא": "Bava_Kamma", "בבא מציעא": "Bava_Metzia", "בבא בתרא": "Bava_Batra", "סנהדרין": "Sanhedrin", "מכות": "Makkot", "שבועות": "Shevuot", "עבודה זרה": "Avodah_Zarah", "הוריות": "Horayot", "זבחים": "Zevachim", "מנחות": "Menachot", "חולין": "Chullin", "בכורות": "Bekhorot", "ערכין": "Arakhin", "תמורה": "Temurah", "כריתות": "Keritot", "מעילה": "Meilah", "נידה": "Niddah",
+  "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
+  "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles"
+};
+
+const COMPLEX_REFS = {
+  "ספר הישר": "Sefer_HaYashar"
+};
+
+/* ── HELPER FUNCTIONS ── */
+function safeHas(setOrObj, val) {
+  if(!setOrObj) return false;
+  if(setOrObj instanceof Set) return setOrObj.has(val);
+  return Array.isArray(setOrObj) && setOrObj.includes(val);
 }
 
 function getBkList(cat, custom) {
@@ -1557,8 +1595,8 @@ function AuthScreen({onLogin,T}){
   );
 }
 
-/* ── APP CONTENT (הופרד כדי שהמעטפת שגיאות תעבוד) ── */
-function AppContent() {
+/* ── ROOT ── */
+function AppContent(){
   useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
   
   const [user, setUser] = useState(null);
@@ -1570,25 +1608,27 @@ function AppContent() {
   const [goals, setGoals] = useState([]);
   const [activity, setActivity] = useState([]);
   const [activeDays, setActiveDays] = useState([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => { 
       const unsubscribe = onAuthStateChanged(auth, async (u) => { 
           if (u) { 
-              // הגנה מפני קריסה כשהאימייל מוסתר (Apple Sign In)
+              // התיקון הקריטי למסך הלבן באייפון: הגנה מפני אימייל מוסתר שגורם לקריסה ב-split
               const safeEmail = u.email || "";
               const safeName = u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש");
               
               setUser({ uid: u.uid, email: safeEmail, name: safeName }); 
+              
               try { 
                   const docSnap = await getDoc(doc(db, "users", u.uid)); 
                   if (docSnap.exists()) { 
                       const data = docSnap.data(); 
                       if(data){ 
-                          setProg(desProg(data.prog)); 
-                          setGoals(Array.isArray(data.goals) ? data.goals : []); 
-                          setSett(prev => ({...prev, ...(data.sett || {})})); 
-                          setActivity(Array.isArray(data.activity) ? data.activity : []); 
-                          setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
+                          setProg(desProg(data?.prog)); 
+                          setGoals(Array.isArray(data?.goals) ? data.goals : []); 
+                          setSett(prev => ({...prev, ...(data?.sett || {})})); 
+                          setActivity(Array.isArray(data?.activity) ? data.activity : []); 
+                          setActiveDays(Array.isArray(data?.activeDays) ? data.activeDays : []); 
                       } 
                   } else {
                       setProg(IP);
@@ -1599,19 +1639,21 @@ function AppContent() {
               } catch (e) { 
                   console.error(e); 
               } 
+              setLoaded(true); 
           } else { 
               setUser(null); 
               setProg(IP);
               setGoals([]);
               setActivity([]);
               setActiveDays([]);
+              setLoaded(true); 
           } 
       }); 
       return () => unsubscribe(); 
   }, []);
 
   useEffect(() => { 
-      if (!user) return; 
+      if (!loaded || !user) return; 
       
       const saveTimer = setTimeout(() => { 
           const rawData = { 
@@ -1630,7 +1672,7 @@ function AppContent() {
       }, 500); 
       
       return () => clearTimeout(saveTimer); 
-  }, [prog, goals, sett, activity, activeDays, user]);
+  }, [prog, goals, sett, activity, activeDays, loaded, user]);
 
   const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
@@ -1642,19 +1684,15 @@ function AppContent() {
           await signInWithEmailAndPassword(auth, email, password);
         } else {
           const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-          try {
-            await signInWithPopup(auth, provider);
-          } catch(err) {
-            // אם ה-App Store חוסם חלונות קופצים, נסה רידיירקט שקט
-            if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
-               await signInWithRedirect(auth, provider);
-            } else {
-               throw err;
-            }
-          }
+          await signInWithPopup(auth, provider);
         }
       } catch(e) {
-        alert("שגיאה: " + e.message);
+        // התיקון השני: הגנה מפני קריסה כשאפל חוסמת חלונות קופצים באפליקציה (WebView)
+        if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') {
+           alert("אפל חוסמת התחברות דרך חלון קופץ. אנא התחבר עם אימייל וסיסמה, או היכנס דרך דפדפן ספארי.");
+        } else {
+           alert("שגיאה: " + (e.message || e.code));
+        }
       }
     }} T={T}/></div>;
     
@@ -1672,7 +1710,6 @@ function AppContent() {
   </div>);
 }
 
-/* ── ROOT ── */
 export default function App() {
   return (
     <ErrorBoundary>
