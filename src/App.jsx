@@ -1685,7 +1685,6 @@ export default function App(){
         // Step 3: Listen for auth state
         unsubscribe = onAuthStateChanged(auth, async (u) => { 
             if (u) {
-                // FIXED: Apple Sign-In null email crash prevention
                 const emailStr = u.email || "";
                 const nameStr = u.displayName || (emailStr ? emailStr.split('@')[0] : "משתמש");
                 
@@ -1752,6 +1751,14 @@ export default function App(){
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   
+  // RESTORED NAV CONSTANT
+  const NAV = [
+    { k: "home", l: T.UI.home, ico: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg> },
+    { k: "library", l: T.UI.library, ico: <IcoBook/> },
+    { k: "goals", l: T.UI.goals, ico: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> },
+    { k: "settings", l: T.UI.settings, ico: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg> }
+  ];
+
   if (!loaded) return (
     <div style={{...appSt, alignItems:"center", justifyContent:"center"}}>
       <div style={{color: NAVY, fontSize: 32, fontWeight: 900, letterSpacing: 1}}>
