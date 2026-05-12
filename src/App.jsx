@@ -1,6 +1,18 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  signOut, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signInWithRedirect, 
+  getRedirectResult, 
+  OAuthProvider, 
+  signInWithEmailAndPassword,
+  setPersistence,
+  indexedDBLocalPersistence
+} from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
@@ -20,6 +32,34 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
+
+/* ── ERROR BOUNDARY ── */
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, errorInfo: null, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("React Crash:", error, errorInfo);
+    this.setState({ errorInfo });
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{padding: 20, textAlign: 'left', direction: 'ltr', background: '#FEE2E2', color: '#B91C1C', minHeight: '100vh'}}>
+          <h2>UI Crash Detected</h2>
+          <p><strong>Error:</strong> {this.state.error?.toString()}</p>
+          <p style={{fontSize: 12, whiteSpace: 'pre-wrap'}}>{this.state.errorInfo?.componentStack}</p>
+          <button onClick={() => window.location.reload()} style={{padding: '10px 20px', background: '#B91C1C', color: '#fff', border: 'none', borderRadius: 8, marginTop: 20}}>Reload App</button>
+        </div>
+      );
+    }
+    return this.props.children; 
+  }
+}
 
 /* ── ICONS & LOGO ── */
 const IcoBook = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
@@ -220,6 +260,72 @@ function generateAmudimRange(startStr, endStr, masechetDafLimit) {
         r.pop();
     }
     return r;
+}
+
+const MISHNA = [{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
+
+const HALACHOT = [
+  { t: "מודה אני — מיד כשיעור משנתו, יאמר 'מודה אני' כדי לזכור את חסד השם שהחזיר לו את נשמתו.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "נטילת ידיים שחרית — יש ליטול ידיים מיד בבוקר שלוש פעמים לסירוגין כדי להעביר את רוח הרעה.", s: "שולחן ערוך, אורח חיים ד, ב" },
+  { t: "ברכות השחר — יש לברך ברכות השחר בכל יום, וראוי לברכן סמוך לקימה ככל האפשר.", s: "שולחן ערוך, אורח חיים מו, א" },
+  { t: "ציצית — מצוות עשה ללבוש בגד של ארבע כנפות ולהטיל בו ציצית, כדי לזכור את כל המצוות.", s: "שולחן ערוך, אורח חיים ח, א" },
+  { t: "תפילין — מצוות תפילין חמורה מאוד, וצריך להיזהר להיות בהן בגוף נקי ומחשבה טהורה.", s: "שולחן ערוך, אורח חיים כח, א" },
+  { t: "קריאת שמע של שחרית — זמנה מתחילת היום עד סוף שלוש שעות זמניות.", s: "שולחן ערוך, אורח חיים נח, א" },
+  { t: "תפילת עמידה — חייב אדם להתפלל בכוונה, לעמוד ברגליים צמודות ולכוון לבו לשמיים.", s: "שולחן ערוך, אורח חיים צה, א" },
+  { t: "תפילת מנחה — זמנה מ-6.5 שעות זמניות מתחילת היום, ויש להיזהר בה מאוד שכן אליהו נענה בה.", s: "שולחן ערוך, אורח חיים רלב, א" },
+  { t: "תפילת ערבית — זמנה מצאת הכוכבים, ויש לקרוא בה קריאת שמע של לילה עם שלוש פרשיותיה.", s: "שולחן ערוך, אורח חיים רלה, א" },
+  { t: "ברכת המזון — חיוב דאורייתא לברך אחר כל אכילת לחם בשיעור כזית ומעלה.", s: "שולחן ערוך, אורח חיים קפד, א" },
+  { t: "מזוזה — כל פתח של בית או חדר החייב במזוזה, יש לקבוע אותה בשליש העליון של הפתח מימין לנכנס.", s: "שולחן ערוך, יורה דעה רפט, א" },
+  { t: "כיבוד אב ואם — מצוות עשה לכבד אב ואם, ואיסור חמור לבזותם או לצערם.", s: "שולחן ערוך, יורה דעה רמ, א" },
+  { t: "צדקה — חייב אדם לתת צדקה מנכסיו, וראוי לתת עשירית מרווחיו (מעשר כספים).", s: "שולחן ערוך, יורה דעה רמט, א" },
+  { t: "לשון הרע — אסור מדאורייתא לדבר בגנות חברו, אפילו אם הדברים הם אמת לאמיתה.", s: "חפץ חיים, הלכות איסור לשון הרע א" },
+  { t: "שמירת שבת — מצוות עשה לזכור את יום השבת ולקדשו בדיבור (קידוש) ובמעשה.", s: "שולחן ערוך, אורח חיים רעא, א" },
+  { t: "מוקצה בשבת — אסור לטלטל כל כלי שמלאכתו לאיסור, אלא אם כן צריך לגופו או למקומו.", s: "שולחן ערוך, אורח חיים שח, א" },
+  { t: "בורר בשבת — אסור לברור פסולת מתוך אוכל, אלא יש לקחת את האוכל מתוך הפסולת, ביד, ולאלתר.", s: "שולחן ערוך, אורח חיים שיט, א" },
+  { t: "בישול בשבת — אין לבשל בשבת. חימום מאכל יבש שכבר מבושל מותר בתנאים מסוימים, אך לא נוזל שהתקרר.", s: "שולחן ערוך, אורח חיים שיח, א" },
+  { t: "הבדלה — מצווה להבדיל במוצאי שבת על הכוס, כדי להבדיל בין קודש לחול.", s: "שולחן ערוך, אורח חיים רצו, א" },
+  { t: "בשר וחלב — אסור מדאורייתא לאכול או לבשל בשר וחלב יחד. לאחר בשר יש להמתין 6 שעות לפני חלב.", s: "שולחן ערוך, יורה דעה פט, א" },
+  { t: "טבילת כלים — כלי סעודה הנקנים מגוי, חייבים טבילה במקווה כשר לפני השימוש הראשון.", s: "שולחן ערוך, יורה דעה קכ, א" },
+  { t: "ברכות הנהנין — אסור לאדם ליהנות מהעולם הזה ללא ברכה. לכן יש לברך לפני ואחרי כל אכילה ושתייה.", s: "שולחן ערוך, אורח חיים רי, א" },
+  { t: "ברכה אחרונה — אכל או שתה בשיעור כזית או רביעית, חייב בברכה אחרונה (מעין שלוש או בורא נפשות).", s: "שולחן ערוך, אורח חיים רי, א" },
+  { t: "השבת אבידה — הרואה אבידת ישראל, חייב להיטפל בה ולהשיבה לבעליה, ובלבד שיש בה סימן.", s: "שולחן ערוך, חושן משפט רנט, א" },
+  { t: "אונאת דברים — אסור לצער את חברו בדברים, כגון להזכיר לבעל תשובה את מעשיו הראשונים.", s: "שולחן ערוך, חושן משפט רכח, א" },
+  { t: "תלמוד תורה — קביעות עיתים לתורה היא חובה יומיומית, ואפילו עני או טרוד במלאכתו חייב לקבוע זמן.", s: "שולחן ערוך, יורה דעה רמו, א" },
+  { t: "ואהבת לרעך כמוך — מצווה לאהוב כל אחד מישראל כגופו, ולדאוג לשלומו ורכושו כשלו.", s: "רמב״ם, הלכות דעות ו, ג" },
+  { t: "הכנסת אורחים — מצווה גדולה להכניס אורחים לביתו, וגדולה היא מהקבלת פני השכינה.", s: "רמב״ם, הלכות אבל יד, ב" },
+  { t: "ביקור חולים — מצווה לבקר חולים ולעזור להם ככל הניתן, ולהתפלל לרפואתם.", s: "שולחן ערוך, יורה דעה שלג, א" },
+  { t: "לא תעמוד על דם רעך — הרואה את חברו בצרה ויכול להצילו, חייב לעשות הכל כדי להציל את חייו.", s: "שולחן ערוך, חושן משפט תכו, א" },
+  { t: "הלנת שכר — אסור להלין שכר שכיר, אלא יש לשלם לו בזמן שנקבע, שנאמר 'ביומו תיתן שכרו'.", s: "שולחן ערוך, חושן משפט שלט, א" },
+  { t: "נשיאת כפיים — מצוות עשה על הכהנים לברך את העם בכל יום, והציבור צריכים לעמוד בכוונה.", s: "שולחן ערוך, אורח חיים קכח, א" },
+  { t: "הפרשת חלה — הלש עיסה מ-5 מיני דגן בשיעור מסוים חייב להפריש ממנה חלה לפני האפייה.", s: "שולחן ערוך, יורה דעה שכד, א" },
+  { t: "ברכת הגומל — ארבעה צריכים להודות: יורדי הים, הולכי מדבריות, מי שהיה חולה ונתרפא, ומי שהיה חבוש בבית האסורים ויצא.", s: "שולחן ערוך, אורח חיים ריט, א" },
+  { t: "השכמת הבוקר — יתגבר כארי לעמוד בבוקר לעבודת בוראו, שיהא הוא מעורר השחר.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "ברכות הראייה — הרואה ברקים, שומע רעמים, או רואה קשת, חייב לברך 'עושה מעשה בראשית'.", s: "שולחן ערוך, אורח חיים רכז, א" }
+];
+
+const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
+const NAVY = "#1A3A6B", GOLD = "#C9A84C";
+const CC_L = {gemara:NAVY,mishna:"#0A5757",tanach:"#7A4818",musar:"#1A5C2E",ravKook:"#1A2B6B",machshava:"#4A1A5C",custom:"#444"};
+const CL_L = {gemara:"#E8EFF8",mishna:"#E3F6F6",tanach:"#FDF3E3",musar:"#E3F5EC",ravKook:"#E8EBF8",machshava:"#F5E8FC",custom:"#F0F0F0"};
+const CC_D = {gemara:"#93C5FD",mishna:"#5EEAD4",tanach:"#FCD34D",musar:"#6EE7B7",ravKook:"#A5B4FC",machshava:"#F9A8D4",custom:"#D1D5DB"};
+const CL_D = {gemara:"#1E3A5F",mishna:"#1A3A38",tanach:"#3D2800",musar:"#1A3A28",ravKook:"#1A2A5F",machshava:"#3A1A48",custom:"#374151"};
+const QUOTES = ["״לא עליך המלאכה לגמור, ולא אתה בן חורין ליבטל ממנה״ (אבות ב, טז)"];
+
+const SEFARIA_MAP = {
+  "ברכות": "Berakhot", "שבת": "Shabbat", "עירובין": "Eruvin", "פסחים": "Pesachim", "שקלים": "Shekalim", "יומא": "Yoma", "סוכה": "Sukkah", "ביצה": "Beitzah", "ראש השנה": "Rosh_Hashanah", "תענית": "Taanit", "מגילה": "Megillah", "מועד קטן": "Moed_Katan", "חגיגה": "Chagigah", "יבמות": "Yevamot", "כתובות": "Ketubot", "נדרים": "Nedarim", "נזיר": "Nazir", "סוטה": "Sotah", "גיטין": "Gittin", "קידושין": "Kiddushin", "בבא קמא": "Bava_Kamma", "בבא מציעא": "Bava_Metzia", "בבא בתרא": "Bava_Batra", "סנהדרין": "Sanhedrin", "מכות": "Makkot", "שבועות": "Shevuot", "עבודה זרה": "Avodah_Zarah", "הוריות": "Horayot", "זבחים": "Zevachim", "מנחות": "Menachot", "חולין": "Chullin", "בכורות": "Bekhorot", "ערכין": "Arakhin", "תמורה": "Temurah", "כריתות": "Keritot", "מעילה": "Meilah", "נידה": "Niddah",
+  "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
+  "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles"
+};
+
+const COMPLEX_REFS = {
+  "ספר הישר": "Sefer_HaYashar"
+};
+
+/* ── HELPER FUNCTIONS ── */
+function safeHas(setOrObj, val) {
+  if(!setOrObj) return false;
+  if(setOrObj instanceof Set) return setOrObj.has(val);
+  return Array.isArray(setOrObj) && setOrObj.includes(val);
 }
 
 function getBkList(cat, custom) {
@@ -501,7 +607,7 @@ function WelcomePrompt({ T }) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const hasSeen = safeStorage.getItem('hasSeenWelcomeAliba');
+    const hasSeen = localStorage.getItem('hasSeenWelcomeAliba');
     if (!hasSeen) {
         const timer = setTimeout(() => setShow(true), 500);
         return () => clearTimeout(timer);
@@ -510,7 +616,7 @@ function WelcomePrompt({ T }) {
 
   const handleClose = () => {
       setShow(false);
-      safeStorage.setItem('hasSeenWelcomeAliba', '1');
+      localStorage.setItem('hasSeenWelcomeAliba', '1');
   };
 
   if (!show) return null;
@@ -548,8 +654,8 @@ function InstallPrompt({ T, sett, setSett }) {
 
   useEffect(() => {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    const localHide = safeStorage.getItem('hideInstallAliba');
-    const sessionHide = safeStorage.getSession('sessionHideInstallAliba');
+    const localHide = localStorage.getItem('hideInstallAliba');
+    const sessionHide = sessionStorage.getItem('sessionHideInstallAliba');
     
     if (!isStandalone && !sett.hideInstallPrompt && !localHide && !sessionHide) {
         const timer = setTimeout(() => setShow(true), 3000);
@@ -559,10 +665,10 @@ function InstallPrompt({ T, sett, setSett }) {
 
   const handleClose = () => {
       setShow(false);
-      safeStorage.setSession('sessionHideInstallAliba', '1');
+      sessionStorage.setItem('sessionHideInstallAliba', '1');
       if (dontShow) {
           setSett(s => ({ ...s, hideInstallPrompt: true }));
-          safeStorage.setItem('hideInstallAliba', '1');
+          localStorage.setItem('hideInstallAliba', '1');
       }
   };
 
@@ -869,7 +975,7 @@ function BookCard({cat, item, prog, T, cc, cl, onPress, custom}){
 function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   const { cat, i: idx, isC, origIdx, autoOpenKey } = detail;
   const list = getBkList(cat, prog?.custom);
-  const item = list.find(l => String(l.idKey) === String(isC ? 'custom_c'+origIdx : cat+'_s'+idx));
+  const item = list.find(l => l.idKey === (isC ? 'custom_c'+origIdx : cat+'_s'+idx));
   const col=cc[cat]||T.primary,lightCol=cl[cat]||"#E8EFF8";
   const[viewMode,setViewMode]=useState(cat==="gemara"?"amudim":cat==="mishna"?"mishna":"perakim");
   const[noteSheet,setNoteSheet]=useState(null), [editNote,setEditNote]=useState(""), [editChz,setEditChz]=useState(0), [readerRef, setReaderRef]=useState(null), [readerTitle, setReaderTitle]=useState(""), [hasAutoOpened, setHasAutoOpened]=useState(false);
@@ -904,7 +1010,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
       }
     } else if(cat==="tanach"){
       if(isParsh) { 
-          (PARSHIOT[idx]||[]).forEach(ps=>arr.push({key:ps,label:ps, sub: `${PARASHA_VERSES[ps]||0} ${T.isEn?"Verses":"פסוקים"}`})); 
+          PARSHIOT[idx].forEach(ps=>arr.push({key:ps,label:ps, sub: `${PARASHA_VERSES[ps]||0} ${T.isEn?"Verses":"פסוקים"}`})); 
       } 
       else { for(let i=1;i<=(TANACH[idx]?.c||0);i++) arr.push({key:i,label:`${T.isEn?"Chap":""} ${toHeb(i)}`}); }
     } else {
@@ -1016,7 +1122,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
             const chapters = PARASHA_CHAPTERS[key] || [];
             chapters.forEach(c => isAdding ? ndPerek.add(c) : ndPerek.delete(c));
 
-            (PARSHIOT[idx]||[]).forEach(parashaName => {
+            PARSHIOT[idx].forEach(parashaName => {
                const chaps = PARASHA_CHAPTERS[parashaName] || [];
                const allDone = chaps.length > 0 && chaps.every(c => ndPerek.has(c));
                if (allDone) ndParsha.add(parashaName); else ndParsha.delete(parashaName);
@@ -1026,7 +1132,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
             if (isAdding) ndPerek.add(key); else ndPerek.delete(key);
 
             if (isTorah) {
-                (PARSHIOT[idx]||[]).forEach(parashaName => {
+                PARSHIOT[idx].forEach(parashaName => {
                     const chaps = PARASHA_CHAPTERS[parashaName] || [];
                     const allDone = chaps.length > 0 && chaps.every(c => ndPerek.has(c));
                     if (allDone) ndParsha.add(parashaName);
@@ -1073,7 +1179,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
           
           if (isTorah) {
              for(let i=1; i<=(TANACH[idx]?.c||0); i++) ndPerek.add(i);
-             (PARSHIOT[idx]||[]).forEach(ps => ndParsha.add(ps));
+             PARSHIOT[idx].forEach(ps => ndParsha.add(ps));
           } else {
              items.forEach(it => { if(!it.isHeader) ndPerek.add(it.key); });
           }
@@ -1500,11 +1606,11 @@ function AuthScreen({onLogin,T}){
       </div>
       
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:14}}>
-        <FI T={T} placeholder={T.isEn ? "Email" : "אימייל"} value={email} onChange={e=>setEmail(e.target.value)} type="email" />
-        <FI T={T} type="password" placeholder={T.isEn ? "Password" : "סיסמה"} value={password} onChange={e=>setPassword(e.target.value)} />
-        <PB T={T} onClick={()=>onLogin({method:"email", email, password})} style={{background:T.primary, height: "54px"}}>{T.isEn ? "Login" : "כניסה"}</PB>
+        <FI T={T} placeholder="אימייל" value={email} onChange={e=>setEmail(e.target.value)} />
+        <FI T={T} type="password" placeholder="סיסמה" value={password} onChange={e=>setPassword(e.target.value)} />
+        <PB T={T} onClick={()=>onLogin({method:"email", email, password})} style={{background:T.primary, height: "54px"}}>כניסה</PB>
 
-        <div style={{textAlign:"center", color:T.muted, fontSize:T.f(12), margin:"4px 0"}}>{T.UI.or || "או"}</div>
+        <div style={{textAlign:"center", color:T.muted, fontSize:T.f(12), margin:"4px 0"}}>או</div>
 
         <button onClick={()=>onLogin({method:"google"})} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font,height:"54px",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all 0.2s"}}>
           <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
@@ -1542,47 +1648,86 @@ export default function App(){
   const [goals, setGoals] = useState([]);
   const [activity, setActivity] = useState([]);
   const [activeDays, setActiveDays] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+
+  // Safety net: Force UI to load after 8 seconds no matter what.
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 8000);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => { 
-      const unsubscribe = onAuthStateChanged(auth, async (u) => { 
-          if (u) { 
-              const safeEmail = u.email || "";
-              const safeName = u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש");
-              setUser({ uid: u.uid, email: safeEmail, name: safeName }); 
-              
-              try { 
-                  const docSnap = await getDoc(doc(db, "users", u.uid)); 
-                  if (docSnap.exists()) { 
-                      const data = docSnap.data(); 
-                      if(data){ 
-                          setProg(desProg(data.prog)); 
-                          setGoals(Array.isArray(data.goals) ? data.goals : []); 
-                          setSett(prev => ({...prev, ...(data.sett || {})})); 
-                          setActivity(Array.isArray(data.activity) ? data.activity : []); 
-                          setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
-                      } 
-                  } else {
-                      setProg(IP);
-                      setGoals([]);
-                      setActivity([]);
-                      setActiveDays([]);
-                  }
-              } catch (e) { 
-                  console.error(e); 
-              } 
-          } else { 
-              setUser(null); 
-              setProg(IP);
-              setGoals([]);
-              setActivity([]);
-              setActiveDays([]);
-          } 
-      }); 
+      let unsubscribe = () => {};
+
+      (async () => {
+        // Step 1: Set persistence with a race condition timeout to prevent infinite hang in WKWebView
+        try {
+          await Promise.race([
+            setPersistence(auth, indexedDBLocalPersistence),
+            new Promise(resolve => setTimeout(resolve, 1500)) 
+          ]);
+        } catch (e) {
+          console.warn("[Auth] Persistence setup skipped:", e.code || e.message);
+        }
+
+        // Step 2: Handle redirect result safely
+        try {
+          const result = await getRedirectResult(auth);
+          if (result?.user) {
+            console.log("[Auth] Redirect result captured:", result.user.email);
+          }
+        } catch (e) {
+          if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
+            console.error("[Auth] Redirect result error:", e.code, e.message);
+          }
+        }
+
+        // Step 3: Listen for auth state
+        unsubscribe = onAuthStateChanged(auth, async (u) => { 
+            if (u) {
+                // FIXED: Apple Sign-In null email crash prevention
+                const emailStr = u.email || "";
+                const nameStr = u.displayName || (emailStr ? emailStr.split('@')[0] : "משתמש");
+                
+                setUser({ uid: u.uid, email: emailStr, name: nameStr }); 
+                
+                try { 
+                    const docSnap = await getDoc(doc(db, "users", u.uid)); 
+                    if (docSnap.exists()) { 
+                        const data = docSnap.data(); 
+                        if(data){ 
+                            setProg(desProg(data.prog)); 
+                            setGoals(Array.isArray(data.goals) ? data.goals : []); 
+                            setSett(prev => ({...prev, ...(data.sett || {})})); 
+                            setActivity(Array.isArray(data.activity) ? data.activity : []); 
+                            setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
+                        } 
+                    } else {
+                        setProg(IP);
+                        setGoals([]);
+                        setActivity([]);
+                        setActiveDays([]);
+                    }
+                } catch (e) { 
+                    console.error("[Firestore] Load error:", e); 
+                } 
+                setLoaded(true); 
+            } else { 
+                setUser(null); 
+                setProg(IP);
+                setGoals([]);
+                setActivity([]);
+                setActiveDays([]);
+                setLoaded(true); 
+            } 
+        });
+      })();
+
       return () => unsubscribe(); 
   }, []);
 
   useEffect(() => { 
-      if (!user) return; 
+      if (!loaded || !user) return; 
       
       const saveTimer = setTimeout(() => { 
           const rawData = { 
@@ -1601,43 +1746,72 @@ export default function App(){
       }, 500); 
       
       return () => clearTimeout(saveTimer); 
-  }, [prog, goals, sett, activity, activeDays, user]);
+  }, [prog, goals, sett, activity, activeDays, loaded, user]);
 
   const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   
-  if(!user) return <div style={appSt}><AuthScreen onLogin={async({method, email, password})=>{
-      try {
-        if (method === "email") {
-          await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-          try {
-             await signInWithPopup(auth, provider);
-          } catch(err) {
-             if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
-                alert("ההתחברות החברתית נחסמה על ידי מערכת ההפעלה. אנא השתמש/י בשם משתמש וסיסמה, או פתח בדפדפן מלא.");
-             } else {
-                throw err;
-             }
-          }
-        }
-      } catch(e) {
-        alert("שגיאה: " + e.message);
-      }
-    }} T={T}/></div>;
-    
-  if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
-  const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
-  
-  return (<div style={appSt}>
-    <WelcomePrompt T={T} />
-    <InstallPrompt T={T} sett={sett} setSett={setSett} />
-    {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}
-    {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
-    {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
-    {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}
-    <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>{NAV.map(it=>(<button key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>{it.ico}{it.l}</button>))}</div>
-  </div>);
+  if (!loaded) return (
+    <div style={{...appSt, alignItems:"center", justifyContent:"center"}}>
+      <div style={{color: NAVY, fontSize: 32, fontWeight: 900, letterSpacing: 1}}>
+        א<span style={{color:GOLD}}>ל</span>י<span style={{color:GOLD}}>ב</span>א
+      </div>
+      <div style={{color:"#6B7280", fontSize: 14, marginTop: 12}}>{T.isEn ? "Loading..." : "טוען..."}</div>
+    </div>
+  );
+
+  return (
+    <div style={appSt}>
+      <ErrorBoundary>
+        {!user && (
+          <AuthScreen onLogin={async({method, email, password})=>{
+            try {
+              if (method === "email") {
+                await signInWithEmailAndPassword(auth, email, password);
+                return;
+              }
+
+              const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
+              
+              try {
+                await signInWithPopup(auth, provider);
+              } catch (popupErr) {
+                const isBlockedByBrowser =
+                  popupErr.code === "auth/popup-blocked" ||
+                  popupErr.code === "auth/popup-closed-by-user" ||
+                  popupErr.code === "auth/cancelled-popup-request" ||
+                  popupErr.code === "auth/operation-not-supported-in-this-environment";
+
+                if (isBlockedByBrowser) {
+                  console.warn("[Auth] Popup blocked, falling back to redirect...");
+                  await signInWithRedirect(auth, provider);
+                } else {
+                  throw popupErr;
+                }
+              }
+            } catch(e) {
+              alert("שגיאה בהתחברות: " + (e.message || e.code));
+            }
+          }} T={T}/>
+        )}
+        
+        {user && detail && (
+          <DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/>
+        )}
+
+        {user && !detail && (
+          <>
+            <WelcomePrompt T={T} />
+            <InstallPrompt T={T} sett={sett} setSett={setSett} />
+            {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}
+            {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
+            {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
+            {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}
+            <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>{NAV.map(it=>(<button key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>{it.ico}{it.l}</button>))}</div>
+          </>
+        )}
+      </ErrorBoundary>
+    </div>
+  );
 }
