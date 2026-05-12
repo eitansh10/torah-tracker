@@ -33,34 +33,6 @@ const db = getFirestore(app);
 
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
 
-/* ── ERROR BOUNDARY ── */
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, errorInfo: null, error: null };
-  }
-  static getDerivedStateFromError(error) {
-    return { hasError: true, error };
-  }
-  componentDidCatch(error, errorInfo) {
-    console.error("React Crash:", error, errorInfo);
-    this.setState({ errorInfo });
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div style={{padding: 20, textAlign: 'left', direction: 'ltr', background: '#FEE2E2', color: '#B91C1C', minHeight: '100vh'}}>
-          <h2>UI Crash Detected</h2>
-          <p><strong>Error:</strong> {this.state.error?.toString()}</p>
-          <p style={{fontSize: 12, whiteSpace: 'pre-wrap'}}>{this.state.errorInfo?.componentStack}</p>
-          <button onClick={() => window.location.reload()} style={{padding: '10px 20px', background: '#B91C1C', color: '#fff', border: 'none', borderRadius: 8, marginTop: 20}}>Reload App</button>
-        </div>
-      );
-    }
-    return this.props.children; 
-  }
-}
-
 /* ── ICONS & LOGO ── */
 const IcoBook = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
 const IcoFlame = () => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>;
@@ -1684,13 +1656,8 @@ export default function App(){
 
         // Step 3: Listen for auth state
         unsubscribe = onAuthStateChanged(auth, async (u) => { 
-            if (u) {
-                // FIXED: Apple Sign-In null email crash prevention
-                const emailStr = u.email || "";
-                const nameStr = u.displayName || (emailStr ? emailStr.split('@')[0] : "משתמש");
-                
-                setUser({ uid: u.uid, email: emailStr, name: nameStr }); 
-                
+            if (u) { 
+                setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); 
                 try { 
                     const docSnap = await getDoc(doc(db, "users", u.uid)); 
                     if (docSnap.exists()) { 
@@ -1761,57 +1728,46 @@ export default function App(){
     </div>
   );
 
-  return (
-    <div style={appSt}>
-      <ErrorBoundary>
-        {!user && (
-          <AuthScreen onLogin={async({method, email, password})=>{
-            try {
-              if (method === "email") {
-                await signInWithEmailAndPassword(auth, email, password);
-                return;
-              }
+  if(!user) return <div style={appSt}><AuthScreen onLogin={async({method, email, password})=>{
+      try {
+        if (method === "email") {
+          await signInWithEmailAndPassword(auth, email, password);
+          return;
+        }
 
-              const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-              
-              try {
-                await signInWithPopup(auth, provider);
-              } catch (popupErr) {
-                const isBlockedByBrowser =
-                  popupErr.code === "auth/popup-blocked" ||
-                  popupErr.code === "auth/popup-closed-by-user" ||
-                  popupErr.code === "auth/cancelled-popup-request" ||
-                  popupErr.code === "auth/operation-not-supported-in-this-environment";
-
-                if (isBlockedByBrowser) {
-                  console.warn("[Auth] Popup blocked, falling back to redirect...");
-                  await signInWithRedirect(auth, provider);
-                } else {
-                  throw popupErr;
-                }
-              }
-            } catch(e) {
-              alert("שגיאה בהתחברות: " + (e.message || e.code));
-            }
-          }} T={T}/>
-        )}
+        const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
         
-        {user && detail && (
-          <DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/>
-        )}
+        try {
+          await signInWithPopup(auth, provider);
+        } catch (popupErr) {
+          const isBlockedByBrowser =
+            popupErr.code === "auth/popup-blocked" ||
+            popupErr.code === "auth/popup-closed-by-user" ||
+            popupErr.code === "auth/cancelled-popup-request" ||
+            popupErr.code === "auth/operation-not-supported-in-this-environment";
 
-        {user && !detail && (
-          <>
-            <WelcomePrompt T={T} />
-            <InstallPrompt T={T} sett={sett} setSett={setSett} />
-            {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}
-            {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
-            {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
-            {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}
-            <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>{NAV.map(it=>(<button key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>{it.ico}{it.l}</button>))}</div>
-          </>
-        )}
-      </ErrorBoundary>
-    </div>
-  );
+          if (isBlockedByBrowser) {
+            console.warn("[Auth] Popup blocked, falling back to redirect...");
+            await signInWithRedirect(auth, provider);
+          } else {
+            throw popupErr;
+          }
+        }
+      } catch(e) {
+        alert("שגיאה בהתחברות: " + (e.message || e.code));
+      }
+    }} T={T}/></div>;
+    
+  if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
+  const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
+  
+  return (<div style={appSt}>
+    <WelcomePrompt T={T} />
+    <InstallPrompt T={T} sett={sett} setSett={setSett} />
+    {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}
+    {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
+    {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
+    {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}
+    <div style={{background:T.card,borderTop:`1px solid ${T.border}`,display:"flex",position:"sticky",bottom:0,zIndex:10}}>{NAV.map(it=>(<button key={it.k} onClick={()=>setTab(it.k)} style={{flex:1,padding:"9px 2px 8px",display:"flex",flexDirection:"column",alignItems:"center",gap:3,fontSize:T.f(9),color:tab===it.k?T.gold||GOLD:T.muted,border:"none",background:"none",cursor:"pointer",fontWeight:tab===it.k?800:400,fontFamily:T.font}}>{it.ico}{it.l}</button>))}</div>
+  </div>);
 }
