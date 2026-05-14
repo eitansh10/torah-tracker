@@ -1,6 +1,18 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup, OAuthProvider, signInWithEmailAndPassword } from "firebase/auth";
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  signOut, 
+  GoogleAuthProvider, 
+  signInWithPopup, 
+  signInWithRedirect, 
+  getRedirectResult, 
+  OAuthProvider, 
+  signInWithEmailAndPassword,
+  setPersistence,
+  indexedDBLocalPersistence
+} from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
@@ -188,14 +200,26 @@ const GEMARA_CHAP_NAMES = {
 
 // מיפוי עמודים מדויק למניעת חירטוטים בגמרא
 const EXACT_GEMARA_STARTS = {
-  "ברכות": ["2a", "13a", "17b", "26a", "30b", "35a", "45a", "51b", "54a"],
-  "שבת": ["2a", "20b", "36b", "47a", "52b", "65b", "69a", "73a", "80a", "90a", "95a", "101a", "105a", "113a", "115a", "119a", "123a", "130a", "137a", "148a", "150a", "153a", "155a", "156a"],
-  "עירובין": ["2a", "18a", "26a", "41b", "53a", "65b", "71b", "82a", "95a", "100b"],
-  "פסחים": ["2a", "21a", "42a", "49b", "58a", "66a", "76a", "86a", "94a", "99b"],
+  "ברכות": ["2a", "11a", "18a", "26a", "30b", "35b", "45a", "51b", "54a"],
+  "שבת": ["2a", "20b", "36b", "47a", "51b", "57a", "68a", "76a", "83a", "90a", "96a", "102b", "105b", "107a", "111a", "115a", "122b", "126b", "130a", "137a", "148a", "150a", "153a", "155a"],
+  "עירובין": ["2a", "17b", "26a", "41a", "53b", "61b", "76b", "89a", "94a", "95a"],
+  "פסחים": ["2a", "21a", "42a", "50a", "58a", "66b", "74a", "87a", "92a", "99b"],
+  "ראש השנה": ["2a", "18a", "24b", "29b"],
+  "יומא": ["2a", "15a", "25a", "39a", "53b", "62a", "68b", "73b"],
+  "סוכה": ["2a", "20a", "29b", "42b", "50a"],
+  "ביצה": ["2a", "15b", "23b", "29b", "35b"],
+  "תענית": ["2a", "11a", "15a", "26a"],
+  "מגילה": ["2a", "17a", "25a", "25b"],
   "מועד קטן": ["2a", "11a", "13b"], 
-  "חגיגה": ["2a", "11b", "20b"], 
+  "חגיגה": ["2a", "11b", "18b"], 
+  "יבמות": ["2a", "17a", "26b", "41a", "50a", "54a", "61a", "70a", "84a", "87b", "97a", "101a", "109a", "112b", "114b", "118b"],
+  "כתובות": ["2a", "16a", "29a", "39b", "54b", "64b", "70a", "79a", "83a", "90b", "103a", "108a", "104a"],
   "קידושין": ["2a", "41a", "58b", "69a"], 
-  "מכות": ["2a", "7a", "13b"],
+  "בבא קמא": ["2a", "16a", "27b", "36a", "46a", "55b", "62b", "83b", "96b", "111b"],
+  "בבא מציעא": ["2a", "21a", "33b", "44a", "60b", "73a", "83a", "94a", "103b", "116a"],
+  "בבא בתרא": ["2a", "17a", "28a", "61a", "73a", "83b", "108b", "160b", "164b", "175a"],
+  "סנהדרין": ["2a", "18a", "23a", "32a", "40a", "42b", "52b", "68b", "73a", "84a", "90a"],
+  "מכות": ["2a", "7a", "13b"]
 };
 
 function generateAmudimRange(startStr, endStr, masechetDafLimit) {
@@ -220,6 +244,51 @@ function generateAmudimRange(startStr, endStr, masechetDafLimit) {
         r.pop();
     }
     return r;
+}
+
+const MISHNA = [{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
+
+const HALACHOT = [
+  { t: "השכמת הבוקר: 'יתגבר כארי לעמוד בבוקר לעבודת בוראו'. ההלכה הפותחת את השולחן ערוך מלמדת שמיד עם היקיצה, עוד לפני שהגוף מתרגל לשגרה, עלינו להתמלא בגבורה רוחנית ולהכיר בכך שהיום החדש הוא מתנה לעשיית רצון ה'.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "מודה אני: מצווה לומר מיד שניעור 'מודה אני לפניך מלך חי וקיים'. היתרון העצום בתפילה זו הוא שאין בה שם השם, ולכן ניתן לאומרה עוד לפני נטילת ידיים (גם כשהגוף אינו טהור), כביטוי טהור, טבעי ומיידי של הכרת הטוב על החזרת הנשמה.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "נטילת ידיים שחרית: בבוקר יש ליטול כל יד שלוש פעמים לסירוגין מכלי עם מים, כדי להעביר את טומאת הלילה. נטילה זו משמשת גם כהכנה רוחנית לתפילה, בדומה לכהן שמקדש את ידיו לפני העבודה בבית המקדש.", s: "שולחן ערוך, אורח חיים ד, ב" },
+  { t: "ברכות השחר: ברכות אלו נתקנו כדי להודות על התפקודים הבסיסיים ביותר של האדם והעולם – פקיחת העיניים, היכולת ללכת, המלבוש ועוד. ראוי לברך אותן בשמחה ובכוונה, שכן הן 'מקרקעות' אותנו רוחנית ונותנות פרופורציה לפני שאנו צוללים לשגרת היום.", s: "שולחן ערוך, אורח חיים מו, א" },
+  { t: "קביעות עיתים לתורה: חובה על כל אדם מישראל, בין עני ובין עשיר, בין בריא ובין בעל ייסורים, לקבוע זמן מוגדר ללימוד תורה בכל יום ובכל לילה. הקביעות צריכה להיות כה יציבה וחזקה, עד שאפילו טרדות הפרנסה לא יבטלו אותה.", s: "שולחן ערוך, יורה דעה רמו, א" },
+  { t: "אהבת ישראל: 'ואהבת לרעך כמוך' – המשמעות המעשית היא לדאוג לכספו, לכבודו ולרווחתו של חברו בדיוק כפי שאדם דואג לעצמו. הרמב״ם מוסיף ומציין שמי שמתכבד בקלון חברו, פוגע בעצם מהותו הרוחנית ואין לו חלק לעולם הבא.", s: "רמב״ם, הלכות דעות ו, ג" },
+  { t: "איסור לשון הרע: מן האיסורים החמורים ביותר בתורה - הדיבור בגנותו של אדם אחר, ואפילו אם הדברים נכונים לחלוטין (שאם הם שקר - הרי זה 'מוציא שם רע'). דיבור רע מפרק משפחות, הורס קהילות והוא הבסיס לחברה לא בריאה.", s: "חפץ חיים, פתיחה" },
+  { t: "כיבוד אב ואם: מצוות עשה מן התורה שכוללת סיוע פיזי וכן מורא (שלא לסתור את דבריהם, לא לעמוד במקומם ולא לקרוא להם בשמם). חז״ל השוו את כבוד ההורים לכבודו של הקב״ה, שכן שלושתם שותפים ביצירת האדם.", s: "שולחן ערוך, יורה דעה רמ, א" },
+  { t: "ביקור חולים: מצווה גדולה להגיע לבקר חולה, לראות מה צרכיו הרפואיים או הנפשיים, ויותר מכל – להתפלל עליו. חז״ל אומרים שמי שמבקר חולה נוטל חלק מסבלו ו'מחיֶּה' אותו. ובלבד שהביקור לא יכביד על החולה.", s: "שולחן ערוך, יורה דעה שלג, א" },
+  { t: "הכנסת אורחים: 'גדולה הכנסת אורחים מהקבלת פני השכינה' – יסוד שלמדנו מאברהם אבינו. המצווה אינה מסתכמת רק בהגשת אוכל, אלא במאור פנים, דאגה למנוחתו של האורח, וליוויו בעת צאתו מן הבית.", s: "רמב״ם, הלכות אבל יד, ב" },
+  { t: "שמירת שבת (עונג וכבוד): 'עונג שבת' מתבטא באכילת מאכלים מיוחדים ומנוחה אמיתית מטכנולוגיה ומטרדות החול. השבת מוגדרת כ'מעין עולם הבא', וככל שמתכוננים אליה מראש - כך זוכים לטעום מקדושתה במהלך השבת כולה.", s: "שולחן ערוך, אורח חיים רנ, א" },
+  { t: "תפילה בכוונה: תפילה שנאמרת ללא כוונה נחשבת ל'גוף ללא נשמה'. כשאדם מתפלל עליו לחוש כאילו השכינה מולו. אם קשה לו לכוון בכל התפילה, עליו להתאמץ לכוון לכל הפחות בברכת 'אבות' הפותחת את שמונה עשרה.", s: "שולחן ערוך, אורח חיים צה, א" },
+  { t: "מתן צדקה: חובה על כל אדם, ואפילו עני המתפרנס מן הצדקה, לתת צדקה לאחרים. הדרך המהודרת ביותר היא לתת עשירית מכל רווחיו ('מעשר כספים'). הרמב״ם פוסק שמעולם לא העני אדם מן הצדקה, והיא מקרבת את הגאולה.", s: "שולחן ערוך, יורה דעה רמז, א" },
+  { t: "השבת אבידה: הרואה אבידה חייב להיטפל בה ולהשיבה לבעליה, ובלבד שיש בה סימן מזהה. התעלמות מאבידה עוברת על הלאו 'לא תוכל להתעלם'. המשיב אבידה עושה חסד עצום ומקיים את האמון בחברה הישראלית.", s: "שולחן ערוך, חושן משפט רנט, א" },
+  { t: "אונאת דברים: אסור להונות ולצער את חברו בדיבור. איסור זה חמור מאונאת ממון (רמאות כספית) משום שהוא פוגע בנפש. למשל, אסור להזכיר לבעל תשובה את עברו, או להציע מחיר על חפץ כשאין שום כוונה לקנותו.", s: "שולחן ערוך, חושן משפט רכח, א" }
+];
+
+const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
+const NAVY = "#1A3A6B", GOLD = "#C9A84C";
+const CC_L = {gemara:NAVY,mishna:"#0A5757",tanach:"#7A4818",musar:"#1A5C2E",ravKook:"#1A2B6B",machshava:"#4A1A5C",custom:"#444"};
+const CL_L = {gemara:"#E8EFF8",mishna:"#E3F6F6",tanach:"#FDF3E3",musar:"#E3F5EC",ravKook:"#E8EBF8",machshava:"#F5E8FC",custom:"#F0F0F0"};
+const CC_D = {gemara:"#93C5FD",mishna:"#5EEAD4",tanach:"#FCD34D",musar:"#6EE7B7",ravKook:"#A5B4FC",machshava:"#F9A8D4",custom:"#D1D5DB"};
+const CL_D = {gemara:"#1E3A5F",mishna:"#1A3A38",tanach:"#3D2800",musar:"#1A3A28",ravKook:"#1A2A5F",machshava:"#3A1A48",custom:"#374151"};
+const QUOTES = ["״לא עליך המלאכה לגמור, ולא אתה בן חורין ליבטל ממנה״ (אבות ב, טז)"];
+
+const SEFARIA_MAP = {
+  "ברכות": "Berakhot", "שבת": "Shabbat", "עירובין": "Eruvin", "פסחים": "Pesachim", "שקלים": "Shekalim", "יומא": "Yoma", "סוכה": "Sukkah", "ביצה": "Beitzah", "ראש השנה": "Rosh_Hashanah", "תענית": "Taanit", "מגילה": "Megillah", "מועד קטן": "Moed_Katan", "חגיגה": "Chagigah", "יבמות": "Yevamot", "כתובות": "Ketubot", "נדרים": "Nedarim", "נזיר": "Nazir", "סוטה": "Sotah", "גיטין": "Gittin", "קידושין": "Kiddushin", "בבא קמא": "Bava_Kamma", "בבא מציעא": "Bava_Metzia", "בבא בתרא": "Bava_Batra", "סנהדרין": "Sanhedrin", "מכות": "Makkot", "שבועות": "Shevuot", "עבודה זרה": "Avodah_Zarah", "הוריות": "Horayot", "זבחים": "Zevachim", "מנחות": "Menachot", "חולין": "Chullin", "בכורות": "Bekhorot", "ערכין": "Arakhin", "תמורה": "Temurah", "כריתות": "Keritot", "מעילה": "Meilah", "נידה": "Niddah",
+  "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
+  "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles"
+};
+
+const COMPLEX_REFS = {
+  "ספר הישר": "Sefer_HaYashar"
+};
+
+/* ── HELPER FUNCTIONS ── */
+function safeHas(setOrObj, val) {
+  if(!setOrObj) return false;
+  if(setOrObj instanceof Set) return setOrObj.has(val);
+  return Array.isArray(setOrObj) && setOrObj.includes(val);
 }
 
 function getBkList(cat, custom) {
@@ -277,7 +346,6 @@ function perekAmudKeys(masIdx, p) {
   return r;
 }
 
-// 3. פתיחת משנה ספציפית: מפרק ל-1:1
 function perekMsKeys(masIdx, p) {
   const cnt = MISHNA[masIdx]?.ms?.[p-1] || 0;
   return Array.from({length:cnt}, (_,i) => `${p}:${i+1}`);
@@ -357,7 +425,7 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
        if (clean === "אורות הקודש") return `Orot_HaKodesh_I.1.${k}`;
        if (clean === "שמונה קבצים") return `Shemonah_Kevatzim.1.${k}`;
        if (clean === "ליקוטי מוהר\"ן") return `Likutei_Moharan.${k}`;
-       if (clean === "שמירת הלשון") return `Shemirat_HaLashon,_Book_I,_Introduction.${k}`; // גיבוי למקרה של תקלה ב-struct
+       if (clean === "שמירת הלשון") return `Shemirat_HaLashon,_Book_I,_Introduction.${k}`;
        
        const bRef = COMPLEX_REFS[clean];
        if (bRef) return `${bRef}.${k}`;
@@ -367,7 +435,6 @@ function getSefariaRefString(cat, bookName, key, tMode, isC, masIdx) {
     
     if(cat === "mishna") {
         const prefix = eng === "Pirkei_Avot" ? "" : "Mishnah_";
-        // 3. תיקון: כשלוחצים על "פרק א", זה פותח "1.1" בספריא.
         if(k.startsWith("pp")) return `${prefix}${eng}.${k.slice(2)}.1`;
         return `${prefix}${eng}.${k.replace(':', '.')}`;
     }
@@ -613,8 +680,12 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
   const [commData, setCommData] = useState([]);
   const [commLoading, setCommLoading] = useState(false);
   
-  // 5. IntersectionObserver לגלילה ופתיחת מפרשים אוטומטית
   const observerRef = useRef(null);
+  const autoOpenRef = useRef(false);
+
+  useEffect(() => {
+      autoOpenRef.current = activeSegment !== null;
+  }, [activeSegment]);
 
   useEffect(() => {
     if (!show || !sefariaRef) {
@@ -710,9 +781,9 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
                          tHe.startsWith("רש\"י") || tHe.startsWith("תוספות") || tHe.startsWith("ביאור שטיינזלץ") || tHe.startsWith("שטיינזלץ");
               }
               if (cat === "mishna") {
-                  // 4. תיקון ברטנורא: סינון מפרשים רק של המשנה הספציפית
-                  if (c.anchorRef && !c.anchorRef.includes(fullIdx)) return false;
-                  return tEn.startsWith("bartenura") || tHe.startsWith("ברטנורא");
+                  const isBartenura = tEn.startsWith("bartenura") || tHe.startsWith("ברטנורא");
+                  if (isBartenura && c.anchorRef && !c.anchorRef.includes(fullIdx)) return false;
+                  return isBartenura;
               }
               if (cat === "tanach") {
                   return tEn.startsWith("rashi") || tEn.startsWith("onkelos") || tEn.startsWith("targum onkelos") || 
@@ -723,15 +794,13 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
           });
 
           filteredComm.sort((a, b) => {
-              const aEn = (a.collectiveTitle?.en || "").toLowerCase();
-              const bEn = (b.collectiveTitle?.en || "").toLowerCase();
               const score = (name) => {
                   if (name.startsWith("steinsaltz")) return 3;
                   if (name.startsWith("rashi") || name.startsWith("bartenura")) return 2;
                   if (name.startsWith("tosafot")) return 1;
                   return 0;
               };
-              return score(bEn) - score(aEn);
+              return score((b.collectiveTitle?.en || "").toLowerCase()) - score((a.collectiveTitle?.en || "").toLowerCase());
           });
 
           setCommData(filteredComm);
@@ -750,38 +819,38 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
       setActiveSegment(item.fullIdx);
       loadCommentary(item.fullIdx);
   };
-  
-  // הגדרת ה-Observer שיפתח מפרשים אוטומטית למקטע שנמצא באמצע המסך
-  useEffect(() => {
-    if (activeSegment !== null) {
-      observerRef.current = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const idx = entry.target.getAttribute('data-idx');
-            if (idx && idx !== activeSegment) {
-                setActiveSegment(idx);
-                loadCommentary(idx);
-            }
-          }
-        });
-      }, {
-        root: null,
-        rootMargin: '-40% 0px -50% 0px', // תופס את מה שנמצא בערך באמצע המסך
-        threshold: 0
-      });
 
-      const elements = document.querySelectorAll('.sefaria-segment');
-      elements.forEach(el => observerRef.current.observe(el));
-    } else {
-        if(observerRef.current) observerRef.current.disconnect();
-    }
-    
-    return () => { if(observerRef.current) observerRef.current.disconnect(); };
-  }, [activeSegment, baseRef]);
+  useEffect(() => {
+      if (content.length === 0) return;
+      observerRef.current = new IntersectionObserver((entries) => {
+          let intersectingIdx = null;
+          entries.forEach((entry) => {
+              if (entry.isIntersecting && autoOpenRef.current) {
+                  intersectingIdx = entry.target.getAttribute('data-idx');
+              }
+          });
+          if (intersectingIdx) {
+              setActiveSegment(prev => {
+                  if (prev !== intersectingIdx) {
+                      loadCommentary(intersectingIdx);
+                      return intersectingIdx;
+                  }
+                  return prev;
+              });
+          }
+      }, { root: document.getElementById('sefaria-scroll-container'), rootMargin: '-30% 0px -50% 0px', threshold: 0 });
+
+      setTimeout(() => {
+          const elements = document.querySelectorAll('.sefaria-segment');
+          elements.forEach(el => observerRef.current.observe(el));
+      }, 500);
+      
+      return () => { if(observerRef.current) observerRef.current.disconnect(); };
+  }, [content, baseRef]);
 
   return (
     <Sheet show={show} onClose={()=>{onClose(); setRetryCount(0); setActiveSegment(null); setShnayimMode(false);}} title={title} T={T}>
-      <div style={{minHeight: 200, maxHeight: '75vh', overflowY: 'auto', paddingRight: 8, direction: 'rtl'}}>
+      <div id="sefaria-scroll-container" style={{minHeight: 200, maxHeight: '75vh', overflowY: 'auto', paddingRight: 8, direction: 'rtl'}}>
          <div style={{display: 'flex', gap: 8, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-start'}}>
             <div style={{display: 'flex', background: T.input, borderRadius: 8, overflow: 'hidden', border: `1px solid ${T.border}`}}>
                <button onClick={()=>setZoom(z => Math.max(14, z - 2))} style={{padding: '8px 14px', background: 'transparent', border: 'none', color: T.navy, cursor: 'pointer', fontSize: 18, fontWeight: 700}}>-</button>
@@ -907,7 +976,7 @@ function BookCard({cat, item, prog, T, cc, cl, onPress, custom}){
 function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
   const { cat, i: idx, isC, origIdx, autoOpenKey } = detail;
   const list = getBkList(cat, prog?.custom);
-  const item = list.find(l => l.idKey === (isC ? 'custom_c'+origIdx : cat+'_s'+idx));
+  const item = list.find(l => String(l.idKey) === String(isC ? 'custom_c'+origIdx : cat+'_s'+idx));
   const col=cc[cat]||T.primary,lightCol=cl[cat]||"#E8EFF8";
   const[viewMode,setViewMode]=useState(cat==="gemara"?"amudim":cat==="mishna"?"mishna":"perakim");
   const[noteSheet,setNoteSheet]=useState(null), [editNote,setEditNote]=useState(""), [editChz,setEditChz]=useState(0), [readerRef, setReaderRef]=useState(null), [readerTitle, setReaderTitle]=useState(""), [hasAutoOpened, setHasAutoOpened]=useState(false);
@@ -1207,7 +1276,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
 }
 
 /* ── HOME ── */
-function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
+function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity,setLibCat}){
   const today=useMemo(()=>hebDateFull(),[]);
   const[now,setNow]=useState(new Date());
   useEffect(()=>{const id=setInterval(()=>setNow(new Date()),30000);return()=>clearInterval(id);},[]);
@@ -1231,7 +1300,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
         navigator.geolocation.getCurrentPosition(
           (pos) => fetchZmanim(pos.coords.latitude, pos.coords.longitude, T.isEn?"Current Location":"מיקום נוכחי"), 
           () => fetchZmanim(31.769, 35.216, T.isEn?"Jerusalem":"ירושלים"),
-          { timeout: 5000 } // הגנה מפני קריסת המיקום של אפל
+          { timeout: 5000 } 
         );
       } catch(e) {
         fetchZmanim(31.769, 35.216, T.isEn?"Jerusalem":"ירושלים");
@@ -1255,7 +1324,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
           <div style={{fontSize:T.f(15),color:"rgba(255,255,255,0.9)",fontWeight:600,borderRight:T.isEn?"none":`3px solid ${GOLD}`,borderLeft:T.isEn?`3px solid ${GOLD}`:"none",paddingRight:T.isEn?0:12,paddingLeft:T.isEn?12:0,marginBottom:20,lineHeight:1.6,textAlign:"start"}}>{QUOTES[0]}</div>
           <div style={{display:"flex", gap:8}}>
             {/* 1. תיקון לחיצה על דף יומי - פתיחה בדיפולט של פרקים */}
-            {dafYomi.masechet&&<div onClick={()=>{const list=getBkList("gemara",prog?.custom); const it=list.find(m=>m.n===dafYomi.masechet); if(it) { setTab("library"); setDetail({...it, autoOpenKey:`${dafYomi.daf}a`}); }}} style={{flex:1, background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.3)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoBook/> {T.UI.dafYomi}</div><div style={{fontSize:T.f(14),fontWeight:700,color:"#fff"}}>{dafYomi.masechet} {T.isEn?"Daf":"דף"} {dafYomi.dafHeb}</div></div>}
+            {dafYomi.masechet&&<div onClick={()=>{const list=getBkList("gemara",prog?.custom); const it=list.find(m=>m.n===dafYomi.masechet); if(it) { setTab("library"); setLibCat("gemara"); setDetail({...it, autoOpenKey:`${dafYomi.daf}a`}); }}} style={{flex:1, background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.3)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoBook/> {T.UI.dafYomi}</div><div style={{fontSize:T.f(14),fontWeight:700,color:"#fff"}}>{dafYomi.masechet} {T.isEn?"Daf":"דף"} {dafYomi.dafHeb}</div></div>}
             
             {/* 1. תיקון לחיצה על פרשת שבוע - מעבר לספרייה (לתורה) */}
             {shabbatData?.parasha&&<div onClick={()=>{
@@ -1265,7 +1334,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
                     const match = PARSHIOT[i].find(p => shabbatData.parasha.includes(p) || shabbatData.parasha.includes(p.replace('ו', '')));
                     if (match) { foundIdx = i; firstParasha = match; break; }
                 }
-                if(foundIdx !== -1) { setTab("library"); setDetail({...list[foundIdx], autoOpenKey: firstParasha}); }
+                if(foundIdx !== -1) { setTab("library"); setLibCat("tanach"); setDetail({...list[foundIdx], autoOpenKey: firstParasha}); }
             }} style={{flex:1, background:"rgba(255,255,255,0.08)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.2)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoStar/> {T.UI.parasha}</div><div style={{fontSize:T.f(13),fontWeight:600,color:"#fff"}}>{shabbatData.parasha}</div></div>}
           </div>
         </div>
@@ -1274,7 +1343,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity}){
         <div style={{background:T.card,borderRadius:14,padding:"16px",marginBottom:16,border:`1.5px solid ${GOLD}`,boxShadow:T.shadow}}><div style={{display:"flex",alignItems:"center",gap:8,color:GOLD,marginBottom:8}}><IcoHeart/><div style={{fontWeight:800,fontSize:T.f(14),textAlign:"start"}}>{T.UI.dedicate}</div></div><div style={{fontSize:T.f(12),color:T.muted,lineHeight:1.6,marginBottom:12,textAlign:"start"}}>{T.UI.dedicateDesc}</div><a href="mailto:eitanshachor1@gmail.com?subject=%D7%94%D7%A7%D7%93%D7%A9%D7%AA%20%D7%9C%D7%99%D7%9E%D7%95%D7%93" style={{display:"inline-block",padding:"8px 16px",background:T.dark?"rgba(201,168,76,0.15)":"#FBF5E0",color:GOLD,borderRadius:10,textDecoration:"none",fontSize:T.f(12),fontWeight:700}}>{T.UI.submitDedication}</a></div>
         
         {/* 1. תיקון הלחיצה על הסטטיסטיקות במסך הבית - כולן עוברות לגמרא */}
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>{rows.map(r=>{const p2=pct(r.v,r.tot);return (<div key={r.cat} onClick={()=>{ setTab("library"); }} style={{background:T.card,borderRadius:14,padding:"13px",boxShadow:T.shadow,cursor:"pointer",borderTop:`3px solid ${cc[r.cat]}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}><div><div style={{fontSize:T.f(11),color:T.muted,marginBottom:2,textAlign:"start"}}>{r.l}</div><div style={{fontSize:T.f(26),fontWeight:900,color:cc[r.cat],textAlign:"start"}}>{r.v}</div><div style={{fontSize:T.f(10),color:T.muted,textAlign:"start"}}>{r.unit}</div></div><Ring p={p2} color={cc[r.cat]} size={46} stroke={5} label={`${p2}%`} dark={T.dark}/></div><Bar p={p2} color={cc[r.cat]} h={4} dark={T.dark}/></div>);})}</div>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>{rows.map(r=>{const p2=pct(r.v,r.tot);return (<div key={r.cat} onClick={()=>{ setTab("library"); setLibCat("gemara"); }} style={{background:T.card,borderRadius:14,padding:"13px",boxShadow:T.shadow,cursor:"pointer",borderTop:`3px solid ${cc[r.cat]}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}><div><div style={{fontSize:T.f(11),color:T.muted,marginBottom:2,textAlign:"start"}}>{r.l}</div><div style={{fontSize:T.f(26),fontWeight:900,color:cc[r.cat],textAlign:"start"}}>{r.v}</div><div style={{fontSize:T.f(10),color:T.muted,textAlign:"start"}}>{r.unit}</div></div><Ring p={p2} color={cc[r.cat]} size={46} stroke={5} label={`${p2}%`} dark={T.dark}/></div><Bar p={p2} color={cc[r.cat]} h={4} dark={T.dark}/></div>);})}</div>
         
         {/* 2. הלכה יומית עם "בשר" (מתוך המערך החדש) */}
         <div style={{background:T.card,borderRadius:14,padding:"13px 14px",marginBottom:14,boxShadow:T.shadow,borderRight:`3px solid ${GOLD}`}}>
@@ -1532,7 +1601,7 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
     <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}><div style={{fontSize:T.f(18),fontWeight:900,color:T.navy,marginBottom:20,textAlign:"start"}}>{T.UI.settings}</div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.appearance}</div><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 16px",borderBottom:`1px solid ${T.border}`}}><div style={{textAlign:"start"}}><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy}}>{T.UI.darkMode}</div><div style={{fontSize:T.f(11),color:T.muted}}>{T.UI.darkSub}</div></div><Toggle on={sett.dark} onToggle={()=>setSett(s=>({...s,dark:!s.dark}))} primary={T.primary}/></div><div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`}}><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.fontSize}</div><div style={{display:"flex",gap:8}}>{[{v:0,l:T.UI.small},{v:1,l:T.UI.medium},{v:2,l:T.UI.large}].map(o=><button key={o.v} onClick={()=>setSett(s=>({...s,fontSize:o.v}))} style={{flex:1,height:"48px",borderRadius:10,border:`2px solid ${sett.fontSize===o.v?T.primary:T.border}`,background:sett.fontSize===o.v?T.primary:"transparent",color:sett.fontSize===o.v?"#fff":T.muted,fontWeight:sett.fontSize===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div></div><div style={{padding:"14px 16px"}}><div style={{fontSize:T.f(14),fontWeight:600,color:T.navy,marginBottom:10,textAlign:"start"}}>{T.UI.language}</div><div style={{display:"flex",gap:8}}>{[{v:"he",l:"עברית"},{v:"en",l:"English"}].map(o=><button key={o.v} onClick={()=>setSett(s=>({...s,lang:o.v}))} style={{flex:1,height:"48px",borderRadius:10,border:`2px solid ${sett.lang===o.v?T.primary:T.border}`,background:sett.lang===o.v?T.primary:"transparent",color:sett.lang===o.v?"#fff":T.muted,fontWeight:sett.lang===o.v?700:400,fontFamily:T.font}}>{o.l}</button>)}</div></div></div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.support}</div><div style={{padding:"14px 16px"}}><a href="mailto:eitanshachor1@gmail.com" style={{display:"flex", alignItems:"center", gap:10, color:T.navy, textDecoration:"none", fontSize:T.f(14), fontWeight:600}}>{T.isEn ? "Contact Developer" : "צור קשר / דיווח על באגים"}</a></div></div>
-      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.legal}</div><div style={{padding:"14px 16px", border Bottom:`1px solid ${T.border}`}}><button onClick={()=>setLegalType('terms')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.terms}</button></div><div style={{padding:"14px 16px"}}><button onClick={()=>setLegalType('privacy')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.privacy}</button></div></div>
+      <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.legal}</div><div style={{padding:"14px 16px", borderBottom:`1px solid ${T.border}`}}><button onClick={()=>setLegalType('terms')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.terms}</button></div><div style={{padding:"14px 16px"}}><button onClick={()=>setLegalType('privacy')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.privacy}</button></div></div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.account}</div><div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`,textAlign:"start"}}><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{user?.name||"משתמש"}</div><div style={{fontSize:T.f(12),color:T.muted,marginTop:2}}>{user?.email||""}</div></div><div style={{padding:"14px 16px"}}><button onClick={onLogout} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(14),fontWeight:700,width:"100%",textAlign:"start"}}>{T.UI.signOut}</button></div></div>
       <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}><div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div><div style={{direction: "ltr"}}>v 1.0</div><div>© {new Date().getFullYear()} פותח ע״י איתן שחור. כל הזכויות שמורות.</div></div>
       <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} /></div>
@@ -1630,7 +1699,7 @@ export default function App(){
               } catch (e) { 
                   console.error(e); 
               } 
-              setLoaded(true); // <-- החזרתי את מה שנשמט בטעות בקוד הקודם וגרם למסך הטעינה להיתקע
+              setLoaded(true); 
           } else { 
               setUser(null); 
               setProg(IP);
@@ -1679,7 +1748,7 @@ export default function App(){
              await signInWithPopup(auth, provider);
           } catch(err) {
              if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
-                alert("אפל חוסמת התחברות דרך חלונות קופצים באפליקציה. אנא התחבר עם אימייל וסיסמה, או היכנס דרך ספארי.");
+                alert("ההתחברות החברתית נחסמה על ידי מערכת ההפעלה. אנא השתמש/י בשם משתמש וסיסמה, או פתח בדפדפן מלא.");
              } else {
                 throw err;
              }
@@ -1696,7 +1765,7 @@ export default function App(){
   return (<div style={appSt}>
     <WelcomePrompt T={T} />
     <InstallPrompt T={T} sett={sett} setSett={setSett} />
-    {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity}/>}
+    {tab==="home"&&<HomeScreen prog={prog} goals={goals} T={T} cc={cc} setTab={setTab} setDetail={setDetail} activity={activity} setLibCat={setLibCat}/>}
     {tab==="library"&&<LibraryScreen prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} setDetail={setDetail} libCat={libCat} setLibCat={setLibCat}/>}
     {tab==="goals"&&<GoalsScreen goals={goals} setGoals={setGoals} prog={prog} T={T} cc={cc}/>}
     {tab==="settings"&&<SettingsScreen sett={sett} setSett={setSett} T={T} onLogout={()=>{signOut(auth);setTab("home");}} user={user}/>}
