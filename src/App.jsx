@@ -16,15 +16,6 @@ import {
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
-/* ── GLOBALS ── */
-const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
-const NAVY = "#1A3A6B", GOLD = "#C9A84C";
-const CC_L = {gemara:NAVY,mishna:"#0A5757",tanach:"#7A4818",musar:"#1A5C2E",ravKook:"#1A2B6B",machshava:"#4A1A5C",custom:"#444"};
-const CL_L = {gemara:"#E8EFF8",mishna:"#E3F6F6",tanach:"#FDF3E3",musar:"#E3F5EC",ravKook:"#E8EBF8",machshava:"#F5E8FC",custom:"#F0F0F0"};
-const CC_D = {gemara:"#93C5FD",mishna:"#5EEAD4",tanach:"#FCD34D",musar:"#6EE7B7",ravKook:"#A5B4FC",machshava:"#F9A8D4",custom:"#D1D5DB"};
-const CL_D = {gemara:"#1E3A5F",mishna:"#1A3A38",tanach:"#3D2800",musar:"#1A3A28",ravKook:"#1A2A5F",machshava:"#3A1A48",custom:"#374151"};
-const QUOTES = ["״לא עליך המלאכה לגמור, ולא אתה בן חורין ליבטל ממנה״ (אבות ב, טז)"];
-
 /* ── FIREBASE CONFIGURATION ── */
 const firebaseConfig = {
   apiKey: "AIzaSyDMVwPx4MngQY-tUB15H3LeeYI5sdVJg14",
@@ -168,7 +159,7 @@ const RAV_KOOK = [
   ]}
 ];
 
-const GEMARA = [{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",d:157,p:24},{n:"עירובין",s:"מועד",d:105,p:10},{n:"פסחים",s:"מועד",d:121,p:10},{n:"שקלים",s:"מועד",d:22,p:8},{n:"יומא",s:"מועד",d:88,p:8},{n:"סוכה",s:"מועד",d:56,p:5},{n:"ביצה",s:"מועד",d:40,p:5},{n:"ראש השנה",s:"מועד",d:35,p:4},{n:"תענית",s:"מועד",d:31,p:4},{n:"מגילה",s:"מועד",d:32,p:4},{n:"מועד קטן",s:"מועד",d:29,p:3},{n:"חגיגה",s:"מועד",d:27,p:3},{n:"יבמות",s:"נשים",d:122,p:16},{n:"כתובות",s:"נשים",d:112,p:13},{n:"נדרים",s:"נשים",d:91,p:11},{n:"נזיר",s:"נשים",d:66,p:9},{n:"סוטה",s:"נשים",d:49,p:9},{n:"גיטין",s:"נשים",d:89,p:9},{n:"קידושין",s:"נשים",d:81,p:4},{n:"בבא קמא",s:"נזיקין",d:118,p:10},{n:"בבא מציעא",s:"נזיקין",d:118,p:10},{n:"בבא בתרא",s:"נזיקין",d:175,p:10},{n:"סנהדרין",s:"נזיקין",d:112,p:11},{n:"מכות",s:"נזיקין",d:23,p:3},{n:"שבועות",s:"נזיקין",d:48,p:8},{n:"עבודה זרה",s:"נזיקין",d:75,p:5},{n:"הוריות",s:"נזיקין",d:13,p:3},{n:"זבחים",s:"קדשים",d:119,p:14},{n:"מנחות",s:"קדשים",d:109,p:13},{n:"חולין",s:"קדשים",d:141,p:12},{n:"בכורות",s:"קדשים",d:60,p:9},{n:"ערכין",s:"קדשים",d:33,p:9},{n:"תמורה",s:"קדשים",d:33,p:7},{n:"כריתות",s:"קדשים",d:27,p:6},{n:"מעילה",s:"קדשים",d:37,p:6},{n:"נידה",s:"טהרות",d:72,p:10}];
+const GEMARA = [{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",d:157,p:24},{n:"עירובין",s:"מועד",d:105,p:10},{n:"פסחים",s:"מועד",d:121,p:10},{n:"שקלים",s:"מועד",d:22,p:8},{n:"יומא",s:"מועד",d:88,p:8},{n:"סוכה",s:"מועד",d:56,p:5},{n:"ביצה",s:"מועד",d:40,p:5},{n:"ראש השנה",s:"מועד",d:35,p:4},{n:"תענית",s:"מועד",d:31,p:4},{n:"מגילה",s:"מועד",d:32,p:4},{n:"מועד קטן",s:"מועד",d:29,p:3},{n:"חגיגה",s:"מועד",d:27,p:3},{n:"יבמות",s:"נשים",d:122,p:16},{n:"כתובות",s:"נשים",d:112,p:13},{n:"נדרים",s:"נשים",d:91,p:11},{n:"נזיר",s:"נשים",d:66,p:9},{n:"סוטה",s:"נשים",d:49,p:9},{n:"גיטין",s:"נשים",d:90,p:9},{n:"קידושין",s:"נשים",d:82,p:4},{n:"בבא קמא",s:"נזיקין",d:119,p:10},{n:"בבא מציעא",s:"נזיקין",d:119,p:10},{n:"בבא בתרא",s:"נזיקין",d:176,p:10},{n:"סנהדרין",s:"נזיקין",d:113,p:11},{n:"מכות",s:"נזיקין",d:24,p:3},{n:"שבועות",s:"נזיקין",d:49,p:8},{n:"עבודה זרה",s:"נזיקין",d:76,p:5},{n:"הוריות",s:"נזיקין",d:14,p:3},{n:"זבחים",s:"קדשים",d:120,p:14},{n:"מנחות",s:"קדשים",d:110,p:13},{n:"חולין",s:"קדשים",d:142,p:12},{n:"בכורות",s:"קדשים",d:61,p:9},{n:"ערכין",s:"קדשים",d:34,p:9},{n:"תמורה",s:"קדשים",d:34,p:7},{n:"כריתות",s:"קדשים",d:28,p:6},{n:"מעילה",s:"קדשים",d:22,p:6},{n:"נידה",s:"טהרות",d:73,p:10}];
 
 const GEMARA_CHAP_NAMES = {
   "ברכות": ["מאימתי", "היה קורא", "מי שמתו", "תפילת השחר", "אין עומדין", "כיצד מברכין", "שלושה שאכלו", "אלו דברים", "הרואה"],
@@ -207,6 +198,7 @@ const GEMARA_CHAP_NAMES = {
   "נידה": ["שמאי אומר", "כל היד", "המפלת חתיכה", "בנות כותים", "יוצא דופן", "בא סימן", "דם הנדה", "רואה כתם", "האשה שהיא", "תינוקת"]
 };
 
+// מיפוי עמודים מדויק למניעת חירטוטים בגמרא
 const EXACT_GEMARA_STARTS = {
   "ברכות": ["2a", "11a", "18a", "26a", "30b", "35b", "45a", "51b", "54a"],
   "שבת": ["2a", "20b", "36b", "47a", "51b", "57a", "68a", "76a", "83a", "90a", "96a", "102b", "105b", "107a", "111a", "115a", "122b", "126b", "130a", "137a", "148a", "150a", "153a", "155a"],
@@ -273,6 +265,31 @@ const HALACHOT = [
   { t: "השבת אבידה: הרואה אבידה חייב להיטפל בה ולהשיבה לבעליה, ובלבד שיש בה סימן מזהה. התעלמות מאבידה עוברת על הלאו 'לא תוכל להתעלם'. המשיב אבידה עושה חסד עצום ומקיים את האמון בחברה הישראלית.", s: "שולחן ערוך, חושן משפט רנט, א" },
   { t: "אונאת דברים: אסור להונות ולצער את חברו בדיבור. איסור זה חמור מאונאת ממון (רמאות כספית) משום שהוא פוגע בנפש. למשל, אסור להזכיר לבעל תשובה את עברו, או להציע מחיר על חפץ כשאין שום כוונה לקנותו.", s: "שולחן ערוך, חושן משפט רכח, א" }
 ];
+
+const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
+const NAVY = "#1A3A6B", GOLD = "#C9A84C";
+const CC_L = {gemara:NAVY,mishna:"#0A5757",tanach:"#7A4818",musar:"#1A5C2E",ravKook:"#1A2B6B",machshava:"#4A1A5C",custom:"#444"};
+const CL_L = {gemara:"#E8EFF8",mishna:"#E3F6F6",tanach:"#FDF3E3",musar:"#E3F5EC",ravKook:"#E8EBF8",machshava:"#F5E8FC",custom:"#F0F0F0"};
+const CC_D = {gemara:"#93C5FD",mishna:"#5EEAD4",tanach:"#FCD34D",musar:"#6EE7B7",ravKook:"#A5B4FC",machshava:"#F9A8D4",custom:"#D1D5DB"};
+const CL_D = {gemara:"#1E3A5F",mishna:"#1A3A38",tanach:"#3D2800",musar:"#1A3A28",ravKook:"#1A2A5F",machshava:"#3A1A48",custom:"#374151"};
+const QUOTES = ["״לא עליך המלאכה לגמור, ולא אתה בן חורין ליבטל ממנה״ (אבות ב, טז)"];
+
+const SEFARIA_MAP = {
+  "ברכות": "Berakhot", "שבת": "Shabbat", "עירובין": "Eruvin", "פסחים": "Pesachim", "שקלים": "Shekalim", "יומא": "Yoma", "סוכה": "Sukkah", "ביצה": "Beitzah", "ראש השנה": "Rosh_Hashanah", "תענית": "Taanit", "מגילה": "Megillah", "מועד קטן": "Moed_Katan", "חגיגה": "Chagigah", "יבמות": "Yevamot", "כתובות": "Ketubot", "נדרים": "Nedarim", "נזיר": "Nazir", "סוטה": "Sotah", "גיטין": "Gittin", "קידושין": "Kiddushin", "בבא קמא": "Bava_Kamma", "בבא מציעא": "Bava_Metzia", "בבא בתרא": "Bava_Batra", "סנהדרין": "Sanhedrin", "מכות": "Makkot", "שבועות": "Shevuot", "עבודה זרה": "Avodah_Zarah", "הוריות": "Horayot", "זבחים": "Zevachim", "מנחות": "Menachot", "חולין": "Chullin", "בכורות": "Bekhorot", "ערכין": "Arakhin", "תמורה": "Temurah", "כריתות": "Keritot", "מעילה": "Meilah", "נידה": "Niddah",
+  "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
+  "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles"
+};
+
+const COMPLEX_REFS = {
+  "ספר הישר": "Sefer_HaYashar"
+};
+
+/* ── HELPER FUNCTIONS ── */
+function safeHas(setOrObj, val) {
+  if(!setOrObj) return false;
+  if(setOrObj instanceof Set) return setOrObj.has(val);
+  return Array.isArray(setOrObj) && setOrObj.includes(val);
+}
 
 function getBkList(cat, custom) {
   const custArr = Array.isArray(custom) ? custom : [];
@@ -670,14 +687,6 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
       autoOpenRef.current = activeSegment !== null;
   }, [activeSegment]);
 
-  const targetScroll = useMemo(() => {
-      if (!sefariaRef || !show) return null;
-      if ((cat === "mishna" || cat === "tanach") && !sefariaRef.includes(".1.") && sefariaRef.split('.').length >= 3) {
-          return sefariaRef.split('.').pop();
-      }
-      return null;
-  }, [sefariaRef, cat, show]);
-
   useEffect(() => {
     if (!show || !sefariaRef) {
        setRetryCount(0);
@@ -734,31 +743,13 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
   }, [show, sefariaRef, retryCount]);
 
   useEffect(() => {
-      if (content.length > 0 && targetScroll) {
-          setTimeout(() => {
-              const el = document.getElementById(`segment-${targetScroll}`);
-              if (el) {
-                  el.scrollIntoView({ behavior: "smooth", block: "center" });
-                  el.style.backgroundColor = "rgba(201,168,76,0.3)";
-                  setTimeout(() => { el.style.backgroundColor = "transparent"; }, 2000);
-              }
-          }, 400);
-      }
-  }, [content, targetScroll]);
-
-  useEffect(() => {
     if (shnayimMode && isTorah && baseRef) {
-        const parts = baseRef.split(" ");
-        const chapStr = parts.pop().split(':')[0];
-        const bookStr = parts.join("_"); 
-        
+        const bookStr = baseRef.split('.')[0].replace('Parashat_', ''); 
+        const chapStr = baseRef.split('.')[1];
         if (bookStr && chapStr) {
             fetch(`https://www.sefaria.org/api/texts/Onkelos_${bookStr}.${chapStr}?context=0`)
                 .then(r => r.json())
-                .then(d => {
-                    let tText = (d.he && d.he.length > 0) ? d.he : d.text;
-                    setTargumContent(Array.isArray(tText) ? tText : []);
-                })
+                .then(d => setTargumContent(Array.isArray(d.he) ? d.he : (d.text || [])))
                 .catch(e => console.error(e));
             
             fetch(`https://www.sefaria.org/api/texts/Rashi_on_${bookStr}.${chapStr}?context=0`)
@@ -775,21 +766,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
   const loadCommentary = async (fullIdx) => {
       setCommLoading(true);
       try {
-          let specificRef = "";
-          if (cat === "gemara") {
-              let bParts = baseRef.split(" ");
-              let amud = bParts.pop();
-              let bk = bParts.join("_");
-              specificRef = `${bk}.${amud}.${fullIdx}`;
-          } else if (cat === "mishna" || cat === "tanach") {
-              let bParts = baseRef.split(" "); 
-              let chap = bParts.pop().split(':')[0]; 
-              let bk = bParts.join("_");
-              specificRef = `${bk}.${chap}.${fullIdx}`;
-          } else {
-              specificRef = `${baseRef.replace(/ /g, '_')}.${fullIdx}`;
-          }
-          
+          const specificRef = `${baseRef.replace(/ /g, '_')}.${fullIdx}`;
           const r = await fetch(`https://www.sefaria.org/api/texts/${encodeURIComponent(specificRef)}?commentary=1&context=0`);
           const d = await r.json();
           
@@ -805,15 +782,8 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
               }
               if (cat === "mishna") {
                   const isBartenura = tEn.startsWith("bartenura") || tHe.startsWith("ברטנורא");
-                  if (!isBartenura) return false;
-                  
-                  let basePrefix = baseRef.split(":")[0]; 
-                  let exactAnchor = `${basePrefix}:${fullIdx}`; 
-                  
-                  if (c.anchorRef && c.anchorRef !== exactAnchor && !c.anchorRef.startsWith(exactAnchor + ":") && !c.anchorRef.startsWith(exactAnchor + " ")) {
-                      return false;
-                  }
-                  return true;
+                  if (isBartenura && c.anchorRef && !c.anchorRef.includes(fullIdx)) return false;
+                  return isBartenura;
               }
               if (cat === "tanach") {
                   return tEn.startsWith("rashi") || tEn.startsWith("onkelos") || tEn.startsWith("targum onkelos") || 
@@ -914,7 +884,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
             const rashi = rashiContent[item.idx - 1];
             
             return (
-            <div key={i} id={`segment-${item.fullIdx}`} className="sefaria-segment" data-idx={item.fullIdx} style={{marginBottom: 24, cursor: 'pointer', padding: '0 8px', borderRight: isActive ? `4px solid ${T.gold||GOLD}` : '4px solid transparent', transition: 'all 0.2s'}} onClick={() => toggleCommentary(item)}>
+            <div key={i} className="sefaria-segment" data-idx={item.fullIdx} style={{marginBottom: 24, cursor: 'pointer', padding: '0 8px', borderRight: isActive ? `4px solid ${T.gold||GOLD}` : '4px solid transparent', transition: 'all 0.2s'}} onClick={() => toggleCommentary(item)}>
                
                {item.he && shnayimMode ? (
                    <div style={{marginBottom: 16, paddingBottom: 16, borderBottom: `1px dashed ${T.border}`}}>
@@ -1319,7 +1289,7 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity,setLibCat}){
         let pName = parasha.title.replace(/[\u0591-\u05C7]/g, '').replace('פרשת ', '').trim();
         const doubles = { "ויקהל פקודי": "ויקהל-פקודי", "ויקהלפקודי": "ויקהל-פקודי", "תזריע מצורע": "תזריע-מצורע", "תזריעמצורע": "תזריע-מצורע", "אחרי מות קדושים": "אחרי מות-קדושים", "אחרי מותקדושים": "אחרי מות-קדושים", "בהר בחקתי": "בהר-בחוקותי", "בהר בחוקותי": "בהר-בחוקותי", "בהרבחקתי": "בהר-בחוקותי", "בהרבחוקותי": "בהר-בחוקותי", "חוקת בלק": "חוקת-בלק", "חקת בלק": "חוקת-בלק", "מטות מסעי": "מטות-מסעי", "מטותמסעי": "מטות-מסעי", "נצבים וילך": "נצבים-וילך", "ניצבים וילך": "נצבים-וילך", "נצביםוילך": "נצבים-וילך" };
         Object.keys(doubles).forEach(k => { if(pName === k || pName.includes(k)) pName = pName.replace(k, doubles[k]); });
-        if(!pName.includes('-') && pName.length > 8) pName = pName.replace(/(בהר)(בחוקותי)/, '$1-$2'); 
+        if(!pName.includes('-') && pName.length > 8) pName = pName.replace(/(בהר)(בחוקותי)/, '$1-$2'); // Fallback
         setShabbatData({parasha: pName});
       }
     }).catch(()=>{});
@@ -1353,8 +1323,10 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity,setLibCat}){
           <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom: 18}}><div style={{display:"flex", alignItems:"center", gap: 12}}><LogoAliba T={T} size={42} /><div><div style={{fontSize:T.f(24), fontWeight:900, color:"#fff", letterSpacing:1}}>א<span style={{color:GOLD}}>ל</span>י<span style={{color:GOLD}}>ב</span>א</div><div style={{fontSize:T.f(12), color:"rgba(255,255,255,0.7)", textAlign:"start"}}>{T.UI.slogan}</div></div></div><div style={{textAlign:"left"}}><div style={{fontSize:T.f(30),fontWeight:800,color:"#fff"}}>{String(now.getHours()).padStart(2,"0")}:{String(now.getMinutes()).padStart(2,"0")}</div></div></div>
           <div style={{fontSize:T.f(15),color:"rgba(255,255,255,0.9)",fontWeight:600,borderRight:T.isEn?"none":`3px solid ${GOLD}`,borderLeft:T.isEn?`3px solid ${GOLD}`:"none",paddingRight:T.isEn?0:12,paddingLeft:T.isEn?12:0,marginBottom:20,lineHeight:1.6,textAlign:"start"}}>{QUOTES[0]}</div>
           <div style={{display:"flex", gap:8}}>
+            {/* 1. תיקון לחיצה על דף יומי - פתיחה בדיפולט של פרקים */}
             {dafYomi.masechet&&<div onClick={()=>{const list=getBkList("gemara",prog?.custom); const it=list.find(m=>m.n===dafYomi.masechet); if(it) { setTab("library"); setLibCat("gemara"); setDetail({...it, autoOpenKey:`${dafYomi.daf}a`}); }}} style={{flex:1, background:"rgba(255,255,255,0.10)",borderRadius:10,padding:"10px 12px",border:`1px solid rgba(201,168,76,0.3)`, cursor:"pointer"}}><div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(10),color:"rgba(255,255,255,0.6)",marginBottom:4}}><IcoBook/> {T.UI.dafYomi}</div><div style={{fontSize:T.f(14),fontWeight:700,color:"#fff"}}>{dafYomi.masechet} {T.isEn?"Daf":"דף"} {dafYomi.dafHeb}</div></div>}
             
+            {/* 1. תיקון לחיצה על פרשת שבוע - מעבר לספרייה (לתורה) */}
             {shabbatData?.parasha&&<div onClick={()=>{
                 const list=getBkList("tanach",prog?.custom); 
                 let foundIdx = -1; let firstParasha = "";
@@ -1370,11 +1342,13 @@ function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity,setLibCat}){
       <div style={{padding:"14px 16px 80px"}}>
         <div style={{background:T.card,borderRadius:14,padding:"16px",marginBottom:16,border:`1.5px solid ${GOLD}`,boxShadow:T.shadow}}><div style={{display:"flex",alignItems:"center",gap:8,color:GOLD,marginBottom:8}}><IcoHeart/><div style={{fontWeight:800,fontSize:T.f(14),textAlign:"start"}}>{T.UI.dedicate}</div></div><div style={{fontSize:T.f(12),color:T.muted,lineHeight:1.6,marginBottom:12,textAlign:"start"}}>{T.UI.dedicateDesc}</div><a href="mailto:eitanshachor1@gmail.com?subject=%D7%94%D7%A7%D7%93%D7%A9%D7%AA%20%D7%9C%D7%99%D7%9E%D7%95%D7%93" style={{display:"inline-block",padding:"8px 16px",background:T.dark?"rgba(201,168,76,0.15)":"#FBF5E0",color:GOLD,borderRadius:10,textDecoration:"none",fontSize:T.f(12),fontWeight:700}}>{T.UI.submitDedication}</a></div>
         
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>{rows.map(r=>{const p2=pct(r.v,r.tot);return (<div key={r.cat} onClick={()=>{ setTab("library"); setLibCat(r.cat); }} style={{background:T.card,borderRadius:14,padding:"13px",boxShadow:T.shadow,cursor:"pointer",borderTop:`3px solid ${cc[r.cat]}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}><div><div style={{fontSize:T.f(11),color:T.muted,marginBottom:2,textAlign:"start"}}>{r.l}</div><div style={{fontSize:T.f(26),fontWeight:900,color:cc[r.cat],textAlign:"start"}}>{r.v}</div><div style={{fontSize:T.f(10),color:T.muted,textAlign:"start"}}>{r.unit}</div></div><Ring p={p2} color={cc[r.cat]} size={46} stroke={5} label={`${p2}%`} dark={T.dark}/></div><Bar p={p2} color={cc[r.cat]} h={4} dark={T.dark}/></div>);})}</div>
+        {/* 1. תיקון הלחיצה על הסטטיסטיקות במסך הבית - כולן עוברות לגמרא */}
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:16}}>{rows.map(r=>{const p2=pct(r.v,r.tot);return (<div key={r.cat} onClick={()=>{ setTab("library"); setLibCat("gemara"); }} style={{background:T.card,borderRadius:14,padding:"13px",boxShadow:T.shadow,cursor:"pointer",borderTop:`3px solid ${cc[r.cat]}`}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}><div><div style={{fontSize:T.f(11),color:T.muted,marginBottom:2,textAlign:"start"}}>{r.l}</div><div style={{fontSize:T.f(26),fontWeight:900,color:cc[r.cat],textAlign:"start"}}>{r.v}</div><div style={{fontSize:T.f(10),color:T.muted,textAlign:"start"}}>{r.unit}</div></div><Ring p={p2} color={cc[r.cat]} size={46} stroke={5} label={`${p2}%`} dark={T.dark}/></div><Bar p={p2} color={cc[r.cat]} h={4} dark={T.dark}/></div>);})}</div>
         
+        {/* 2. הלכה יומית עם "בשר" (מתוך המערך החדש) */}
         <div style={{background:T.card,borderRadius:14,padding:"13px 14px",marginBottom:14,boxShadow:T.shadow,borderRight:`3px solid ${GOLD}`}}>
             <div style={{display:"flex",alignItems:"center",gap:6,fontSize:T.f(11),fontWeight:700,color:GOLD,marginBottom:8,textAlign:"start"}}><IcoScroll/> {T.UI.dailyHalacha}</div>
-            <div style={{fontSize:T.f(14),color:T.navy,lineHeight:1.7,textAlign:"start", marginBottom: 6}} dangerouslySetInnerHTML={{__html: halacha.t}} />
+            <div style={{fontSize:T.f(14),color:T.navy,lineHeight:1.7,textAlign:"justify", marginBottom: 6}} dangerouslySetInnerHTML={{__html: halacha.t}} />
             <div style={{fontSize:T.f(11),color:T.muted,textAlign:"start", fontWeight: 600}}>{halacha.s}</div>
         </div>
 
@@ -1698,70 +1672,43 @@ export default function App(){
   const [activeDays, setActiveDays] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 8000);
-    return () => clearTimeout(t);
-  }, []);
-
   useEffect(() => { 
-      let unsubscribe = () => {};
-
-      (async () => {
-        try {
-          await Promise.race([
-            setPersistence(auth, indexedDBLocalPersistence),
-            new Promise(resolve => setTimeout(resolve, 1500)) 
-          ]);
-        } catch (e) {
-          console.warn("[Auth] Persistence setup skipped:", e.code || e.message);
-        }
-
-        try {
-          const result = await getRedirectResult(auth);
-          if (result?.user) {
-            console.log("[Auth] Redirect result captured:", result.user.email);
-          }
-        } catch (e) {
-          if (e.code !== "auth/popup-closed-by-user" && e.code !== "auth/cancelled-popup-request") {
-            console.error("[Auth] Redirect result error:", e.code, e.message);
-          }
-        }
-
-        unsubscribe = onAuthStateChanged(auth, async (u) => { 
-            if (u) { 
-                setUser({ uid: u.uid, email: u.email, name: u.displayName || u.email.split('@')[0] }); 
-                try { 
-                    const docSnap = await getDoc(doc(db, "users", u.uid)); 
-                    if (docSnap.exists()) { 
-                        const data = docSnap.data(); 
-                        if(data){ 
-                            setProg(desProg(data.prog)); 
-                            setGoals(Array.isArray(data.goals) ? data.goals : []); 
-                            setSett(prev => ({...prev, ...(data.sett || {})})); 
-                            setActivity(Array.isArray(data.activity) ? data.activity : []); 
-                            setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
-                        } 
-                    } else {
-                        setProg(IP);
-                        setGoals([]);
-                        setActivity([]);
-                        setActiveDays([]);
-                    }
-                } catch (e) { 
-                    console.error("[Firestore] Load error:", e); 
-                } 
-                setLoaded(true); 
-            } else { 
-                setUser(null); 
-                setProg(IP);
-                setGoals([]);
-                setActivity([]);
-                setActiveDays([]);
-                setLoaded(true); 
-            } 
-        });
-      })();
-
+      const unsubscribe = onAuthStateChanged(auth, async (u) => { 
+          if (u) { 
+              const safeEmail = u.email || "";
+              const safeName = u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש");
+              setUser({ uid: u.uid, email: safeEmail, name: safeName }); 
+              
+              try { 
+                  const docSnap = await getDoc(doc(db, "users", u.uid)); 
+                  if (docSnap.exists()) { 
+                      const data = docSnap.data(); 
+                      if(data){ 
+                          setProg(desProg(data.prog)); 
+                          setGoals(Array.isArray(data.goals) ? data.goals : []); 
+                          setSett(prev => ({...prev, ...(data.sett || {})})); 
+                          setActivity(Array.isArray(data.activity) ? data.activity : []); 
+                          setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
+                      } 
+                  } else {
+                      setProg(IP);
+                      setGoals([]);
+                      setActivity([]);
+                      setActiveDays([]);
+                  }
+              } catch (e) { 
+                  console.error(e); 
+              } 
+              setLoaded(true); 
+          } else { 
+              setUser(null); 
+              setProg(IP);
+              setGoals([]);
+              setActivity([]);
+              setActiveDays([]);
+              setLoaded(true); 
+          } 
+      }); 
       return () => unsubscribe(); 
   }, []);
 
@@ -1777,7 +1724,7 @@ export default function App(){
               activeDays: (activeDays || []).slice(-60) 
           };
           
-          const safeDataToSave = JSON.parse(JSON.stringify(rawData)); 
+          const safeDataToSave = JSON.parse(JSON.stringify(rawData));
           
           setDoc(doc(db, "users", user.uid), safeDataToSave, { merge: true })
             .catch(e => console.error("Firebase Save Error:", e)); 
@@ -1791,42 +1738,24 @@ export default function App(){
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   
-  if (!loaded) return (
-    <div style={{...appSt, alignItems:"center", justifyContent:"center"}}>
-      <div style={{color: NAVY, fontSize: 32, fontWeight: 900, letterSpacing: 1}}>
-        א<span style={{color:GOLD}}>ל</span>י<span style={{color:GOLD}}>ב</span>א
-      </div>
-      <div style={{color:"#6B7280", fontSize: 14, marginTop: 12}}>{T.isEn ? "Loading..." : "טוען..."}</div>
-    </div>
-  );
-
   if(!user) return <div style={appSt}><AuthScreen onLogin={async({method, email, password})=>{
       try {
         if (method === "email") {
           await signInWithEmailAndPassword(auth, email, password);
-          return;
-        }
-
-        const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-        
-        try {
-          await signInWithPopup(auth, provider);
-        } catch (popupErr) {
-          const isBlockedByBrowser =
-            popupErr.code === "auth/popup-blocked" ||
-            popupErr.code === "auth/popup-closed-by-user" ||
-            popupErr.code === "auth/cancelled-popup-request" ||
-            popupErr.code === "auth/operation-not-supported-in-this-environment";
-
-          if (isBlockedByBrowser) {
-            console.warn("[Auth] Popup blocked, falling back to redirect...");
-            await signInWithRedirect(auth, provider);
-          } else {
-            throw popupErr;
+        } else {
+          const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
+          try {
+             await signInWithPopup(auth, provider);
+          } catch(err) {
+             if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
+                alert("ההתחברות החברתית נחסמה על ידי מערכת ההפעלה. אנא השתמש/י בשם משתמש וסיסמה, או פתח בדפדפן מלא.");
+             } else {
+                throw err;
+             }
           }
         }
       } catch(e) {
-        alert("שגיאה בהתחברות: " + (e.message || e.code));
+        alert("שגיאה: " + e.message);
       }
     }} T={T}/></div>;
     
