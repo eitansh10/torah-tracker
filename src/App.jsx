@@ -9,9 +9,7 @@ import {
   signInWithRedirect, 
   getRedirectResult, 
   OAuthProvider, 
-  signInWithEmailAndPassword,
-  setPersistence,
-  indexedDBLocalPersistence
+  signInWithEmailAndPassword
 } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
@@ -1609,7 +1607,7 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
 }
 
 /* ── AUTH SCREEN ── */
-function AuthScreen({onLogin,T}){
+function AuthScreen({onLogin,T,globalError}){
   const [err,setErr]=useState("");
   const [legalType,setLegalType]=useState(null);
   const [email, setEmail] = useState("");
@@ -1628,6 +1626,8 @@ function AuthScreen({onLogin,T}){
       </div>
       
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:14}}>
+        {globalError && <div style={{color:T.red,fontSize:T.f(13),marginBottom:8,textAlign:"center", background: "#fee2e2", padding: "10px", borderRadius: 8}}>{globalError}</div>}
+        
         <FI T={T} placeholder={T.isEn ? "Email" : "אימייל"} value={email} onChange={e=>setEmail(e.target.value)} type="email" />
         <FI T={T} type="password" placeholder={T.isEn ? "Password" : "סיסמה"} value={password} onChange={e=>setPassword(e.target.value)} />
         <PB T={T} onClick={()=>onLogin({method:"email", email, password})} style={{background:T.primary, height: "54px"}}>{T.isEn ? "Login" : "כניסה"}</PB>
@@ -1661,16 +1661,24 @@ function AuthScreen({onLogin,T}){
 export default function App(){
   useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
   
-  // הוספת הטיפול ב-Redirect עבור סביבות iOS WebView / PWA
+  // הוספת מצבי טעינה כדי למנוע את המסך הריק בעת החזרה מ-Redirect
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [authErrorMsg, setAuthErrorMsg] = useState("");
+
   useEffect(() => {
     getRedirectResult(auth)
       .then(result => {
         if (result?.user) console.log("Redirect sign-in success");
       })
       .catch(e => {
+        // התעלם משגיאת "אין משתמש" כי זה המצב הרגיל בהעלאה הראשונה
         if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
           console.error('Redirect result error:', e.code, e.message);
+          setAuthErrorMsg("שגיאת התחברות: " + e.message);
         }
+      })
+      .finally(() => {
+        setIsAuthLoading(false);
       });
   }, []);
 
@@ -1751,14 +1759,27 @@ export default function App(){
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   
-  if(!user) return <div style={appSt}><AuthScreen onLogin={async({method, email, password})=>{
+  // מסך טעינה - מונע את ה"מסך הריק" שקורה כשהמערכת עדיין בודקת את ה-Redirect
+  const isAppLoading = isAuthLoading || !loaded;
+
+  if (isAppLoading) {
+     return (
+       <div style={{...appSt, justifyContent: "center", alignItems: "center", height: "100vh"}}>
+         <LogoAliba T={T} size={64}/>
+         <div style={{fontSize: T.f(18), color: T.navy, fontWeight: 700, marginTop: 24}}>טוען... ⏳</div>
+         <div style={{fontSize: T.f(13), color: T.muted, marginTop: 8}}>ממתין לאימות המשתמש</div>
+       </div>
+     );
+  }
+
+  if(!user) return <div style={appSt}><AuthScreen globalError={authErrorMsg} onLogin={async({method, email, password})=>{
     try {
-      // זיהוי iOS WebView / standalone PWA
+      // זיהוי אגרסיבי יותר של iOS / WebView / PWA
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      const isStandalone = window.navigator.standalone === true;
-      const isWebView = /(WebView|wv)/i.test(navigator.userAgent) || 
-                         (isIOS && !/Safari\//.test(navigator.userAgent));
-      const useRedirect = isIOS && (isStandalone || isWebView);
+      const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+      const isWebView = /(WebView|wv)/i.test(navigator.userAgent) || (isIOS && !/Safari\//.test(navigator.userAgent));
+      
+      const useRedirect = isIOS || isStandalone || isWebView;
 
       if (method === "email") {
         await signInWithEmailAndPassword(auth, email, password);
@@ -1766,13 +1787,13 @@ export default function App(){
         const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
         
         if (useRedirect) {
-          // שימוש ב-Redirect אם אנחנו בתוך WebView או PWA ב-iOS
+          // שימוש ב-Redirect לא עוקף חוסמי Popup ב-iOS
           await signInWithRedirect(auth, provider);
         } else {
           try {
             await signInWithPopup(auth, provider);
           } catch(err) {
-            // Fallback ל-Redirect אם ה-Popup נחסם מסיבה אחרת
+            // Fallback ל-Redirect אם ה-Popup בכל זאת נחסם
             if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
               await signInWithRedirect(auth, provider);
             } else {
