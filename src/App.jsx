@@ -863,7 +863,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
             
             {isTorah && (
                 <button onClick={()=>setShnayimMode(!shnayimMode)} style={{padding: '0 16px', height: '40px', borderRadius: 8, background: shnayimMode ? (T.gold||GOLD) : T.input, color: shnayimMode ? '#fff' : T.navy, border: `1px solid ${shnayimMode ? (T.gold||GOLD) : T.border}`, fontWeight: 800, fontFamily: T.font, cursor: 'pointer', transition: 'all 0.2s'}}>
-                   שניים מקרא
+                    שניים מקרא
                 </button>
             )}
          </div>
@@ -1661,6 +1661,19 @@ function AuthScreen({onLogin,T}){
 export default function App(){
   useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
   
+  // הוספת הטיפול ב-Redirect עבור סביבות iOS WebView / PWA
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then(result => {
+        if (result?.user) console.log("Redirect sign-in success");
+      })
+      .catch(e => {
+        if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
+          console.error('Redirect result error:', e.code, e.message);
+        }
+      });
+  }, []);
+
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("home");
   const [libCat, setLibCat] = useState("gemara");
@@ -1739,25 +1752,39 @@ export default function App(){
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   
   if(!user) return <div style={appSt}><AuthScreen onLogin={async({method, email, password})=>{
-      try {
-        if (method === "email") {
-          await signInWithEmailAndPassword(auth, email, password);
+    try {
+      // זיהוי iOS WebView / standalone PWA
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const isStandalone = window.navigator.standalone === true;
+      const isWebView = /(WebView|wv)/i.test(navigator.userAgent) || 
+                         (isIOS && !/Safari\//.test(navigator.userAgent));
+      const useRedirect = isIOS && (isStandalone || isWebView);
+
+      if (method === "email") {
+        await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
+        
+        if (useRedirect) {
+          // שימוש ב-Redirect אם אנחנו בתוך WebView או PWA ב-iOS
+          await signInWithRedirect(auth, provider);
         } else {
-          const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
           try {
-             await signInWithPopup(auth, provider);
+            await signInWithPopup(auth, provider);
           } catch(err) {
-             if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
-                alert("ההתחברות החברתית נחסמה על ידי מערכת ההפעלה. אנא השתמש/י בשם משתמש וסיסמה, או פתח בדפדפן מלא.");
-             } else {
-                throw err;
-             }
+            // Fallback ל-Redirect אם ה-Popup נחסם מסיבה אחרת
+            if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
+              await signInWithRedirect(auth, provider);
+            } else {
+              throw err;
+            }
           }
         }
-      } catch(e) {
-        alert("שגיאה: " + e.message);
       }
-    }} T={T}/></div>;
+    } catch(e) {
+      alert("שגיאה: " + e.message);
+    }
+  }} T={T}/></div>;
     
   if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
   const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
