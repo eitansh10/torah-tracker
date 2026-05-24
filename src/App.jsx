@@ -1795,9 +1795,23 @@ if (!user) return (
                 window.matchMedia &&
                 window.matchMedia('(display-mode: standalone)').matches) ||
               window.navigator.standalone === true;
-            // PWA של iOS (הותקנה ממסך הבית / App Store) — redirect שבור שם,
-            // חייבים popup. נתמך מ-iOS 16.4 ומעלה.
+            // זיהוי WKWebView (אפליקציה עטופה מ-App Store) — אין שם Safari ולא window.open
+            const isIOSWebView =
+              isIOS &&
+              !/Safari/.test(ua) &&
+              !/CriOS|FxiOS|EdgiOS/.test(ua);
+            // PWA של iOS (הותקנה ממסך הבית) — popup פותח Safari חיצוני שלא יכול
+            // לתקשר חזרה ל-PWA, ולכן ההתחברות נכשלת ומשאירה מסך ריק.
             const isIOSStandalone = isIOS && isStandalone;
+
+            // ב-iOS PWA / WebView — חוסמים מראש ומציעים פתרון, במקום לנסות popup שייכשל בשקט.
+            if (isIOSStandalone || isIOSWebView) {
+              setAuthErrorMsg(
+                "ההתחברות עם Google/Apple אינה נתמכת בתוך האפליקציה המותקנת מ-App Store. " +
+                "אנא התחבר עם מייל וסיסמה, או פתח את האתר ישירות ב-Safari כדי להתחבר."
+              );
+              return;
+            }
 
             try {
               await signInWithPopup(auth, provider);
@@ -1810,13 +1824,6 @@ if (!user) return (
               if (silent.includes(err.code)) {
                 return;
               }
-              // ב-PWA של iOS לא ניפול ל-redirect — הוא לא חוזר ל-PWA וייצור מסך ריק.
-              if (isIOSStandalone) {
-                setAuthErrorMsg(
-                  "ההתחברות נכשלה בתוך האפליקציה המותקנת. נסה לפתוח את האתר ב-Safari ולהתחבר משם, או עדכן ל-iOS 16.4 ומעלה."
-                );
-                return;
-              }
               if (
                 err.code === "auth/popup-blocked" ||
                 err.code === "auth/operation-not-supported-in-this-environment"
@@ -1826,6 +1833,7 @@ if (!user) return (
               }
               throw err;
             }
+
           } catch (err) {
             if (err.code !== "auth/popup-closed-by-user") {
               setAuthErrorMsg(err.message || "Login failed");
