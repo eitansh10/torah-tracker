@@ -1632,7 +1632,6 @@ function AuthScreen({onLogin,T,globalError}){
       
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:14}}>
         {globalError && <div style={{color:T.red,fontSize:T.f(13),marginBottom:8,textAlign:"center", background: "#fee2e2", padding: "10px", borderRadius: 8}}>{globalError}</div>}
-        {globalError && <div style={{color:T.red,fontSize:T.f(13),marginBottom:8,textAlign:"center", background: "#fee2e2", padding: "10px", borderRadius: 8}}>{globalError}</div>}
         
         <FI T={T} placeholder={T.isEn ? "Email" : "אימייל"} value={email} onChange={e=>setEmail(e.target.value)} type="email" />
         <FI T={T} type="password" placeholder={T.isEn ? "Password" : "סיסמה"} value={password} onChange={e=>setPassword(e.target.value)} />
@@ -1773,41 +1772,40 @@ if (!user) return (
     <div style={appSt}>
       <AuthScreen 
         globalError={authErrorMsg} 
-        onLogin={async ({ method, email, password }) => {
-          try {
-            if (method === "email") {
-              await signInWithEmailAndPassword(auth, email, password);
-              return;
-            }
-            const provider = method === "apple"
-              ? new OAuthProvider("apple.com")
-              : new GoogleAuthProvider();
-            try {
-              await signInWithPopup(auth, provider);
-            } catch (err) {
-              if (
-                err.code === "auth/popup-blocked" ||
-                err.code === "auth/operation-not-supported-in-this-environment"
-              ) {
-                await signInWithRedirect(auth, provider);
-              } else {
-                throw err;
-              }
-            }
-          } catch (err) {
-            if (
-              err.code !== "auth/popup-closed-by-user" &&
-              err.code !== "auth/cancelled-popup-request"
-            ) {
-              setAuthErrorMsg(err.message || "Login failed");
-            }
-          }
-        }} 
-        T={T} 
-      />
-    </div>
-  );
+     onLogin={async ({ method, email, password }) => {
+  setAuthErrorMsg("");
+  try {
+    if (method === "email") {
+      await signInWithEmailAndPassword(auth, email, password);
+      return;
+    }
+    const provider = method === "apple" ? new OAuthProvider("apple.com") : new GoogleAuthProvider();
+    
+    // בדיקה אם המשתמש נמצא בתוך אפליקציה של אייפון (WKWebView)
+    const ua = navigator.userAgent;
+    const isIOSApp = /iPad|iPhone|iPod/.test(ua) && /AppleWebKit/.test(ua) && !/Safari\//.test(ua) && !/CriOS/.test(ua) && !/FxiOS/.test(ua);
 
+    if (isIOSApp) {
+      await signInWithRedirect(auth, provider);
+      return;
+    }
+    
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err) {
+      if (err.code === "auth/popup-blocked") {
+        await signInWithRedirect(auth, provider);
+      } else {
+        throw err;
+      }
+    }
+  } catch (err) {
+    if (err.code !== "auth/popup-closed-by-user") {
+      setAuthErrorMsg(err.message || "Login failed");
+    }
+  }
+}}
+        
   if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
   const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
   
