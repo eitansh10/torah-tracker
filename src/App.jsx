@@ -1779,61 +1779,26 @@ if (!user) return (
               await signInWithEmailAndPassword(auth, email, password);
               return;
             }
-            let provider;
-            if (method === "apple") {
-              provider = new OAuthProvider("apple.com");
-              provider.addScope("email");
-              provider.addScope("name");
-            } else {
-              provider = new GoogleAuthProvider();
-            }
-
+            const provider = method === "apple" ? new OAuthProvider("apple.com") : new GoogleAuthProvider();
+            
+            // זיהוי פשוט לאייפון - אנדרואיד ידלג על זה וימשיך כרגיל
             const ua = navigator.userAgent;
-            const isIOS = /iPad|iPhone|iPod/.test(ua);
-            const isStandalone =
-              (typeof window !== "undefined" &&
-                window.matchMedia &&
-                window.matchMedia('(display-mode: standalone)').matches) ||
-              window.navigator.standalone === true;
-            // זיהוי WKWebView (אפליקציה עטופה מ-App Store) — אין שם Safari ולא window.open
-            const isIOSWebView =
-              isIOS &&
-              !/Safari/.test(ua) &&
-              !/CriOS|FxiOS|EdgiOS/.test(ua);
-            // PWA של iOS (הותקנה ממסך הבית) — popup פותח Safari חיצוני שלא יכול
-            // לתקשר חזרה ל-PWA, ולכן ההתחברות נכשלת ומשאירה מסך ריק.
-            const isIOSStandalone = isIOS && isStandalone;
+            const isIOSApp = /iPad|iPhone|iPod/.test(ua);
 
-            // ב-iOS PWA / WebView — חוסמים מראש ומציעים פתרון, במקום לנסות popup שייכשל בשקט.
-            if (isIOSStandalone || isIOSWebView) {
-              setAuthErrorMsg(
-                "ההתחברות עם Google/Apple אינה נתמכת בתוך האפליקציה המותקנת מ-App Store. " +
-                "אנא התחבר עם מייל וסיסמה, או פתח את האתר ישירות ב-Safari כדי להתחבר."
-              );
+            if (isIOSApp) {
+              await signInWithRedirect(auth, provider);
               return;
             }
-
+            
             try {
               await signInWithPopup(auth, provider);
             } catch (err) {
-              const silent = [
-                "auth/popup-closed-by-user",
-                "auth/cancelled-popup-request",
-                "auth/user-cancelled",
-              ];
-              if (silent.includes(err.code)) {
-                return;
-              }
-              if (
-                err.code === "auth/popup-blocked" ||
-                err.code === "auth/operation-not-supported-in-this-environment"
-              ) {
+              if (err.code === "auth/popup-blocked") {
                 await signInWithRedirect(auth, provider);
-                return;
+              } else {
+                throw err;
               }
-              throw err;
             }
-
           } catch (err) {
             if (err.code !== "auth/popup-closed-by-user") {
               setAuthErrorMsg(err.message || "Login failed");
