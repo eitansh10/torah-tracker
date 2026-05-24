@@ -1658,48 +1658,13 @@ function AuthScreen({onLogin,T,globalError}){
 }
 
 /* ── ROOT ── */
+/* ── ROOT ── */
 export default function App(){
   useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
   
-  // -- תוספת חדשה 1: מצבי טעינה למניעת המסך הריק --
+  // משתני טעינה וניהול שגיאות התחברות
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authErrorMsg, setAuthErrorMsg] = useState("");
-
-  useEffect(() => {
-    getRedirectResult(auth)
-      .then(result => {
-        if (result?.user) console.log("Redirect sign-in success");
-      })
-      .catch(e => {
-        if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
-          console.error('Redirect result error:', e.code, e.message);
-          setAuthErrorMsg("שגיאת התחברות: " + e.message);
-        }
-      })
-      .finally(() => {
-        setIsAuthLoading(false);
-      });
-  }, []);
-  // -- סוף תוספת חדשה 1 --
-
-  const [user, setUser] = useState(null);
-  const [tab, setTab] = useState("home");
-  useEffect(() => {
-    getRedirectResult(auth)
-      .then(result => {
-        if (result?.user) console.log("Redirect sign-in success");
-      })
-      .catch(e => {
-        // התעלם משגיאת "אין משתמש" כי זה המצב הרגיל בהעלאה הראשונה
-        if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
-          console.error('Redirect result error:', e.code, e.message);
-          setAuthErrorMsg("שגיאת התחברות: " + e.message);
-        }
-      })
-      .finally(() => {
-        setIsAuthLoading(false);
-      });
-  }, []);
 
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("home");
@@ -1712,153 +1677,105 @@ export default function App(){
   const [activeDays, setActiveDays] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => { 
-      const unsubscribe = onAuthStateChanged(auth, async (u) => { 
-          if (u) { 
-              const safeEmail = u.email || "";
-              const safeName = u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש");
-              setUser({ uid: u.uid, email: safeEmail, name: safeName }); 
-              
-              try { 
-                  const docSnap = await getDoc(doc(db, "users", u.uid)); 
-                  if (docSnap.exists()) { 
-                      const data = docSnap.data(); 
-                      if(data){ 
-                          setProg(desProg(data.prog)); 
-                          setGoals(Array.isArray(data.goals) ? data.goals : []); 
-                          setSett(prev => ({...prev, ...(data.sett || {})})); 
-                          setActivity(Array.isArray(data.activity) ? data.activity : []); 
-                          setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []); 
-                      } 
-                  } else {
-                      setProg(IP);
-                      setGoals([]);
-                      setActivity([]);
-                      setActiveDays([]);
-                  }
-              } catch (e) { 
-                  console.error(e); 
-              } 
-              setLoaded(true); 
-          } else { 
-              setUser(null); 
-              setProg(IP);
-              setGoals([]);
-              setActivity([]);
-              setActiveDays([]);
-              setLoaded(true); 
-          } 
-      }); 
-      return () => unsubscribe(); 
+  // סנכרון מושלם בין מצב ההתחברות לתוצאת ה-Redirect
+  useEffect(() => {
+    let authStateResolved = false;
+    let redirectResolved = false;
+
+    const checkAuthReady = () => {
+      if (authStateResolved && redirectResolved) {
+        setIsAuthLoading(false);
+      }
+    };
+
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+      if (u) {
+        const safeEmail = u.email || "";
+        const safeName = u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש");
+        setUser({ uid: u.uid, email: safeEmail, name: safeName });
+        try {
+          const docSnap = await getDoc(doc(db, "users", u.uid));
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            if(data){
+              setProg(desProg(data.prog));
+              setGoals(Array.isArray(data.goals) ? data.goals : []);
+              setSett(prev => ({...prev, ...(data.sett || {})}));
+              setActivity(Array.isArray(data.activity) ? data.activity : []);
+              setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
+            }
+          } else {
+            setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
+          }
+        } catch (e) { console.error(e); }
+        setLoaded(true);
+      } else {
+        setUser(null);
+        setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
+        setLoaded(true);
+      }
+      authStateResolved = true;
+      checkAuthReady();
+    });
+
+    getRedirectResult(auth)
+      .then(result => {
+        if (result?.user) console.log("Redirect sign-in success");
+      })
+      .catch(e => {
+        if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
+          setAuthErrorMsg("שגיאת התחברות: " + e.message);
+        }
+      })
+      .finally(() => {
+        redirectResolved = true;
+        checkAuthReady();
+      });
+
+    return () => unsubscribe();
   }, []);
 
-  useEffect(() => { 
-      if (!loaded || !user) return; 
-      
-      const saveTimer = setTimeout(() => { 
-          const rawData = { 
-              prog: serProg(prog), 
-              goals: goals || [], 
-              sett: sett, 
-              activity: (activity || []).slice(0, 50), 
-              activeDays: (activeDays || []).slice(-60) 
-          };
-          
-          const safeDataToSave = JSON.parse(JSON.stringify(rawData));
-          
-          setDoc(doc(db, "users", user.uid), safeDataToSave, { merge: true })
-            .catch(e => console.error("Firebase Save Error:", e)); 
-            
-      }, 500); 
-      
-      return () => clearTimeout(saveTimer); 
+  useEffect(() => {
+      if (!loaded || !user) return;
+      const saveTimer = setTimeout(() => {
+          const rawData = { prog: serProg(prog), goals: goals || [], sett: sett, activity: (activity || []).slice(0, 50), activeDays: (activeDays || []).slice(-60) };
+          setDoc(doc(db, "users", user.uid), JSON.parse(JSON.stringify(rawData)), { merge: true }).catch(e => console.error("Firebase Save Error:", e));
+      }, 500);
+      return () => clearTimeout(saveTimer);
   }, [prog, goals, sett, activity, activeDays, loaded, user]);
 
   const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
- const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
-  
-  // -- תוספת חדשה 2: הצגת מסך טעינה במקום מסך ריק --
-  const isAppLoading = isAuthLoading || !loaded;
+  const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
 
-  if (isAppLoading) {
+  // מסך טעינה אחיד
+  if (isAuthLoading || (user && !loaded)) {
      return (
        <div style={{...appSt, justifyContent: "center", alignItems: "center", height: "100vh"}}>
          <LogoAliba T={T} size={64}/>
          <div style={{fontSize: T.f(18), color: T.navy, fontWeight: 700, marginTop: 24}}>טוען... ⏳</div>
-         <div style={{fontSize: T.f(13), color: T.muted, marginTop: 8}}>ממתין לאימות המשתמש</div>
        </div>
      );
   }
-  // -- סוף תוספת חדשה 2 --
 
-  // -- תוספת חדשה 3: מנגנון התחברות חסין לאפל (IndexedDB) --
+  // מסך התחברות עם פתרון מותאם ל-iOS
   if(!user) return <div style={appSt}><AuthScreen globalError={authErrorMsg} onLogin={({method, email, password})=>{
     if (method === "email") {
-      signInWithEmailAndPassword(auth, email, password).catch(e => alert("שגיאה: " + e.message));
+      signInWithEmailAndPassword(auth, email, password).catch(e => setAuthErrorMsg("שגיאה: " + e.message));
     } else {
       const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-      
-      setPersistence(auth, indexedDBLocalPersistence)
-        .then(() => {
-           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-           const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-           const isWebView = /(WebView|wv)/i.test(navigator.userAgent) || (isIOS && !/Safari\//.test(navigator.userAgent));
-           
-           if (isIOS || isStandalone || isWebView) {
-             signInWithRedirect(auth, provider).catch(e => alert("שגיאה בהפניה: " + e.message));
-           } else {
-             signInWithPopup(auth, provider).catch(err => {
-               if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
-                 signInWithRedirect(auth, provider);
-               } else {
-                 alert("שגיאה: " + err.message);
-               }
-             });
-           }
-        })
-        .catch(e => alert("שגיאת הגדרת זיכרון: " + e.message));
-    }
-  }} T={T}/></div>;
-  // -- סוף תוספת חדשה 3 --
-    
-  if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
-
-  if(!user) return <div style={appSt}><AuthScreen globalError={authErrorMsg} onLogin={async({method, email, password})=>{
-    try {
-      // זיהוי אגרסיבי יותר של iOS / WebView / PWA
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-      const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-      const isWebView = /(WebView|wv)/i.test(navigator.userAgent) || (isIOS && !/Safari\//.test(navigator.userAgent));
-      
-      const useRedirect = isIOS || isStandalone || isWebView;
-
-      if (method === "email") {
-        await signInWithEmailAndPassword(auth, email, password);
-      } else {
-        const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-        
-        if (useRedirect) {
-          // שימוש ב-Redirect לא עוקף חוסמי Popup ב-iOS
-          await signInWithRedirect(auth, provider);
-        } else {
-          try {
-            await signInWithPopup(auth, provider);
-          } catch(err) {
-            // Fallback ל-Redirect אם ה-Popup בכל זאת נחסם
-            if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
-              await signInWithRedirect(auth, provider);
-            } else {
-              throw err;
-            }
-          }
+      // הפעלת פופאפ מיידית (ללא await) כדי לעבור את החוסם של ספארי
+      signInWithPopup(auth, provider).catch(err => {
+        // אם הפופאפ נחסם כי אנחנו בתוך מעטפת (WebView) - נבצע גיבוי ל-Redirect
+        if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
+          signInWithRedirect(auth, provider).catch(e => setAuthErrorMsg("שגיאת הפניה: " + e.message));
+        } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+          setAuthErrorMsg("שגיאה: " + err.message);
         }
-      }
-    } catch(e) {
-      alert("שגיאה: " + e.message);
+      });
     }
   }} T={T}/></div>;
-    
+
   if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
   const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
   
