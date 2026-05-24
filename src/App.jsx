@@ -1627,6 +1627,7 @@ function AuthScreen({onLogin,T,globalError}){
       
       <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:14}}>
         {globalError && <div style={{color:T.red,fontSize:T.f(13),marginBottom:8,textAlign:"center", background: "#fee2e2", padding: "10px", borderRadius: 8}}>{globalError}</div>}
+        {globalError && <div style={{color:T.red,fontSize:T.f(13),marginBottom:8,textAlign:"center", background: "#fee2e2", padding: "10px", borderRadius: 8}}>{globalError}</div>}
         
         <FI T={T} placeholder={T.isEn ? "Email" : "אימייל"} value={email} onChange={e=>setEmail(e.target.value)} type="email" />
         <FI T={T} type="password" placeholder={T.isEn ? "Password" : "סיסמה"} value={password} onChange={e=>setPassword(e.target.value)} />
@@ -1666,6 +1667,8 @@ export default function App(){
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authErrorMsg, setAuthErrorMsg] = useState("");
 
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [authErrorMsg, setAuthErrorMsg] = useState("");
   const [user, setUser] = useState(null);
   const [tab, setTab] = useState("home");
   const [libCat, setLibCat] = useState("gemara");
@@ -1688,40 +1691,37 @@ export default function App(){
       }
     };
 
+   useEffect(() => {
+    let authStateResolved = false;
+    let redirectResolved = false;
+
+    const checkAuthReady = () => {
+      if (authStateResolved && redirectResolved) setIsAuthLoading(false);
+    };
+
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       if (u) {
         const safeEmail = u.email || "";
-        const safeName = u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש");
-        setUser({ uid: u.uid, email: safeEmail, name: safeName });
+        setUser({ uid: u.uid, email: safeEmail, name: u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש") });
         try {
           const docSnap = await getDoc(doc(db, "users", u.uid));
-          if (docSnap.exists()) {
+          if (docSnap.exists() && docSnap.data()) {
             const data = docSnap.data();
-            if(data){
-              setProg(desProg(data.prog));
-              setGoals(Array.isArray(data.goals) ? data.goals : []);
-              setSett(prev => ({...prev, ...(data.sett || {})}));
-              setActivity(Array.isArray(data.activity) ? data.activity : []);
-              setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
-            }
+            setProg(desProg(data.prog)); setGoals(Array.isArray(data.goals) ? data.goals : []); setSett(prev => ({...prev, ...(data.sett || {})})); setActivity(Array.isArray(data.activity) ? data.activity : []); setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
           } else {
             setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
           }
         } catch (e) { console.error(e); }
         setLoaded(true);
       } else {
-        setUser(null);
-        setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
-        setLoaded(true);
+        setUser(null); setProg(IP); setGoals([]); setActivity([]); setActiveDays([]); setLoaded(true);
       }
       authStateResolved = true;
       checkAuthReady();
     });
 
     getRedirectResult(auth)
-      .then(result => {
-        if (result?.user) console.log("Redirect sign-in success");
-      })
+      .then(result => { if (result?.user) console.log("Redirect sign-in success"); })
       .catch(e => {
         if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
           setAuthErrorMsg("שגיאת התחברות: " + e.message);
@@ -1734,6 +1734,7 @@ export default function App(){
 
     return () => unsubscribe();
   }, []);
+  
 
   useEffect(() => {
       if (!loaded || !user) return;
@@ -1758,15 +1759,21 @@ export default function App(){
      );
   }
 
-  // מסך התחברות עם פתרון מותאם ל-iOS
+if (isAuthLoading || (user && !loaded)) {
+     return (
+       <div style={{...appSt, justifyContent: "center", alignItems: "center", height: "100vh"}}>
+         <LogoAliba T={T} size={64}/>
+         <div style={{fontSize: T.f(18), color: T.navy, fontWeight: 700, marginTop: 24}}>טוען... ⏳</div>
+       </div>
+     );
+  }
+
   if(!user) return <div style={appSt}><AuthScreen globalError={authErrorMsg} onLogin={({method, email, password})=>{
     if (method === "email") {
       signInWithEmailAndPassword(auth, email, password).catch(e => setAuthErrorMsg("שגיאה: " + e.message));
     } else {
       const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
-      // הפעלת פופאפ מיידית (ללא await) כדי לעבור את החוסם של ספארי
       signInWithPopup(auth, provider).catch(err => {
-        // אם הפופאפ נחסם כי אנחנו בתוך מעטפת (WebView) - נבצע גיבוי ל-Redirect
         if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
           signInWithRedirect(auth, provider).catch(e => setAuthErrorMsg("שגיאת הפניה: " + e.message));
         } else if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
