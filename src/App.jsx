@@ -1779,24 +1779,52 @@ if (!user) return (
               await signInWithEmailAndPassword(auth, email, password);
               return;
             }
-            const provider = method === "apple" ? new OAuthProvider("apple.com") : new GoogleAuthProvider();
-            
-            const ua = navigator.userAgent;
-            const isIOSApp = /iPad|iPhone|iPod/.test(ua) && /AppleWebKit/.test(ua) && !/Safari\//.test(ua) && !/CriOS/.test(ua) && !/FxiOS/.test(ua);
-
-            if (isIOSApp) {
-              await signInWithRedirect(auth, provider);
-              return;
+            let provider;
+            if (method === "apple") {
+              provider = new OAuthProvider("apple.com");
+              provider.addScope("email");
+              provider.addScope("name");
+            } else {
+              provider = new GoogleAuthProvider();
             }
-            
+
+            const ua = navigator.userAgent;
+            const isIOS = /iPad|iPhone|iPod/.test(ua);
+            const isStandalone =
+              (typeof window !== "undefined" &&
+                window.matchMedia &&
+                window.matchMedia('(display-mode: standalone)').matches) ||
+              window.navigator.standalone === true;
+            // PWA של iOS (הותקנה ממסך הבית / App Store) — redirect שבור שם,
+            // חייבים popup. נתמך מ-iOS 16.4 ומעלה.
+            const isIOSStandalone = isIOS && isStandalone;
+
             try {
               await signInWithPopup(auth, provider);
             } catch (err) {
-              if (err.code === "auth/popup-blocked") {
-                await signInWithRedirect(auth, provider);
-              } else {
-                throw err;
+              const silent = [
+                "auth/popup-closed-by-user",
+                "auth/cancelled-popup-request",
+                "auth/user-cancelled",
+              ];
+              if (silent.includes(err.code)) {
+                return;
               }
+              // ב-PWA של iOS לא ניפול ל-redirect — הוא לא חוזר ל-PWA וייצור מסך ריק.
+              if (isIOSStandalone) {
+                setAuthErrorMsg(
+                  "ההתחברות נכשלה בתוך האפליקציה המותקנת. נסה לפתוח את האתר ב-Safari ולהתחבר משם, או עדכן ל-iOS 16.4 ומעלה."
+                );
+                return;
+              }
+              if (
+                err.code === "auth/popup-blocked" ||
+                err.code === "auth/operation-not-supported-in-this-environment"
+              ) {
+                await signInWithRedirect(auth, provider);
+                return;
+              }
+              throw err;
             }
           } catch (err) {
             if (err.code !== "auth/popup-closed-by-user") {
