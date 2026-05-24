@@ -1661,10 +1661,29 @@ function AuthScreen({onLogin,T,globalError}){
 export default function App(){
   useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
   
-  // הוספת מצבי טעינה כדי למנוע את המסך הריק בעת החזרה מ-Redirect
+  // -- תוספת חדשה 1: מצבי טעינה למניעת המסך הריק --
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [authErrorMsg, setAuthErrorMsg] = useState("");
 
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then(result => {
+        if (result?.user) console.log("Redirect sign-in success");
+      })
+      .catch(e => {
+        if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
+          console.error('Redirect result error:', e.code, e.message);
+          setAuthErrorMsg("שגיאת התחברות: " + e.message);
+        }
+      })
+      .finally(() => {
+        setIsAuthLoading(false);
+      });
+  }, []);
+  // -- סוף תוספת חדשה 1 --
+
+  const [user, setUser] = useState(null);
+  const [tab, setTab] = useState("home");
   useEffect(() => {
     getRedirectResult(auth)
       .then(result => {
@@ -1757,9 +1776,9 @@ export default function App(){
 
   const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
-  const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
+ const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
   
-  // מסך טעינה - מונע את ה"מסך הריק" שקורה כשהמערכת עדיין בודקת את ה-Redirect
+  // -- תוספת חדשה 2: הצגת מסך טעינה במקום מסך ריק --
   const isAppLoading = isAuthLoading || !loaded;
 
   if (isAppLoading) {
@@ -1771,6 +1790,39 @@ export default function App(){
        </div>
      );
   }
+  // -- סוף תוספת חדשה 2 --
+
+  // -- תוספת חדשה 3: מנגנון התחברות חסין לאפל (IndexedDB) --
+  if(!user) return <div style={appSt}><AuthScreen globalError={authErrorMsg} onLogin={({method, email, password})=>{
+    if (method === "email") {
+      signInWithEmailAndPassword(auth, email, password).catch(e => alert("שגיאה: " + e.message));
+    } else {
+      const provider = method === "apple" ? new OAuthProvider('apple.com') : new GoogleAuthProvider();
+      
+      setPersistence(auth, indexedDBLocalPersistence)
+        .then(() => {
+           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+           const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+           const isWebView = /(WebView|wv)/i.test(navigator.userAgent) || (isIOS && !/Safari\//.test(navigator.userAgent));
+           
+           if (isIOS || isStandalone || isWebView) {
+             signInWithRedirect(auth, provider).catch(e => alert("שגיאה בהפניה: " + e.message));
+           } else {
+             signInWithPopup(auth, provider).catch(err => {
+               if (err.code === 'auth/popup-blocked' || err.code === 'auth/operation-not-supported-in-this-environment') {
+                 signInWithRedirect(auth, provider);
+               } else {
+                 alert("שגיאה: " + err.message);
+               }
+             });
+           }
+        })
+        .catch(e => alert("שגיאת הגדרת זיכרון: " + e.message));
+    }
+  }} T={T}/></div>;
+  // -- סוף תוספת חדשה 3 --
+    
+  if(detail) return <div style={appSt}><DetailScreen detail={detail} prog={prog} T={T} cc={cc} cl={cl} setProg={setProg} goBack={()=>setDetail(null)} onActivity={(it)=>{setActivity(p=>[{...it,timeStr:new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}),date:todayKey()},...(Array.isArray(p)?p:[])].slice(0,50)); setActiveDays(p=>[...new Set([...(Array.isArray(p)?p:[]), todayKey()])].slice(-60));}}/></div>;
 
   if(!user) return <div style={appSt}><AuthScreen globalError={authErrorMsg} onLogin={async({method, email, password})=>{
     try {
