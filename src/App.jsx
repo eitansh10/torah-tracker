@@ -25,10 +25,15 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+let analytics = null;
+try {
+  analytics = getAnalytics(app);
+} catch (e) {
+  console.warn("Analytics blocked in this environment");
+  analytics = null;
+}
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
 
 /* ── ICONS & LOGO ── */
@@ -1680,51 +1685,59 @@ export default function App(){
   const [activeDays, setActiveDays] = useState([]);
   const [loaded, setLoaded] = useState(false);
 
-  // סנכרון מושלם בין מצב ההתחברות לתוצאת ה-Redirect
   useEffect(() => {
     let authStateResolved = false;
     let redirectResolved = false;
+    let cancelled = false;
 
     const checkAuthReady = () => {
-      if (authStateResolved && redirectResolved) {
+      if (!cancelled && authStateResolved && redirectResolved) {
         setIsAuthLoading(false);
       }
     };
 
-   useEffect(() => {
-    let authStateResolved = false;
-    let redirectResolved = false;
-
-    const checkAuthReady = () => {
-      if (authStateResolved && redirectResolved) setIsAuthLoading(false);
-    };
-
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
-      if (u) {
-        const safeEmail = u.email || "";
-        setUser({ uid: u.uid, email: safeEmail, name: u.displayName || (safeEmail ? safeEmail.split('@')[0] : "משתמש") });
-        try {
+      try {
+        if (u) {
+          const safeEmail = u.email || "";
+          setUser({
+            uid: u.uid,
+            email: safeEmail,
+            name: u.displayName || (safeEmail ? safeEmail.split("@")[0] : "משתמש")
+          });
           const docSnap = await getDoc(doc(db, "users", u.uid));
           if (docSnap.exists() && docSnap.data()) {
             const data = docSnap.data();
-            setProg(desProg(data.prog)); setGoals(Array.isArray(data.goals) ? data.goals : []); setSett(prev => ({...prev, ...(data.sett || {})})); setActivity(Array.isArray(data.activity) ? data.activity : []); setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
+            setProg(desProg(data.prog));
+            setGoals(Array.isArray(data.goals) ? data.goals : []);
+            setSett(prev => ({ ...prev, ...(data.sett || {}) }));
+            setActivity(Array.isArray(data.activity) ? data.activity : []);
+            setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
           } else {
             setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
           }
-        } catch (e) { console.error(e); }
+        } else {
+          setUser(null); setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
+        }
+      } catch (e) {
+        console.error(e);
+        setAuthErrorMsg(e.message || "Auth error");
+      } finally {
         setLoaded(true);
-      } else {
-        setUser(null); setProg(IP); setGoals([]); setActivity([]); setActiveDays([]); setLoaded(true);
+        authStateResolved = true;
+        checkAuthReady();
       }
-      authStateResolved = true;
-      checkAuthReady();
     });
 
     getRedirectResult(auth)
-      .then(result => { if (result?.user) console.log("Redirect sign-in success"); })
-      .catch(e => {
-        if (e.code !== 'auth/no-current-user' && e.code !== 'auth/null-user') {
-          setAuthErrorMsg("שגיאת התחברות: " + e.message);
+      .then((result) => {
+        if (result?.user) {
+          console.log("Redirect sign-in success");
+        }
+      })
+      .catch((e) => {
+        if (e.code !== "auth/no-current-user" && e.code !== "auth/null-user") {
+          setAuthErrorMsg(e.message || "Redirect sign-in failed");
         }
       })
       .finally(() => {
@@ -1732,10 +1745,11 @@ export default function App(){
         checkAuthReady();
       });
 
-    return () => unsubscribe();
+    return () => {
+      cancelled = true;
+      unsubscribe();
+    };
   }, []);
-  
-
   useEffect(() => {
       if (!loaded || !user) return;
       const saveTimer = setTimeout(() => {
@@ -1768,7 +1782,44 @@ if (isAuthLoading || (user && !loaded)) {
      );
   }
 
-  if(!user) return <div style={appSt}><AuthScreen globalError={authErrorMsg} onLogin={({method, email, password})=>{
+if (!user) return (
+    <div style={appSt}>
+      <AuthScreen 
+        globalError={authErrorMsg} 
+        onLogin={async ({ method, email, password }) => {
+          try {
+            if (method === "email") {
+              await signInWithEmailAndPassword(auth, email, password);
+              return;
+            }
+            const provider = method === "apple"
+              ? new OAuthProvider("apple.com")
+              : new GoogleAuthProvider();
+            try {
+              await signInWithPopup(auth, provider);
+            } catch (err) {
+              if (
+                err.code === "auth/popup-blocked" ||
+                err.code === "auth/operation-not-supported-in-this-environment"
+              ) {
+                await signInWithRedirect(auth, provider);
+              } else {
+                throw err;
+              }
+            }
+          } catch (err) {
+            if (
+              err.code !== "auth/popup-closed-by-user" &&
+              err.code !== "auth/cancelled-popup-request"
+            ) {
+              setAuthErrorMsg(err.message || "Login failed");
+            }
+          }
+        }} 
+        T={T} 
+      />
+    </div>
+  );
     if (method === "email") {
       signInWithEmailAndPassword(auth, email, password).catch(e => setAuthErrorMsg("שגיאה: " + e.message));
     } else {
