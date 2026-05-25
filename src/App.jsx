@@ -34,6 +34,44 @@ try {
 }
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+const getRuntimeEnv = () => {
+  if (typeof window === "undefined") {
+    return { isIOS: false, isStandalone: false, isIOSWebView: false, isEmbeddedIOSAuth: false };
+  }
+
+  const ua = window.navigator.userAgent || "";
+  const platform = window.navigator.platform || "";
+  const maxTouchPoints = window.navigator.maxTouchPoints || 0;
+  const isIOS = /iPad|iPhone|iPod/.test(ua) || (platform === "MacIntel" && maxTouchPoints > 1);
+  const isStandalone =
+    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+    window.navigator.standalone === true;
+  const isIOSWebView =
+    isIOS &&
+    /AppleWebKit/i.test(ua) &&
+    !/Safari/i.test(ua) &&
+    !/CriOS|FxiOS|EdgiOS/i.test(ua);
+
+  return {
+    isIOS,
+    isStandalone,
+    isIOSWebView,
+    isEmbeddedIOSAuth: isIOS && (isStandalone || isIOSWebView),
+  };
+};
+
+const getAuthPromiseWithTimeout = (promise, timeoutMs = 8000) =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => {
+        const error = new Error("Auth timeout");
+        error.code = "auth/timeout";
+        reject(error);
+      }, timeoutMs);
+    }),
+  ]);
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
 
 /* ── ICONS & LOGO ── */
@@ -1724,21 +1762,32 @@ export default function App(){
       }
     });
 
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          console.log("Redirect sign-in success");
-        }
-      })
-      .catch((e) => {
-        if (e.code !== "auth/no-current-user" && e.code !== "auth/null-user") {
-          setAuthErrorMsg(e.message || "Redirect sign-in failed");
-        }
-      })
-      .finally(() => {
-        redirectResolved = true;
-        checkAuthReady();
-      });
+    const { isEmbeddedIOSAuth } = getRuntimeEnv();
+
+    if (isEmbeddedIOSAuth) {
+      redirectResolved = true;
+      checkAuthReady();
+    } else {
+      getAuthPromiseWithTimeout(getRedirectResult(auth))
+        .then((result) => {
+          if (result?.user) {
+            console.log("Redirect sign-in success");
+          }
+        })
+        .catch((e) => {
+          if (
+            e.code !== "auth/no-current-user" &&
+            e.code !== "auth/null-user" &&
+            e.code !== "auth/timeout"
+          ) {
+            setAuthErrorMsg(e.message || "Redirect sign-in failed");
+          }
+        })
+        .finally(() => {
+          redirectResolved = true;
+          checkAuthReady();
+        });
+    }
 
     return () => {
       cancelled = true;
@@ -1779,26 +1828,47 @@ if (!user) return (
               await signInWithEmailAndPassword(auth, email, password);
               return;
             }
-            const provider = method === "apple" ? new OAuthProvider("apple.com") : new GoogleAuthProvider();
-            
-            // זיהוי פשוט לאייפון - אנדרואיד ידלג על זה וימשיך כרגיל
-            const ua = navigator.userAgent;
-            const isIOSApp = /iPad|iPhone|iPod/.test(ua);
+            let provider;
+            if (method === "apple") {
+              provider = new OAuthProvider("apple.com");
+              provider.addScope("email");
+              provider.addScope("name");
+            } else {
+              provider = new GoogleAuthProvider();
+            }
 
-            if (isIOSApp) {
-              await signInWithRedirect(auth, provider);
+            const { isEmbeddedIOSAuth } = getRuntimeEnv();
+
+            if (isEmbeddedIOSAuth) {
+              setAuthErrorMsg(
+                "בתוך אפליקציית iOS שמריצה WebView, Firebase לא יכול להשלים התחברות Google/Apple בתוך המסך של האפליקציה עצמה. " +
+                "כדי שזה יעבוד בתוך האפליקציה צריך להוסיף Sign in with Apple/Google בצד ה-native של iOS, ואז לחבר את הטוקן ל-Firebase. " +
+                "כרגע אפשר להתחבר עם מייל וסיסמה, או לפתוח את האתר ב-Safari."
+              );
               return;
             }
-            
+
             try {
               await signInWithPopup(auth, provider);
             } catch (err) {
-              if (err.code === "auth/popup-blocked") {
-                await signInWithRedirect(auth, provider);
-              } else {
-                throw err;
+              const silent = [
+                "auth/popup-closed-by-user",
+                "auth/cancelled-popup-request",
+                "auth/user-cancelled",
+              ];
+              if (silent.includes(err.code)) {
+                return;
               }
+              if (
+                err.code === "auth/popup-blocked" ||
+                err.code === "auth/operation-not-supported-in-this-environment"
+              ) {
+                await signInWithRedirect(auth, provider);
+                return;
+              }
+              throw err;
             }
+
           } catch (err) {
             if (err.code !== "auth/popup-closed-by-user") {
               setAuthErrorMsg(err.message || "Login failed");
