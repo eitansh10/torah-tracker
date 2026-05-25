@@ -9,7 +9,9 @@ import {
   signInWithRedirect, 
   getRedirectResult, 
   OAuthProvider, 
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence
 } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
@@ -34,44 +36,6 @@ try {
 }
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-const getRuntimeEnv = () => {
-  if (typeof window === "undefined") {
-    return { isIOS: false, isStandalone: false, isIOSWebView: false, isEmbeddedIOSAuth: false };
-  }
-
-  const ua = window.navigator.userAgent || "";
-  const platform = window.navigator.platform || "";
-  const maxTouchPoints = window.navigator.maxTouchPoints || 0;
-  const isIOS = /iPad|iPhone|iPod/.test(ua) || (platform === "MacIntel" && maxTouchPoints > 1);
-  const isStandalone =
-    (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
-    window.navigator.standalone === true;
-  const isIOSWebView =
-    isIOS &&
-    /AppleWebKit/i.test(ua) &&
-    !/Safari/i.test(ua) &&
-    !/CriOS|FxiOS|EdgiOS/i.test(ua);
-
-  return {
-    isIOS,
-    isStandalone,
-    isIOSWebView,
-    isEmbeddedIOSAuth: isIOS && (isStandalone || isIOSWebView),
-  };
-};
-
-const getAuthPromiseWithTimeout = (promise, timeoutMs = 8000) =>
-  Promise.race([
-    promise,
-    new Promise((_, reject) => {
-      setTimeout(() => {
-        const error = new Error("Auth timeout");
-        error.code = "auth/timeout";
-        reject(error);
-      }, timeoutMs);
-    }),
-  ]);
 const IP = { gemara: {}, mishna: {}, tanach: {}, tanach_parshiot: {}, tmode: {}, musar: {}, ravKook: {}, machshava: {}, custom: [], notes: {}, chazara: {} };
 
 /* ── ICONS & LOGO ── */
@@ -1701,7 +1665,6 @@ function AuthScreen({onLogin,T,globalError}){
 }
 
 /* ── ROOT ── */
-/* ── ROOT ── */
 export default function App(){
   useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
   
@@ -1722,6 +1685,9 @@ export default function App(){
     let authStateResolved = false;
     let redirectResolved = false;
     let cancelled = false;
+
+    // כופה שימוש באחסון מקומי רגיל כדי שהדפדפן הפנימי לא ישכח את החיבור
+    setPersistence(auth, browserLocalPersistence).catch(console.error);
 
     const checkAuthReady = () => {
       if (!cancelled && authStateResolved && redirectResolved) {
@@ -1762,38 +1728,37 @@ export default function App(){
       }
     });
 
-    const { isEmbeddedIOSAuth } = getRuntimeEnv();
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result?.user) {
+          console.log("Redirect sign-in success");
+        }
+      })
+      .catch((e) => {
+        if (e.code !== "auth/no-current-user" && e.code !== "auth/null-user") {
+          setAuthErrorMsg(e.message || "Redirect sign-in failed");
+        }
+      })
+      .finally(() => {
+        redirectResolved = true;
+        checkAuthReady();
+      });
 
-    if (isEmbeddedIOSAuth) {
-      redirectResolved = true;
-      checkAuthReady();
-    } else {
-      getAuthPromiseWithTimeout(getRedirectResult(auth))
-        .then((result) => {
-          if (result?.user) {
-            console.log("Redirect sign-in success");
-          }
-        })
-        .catch((e) => {
-          if (
-            e.code !== "auth/no-current-user" &&
-            e.code !== "auth/null-user" &&
-            e.code !== "auth/timeout"
-          ) {
-            setAuthErrorMsg(e.message || "Redirect sign-in failed");
-          }
-        })
-        .finally(() => {
-          redirectResolved = true;
-          checkAuthReady();
-        });
-    }
+    // כלי חירום: אם פיירבייס נתקע, שחרר את המסך הלבן אחרי 6 שניות
+    const emergencyTimeout = setTimeout(() => {
+        if (isAuthLoading && !cancelled) {
+            setIsAuthLoading(false);
+            setLoaded(true);
+        }
+    }, 6000);
 
     return () => {
       cancelled = true;
+      clearTimeout(emergencyTimeout);
       unsubscribe();
     };
   }, []);
+
   useEffect(() => {
       if (!loaded || !user) return;
       const saveTimer = setTimeout(() => {
@@ -1807,7 +1772,7 @@ export default function App(){
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
 
-  // מסך טעינה אחיד
+  // מסך טעינה
   if (isAuthLoading || (user && !loaded)) {
      return (
        <div style={{...appSt, justifyContent: "center", alignItems: "center", height: "100vh"}}>
@@ -1817,7 +1782,7 @@ export default function App(){
      );
   }
 
-if (!user) return (
+  if (!user) return (
     <div style={appSt}>
       <AuthScreen 
         globalError={authErrorMsg} 
@@ -1828,47 +1793,26 @@ if (!user) return (
               await signInWithEmailAndPassword(auth, email, password);
               return;
             }
-            let provider;
-            if (method === "apple") {
-              provider = new OAuthProvider("apple.com");
-              provider.addScope("email");
-              provider.addScope("name");
-            } else {
-              provider = new GoogleAuthProvider();
-            }
+            const provider = method === "apple" ? new OAuthProvider("apple.com") : new GoogleAuthProvider();
+            
+            // זיהוי אייפון כדי לעקוף את חסימת הפופ-אפ של Safari
+            const ua = navigator.userAgent;
+            const isIOSApp = /iPad|iPhone|iPod/.test(ua);
 
-            const { isEmbeddedIOSAuth } = getRuntimeEnv();
-
-            if (isEmbeddedIOSAuth) {
-              setAuthErrorMsg(
-                "בתוך אפליקציית iOS שמריצה WebView, Firebase לא יכול להשלים התחברות Google/Apple בתוך המסך של האפליקציה עצמה. " +
-                "כדי שזה יעבוד בתוך האפליקציה צריך להוסיף Sign in with Apple/Google בצד ה-native של iOS, ואז לחבר את הטוקן ל-Firebase. " +
-                "כרגע אפשר להתחבר עם מייל וסיסמה, או לפתוח את האתר ב-Safari."
-              );
+            if (isIOSApp) {
+              await signInWithRedirect(auth, provider);
               return;
             }
-
+            
             try {
               await signInWithPopup(auth, provider);
             } catch (err) {
-              const silent = [
-                "auth/popup-closed-by-user",
-                "auth/cancelled-popup-request",
-                "auth/user-cancelled",
-              ];
-              if (silent.includes(err.code)) {
-                return;
-              }
-              if (
-                err.code === "auth/popup-blocked" ||
-                err.code === "auth/operation-not-supported-in-this-environment"
-              ) {
+              if (err.code === "auth/popup-blocked") {
                 await signInWithRedirect(auth, provider);
-                return;
+              } else {
+                throw err;
               }
-              throw err;
             }
-
           } catch (err) {
             if (err.code !== "auth/popup-closed-by-user") {
               setAuthErrorMsg(err.message || "Login failed");
@@ -1891,7 +1835,7 @@ if (!user) return (
         setProg={setProg} 
         goBack={() => setDetail(null)} 
         onActivity={(it) => {
-          setActivity(p => [{ ...it, timeStr: new Date().toLocaleString("he-IL"), date: todayKey() }, ...(Array.isArray(p) ? p : [])].slice(0, 50));
+          setActivity(p => [{ ...it, timeStr: new Date().toLocaleString("he-IL",{day:"numeric",month:"numeric",hour:"2-digit",minute:"2-digit"}), date: todayKey() }, ...(Array.isArray(p) ? p : [])].slice(0, 50));
           setActiveDays(p => [...new Set([...(Array.isArray(p) ? p : []), todayKey()])].slice(-60));
         }}
       />
