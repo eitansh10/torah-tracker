@@ -1782,7 +1782,7 @@ export default function App(){
      );
   }
 
-  if (!user) return (
+if (!user) return (
     <div style={appSt}>
       <AuthScreen 
         globalError={authErrorMsg} 
@@ -1793,8 +1793,16 @@ export default function App(){
               await signInWithEmailAndPassword(auth, email, password);
               return;
             }
-            const provider = method === "apple" ? new OAuthProvider("apple.com") : new GoogleAuthProvider();
             
+            let provider;
+            if (method === "apple") {
+              provider = new OAuthProvider("apple.com");
+              provider.addScope("email");
+              provider.addScope("name");
+            } else {
+              provider = new GoogleAuthProvider();
+            }
+
             // זיהוי אייפון כדי לעקוף את חסימת הפופ-אפ של Safari
             const ua = navigator.userAgent;
             const isIOSApp = /iPad|iPhone|iPod/.test(ua);
@@ -1823,7 +1831,6 @@ export default function App(){
       />
     </div>
   );
-
   if (detail) return (
     <div style={appSt}>
       <DetailScreen 
