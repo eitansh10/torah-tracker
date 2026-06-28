@@ -9,9 +9,7 @@ import {
   signInWithRedirect, 
   getRedirectResult, 
   OAuthProvider, 
-  signInWithEmailAndPassword,
-  setPersistence,
-  browserLocalPersistence
+  signInWithEmailAndPassword
 } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
@@ -1608,7 +1606,7 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.support}</div><div style={{padding:"14px 16px"}}><a href="mailto:eitanshachor1@gmail.com" style={{display:"flex", alignItems:"center", gap:10, color:T.navy, textDecoration:"none", fontSize:T.f(14), fontWeight:600}}>{T.isEn ? "Contact Developer" : "צור קשר / דיווח על באגים"}</a></div></div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.legal}</div><div style={{padding:"14px 16px", borderBottom:`1px solid ${T.border}`}}><button onClick={()=>setLegalType('terms')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.terms}</button></div><div style={{padding:"14px 16px"}}><button onClick={()=>setLegalType('privacy')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.privacy}</button></div></div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.account}</div><div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`,textAlign:"start"}}><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{user?.name||"משתמש"}</div><div style={{fontSize:T.f(12),color:T.muted,marginTop:2}}>{user?.email||""}</div></div><div style={{padding:"14px 16px"}}><button onClick={onLogout} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(14),fontWeight:700,width:"100%",textAlign:"start"}}>{T.UI.signOut}</button></div></div>
-      <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}><div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div><div style={{direction: "ltr"}}>v 1.0</div><div>© {new Date().getFullYear()} פותח ע״י איתן שחור. כל הזכויות שמורות.</div></div>
+      <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}><div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div><div style={{direction: "ltr"}}>v 1.0.1</div><div>© {new Date().getFullYear()} פותח ע״י איתן שחור. כל הזכויות שמורות.</div></div>
       <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} /></div>
   );
 }
@@ -1686,65 +1684,69 @@ export default function App(){
     let redirectResolved = false;
     let cancelled = false;
 
-    // כופה שימוש באחסון מקומי רגיל כדי שהדפדפן הפנימי לא ישכח את החיבור
-    setPersistence(auth, browserLocalPersistence).catch(console.error);
-
     const checkAuthReady = () => {
       if (!cancelled && authStateResolved && redirectResolved) {
         setIsAuthLoading(false);
       }
     };
 
-    const unsubscribe = onAuthStateChanged(auth, async (u) => {
+    const initAuth = async () => {
       try {
-        if (u) {
-          const safeEmail = u.email || "";
-          setUser({
-            uid: u.uid,
-            email: safeEmail,
-            name: u.displayName || (safeEmail ? safeEmail.split("@")[0] : "משתמש")
-          });
-          const docSnap = await getDoc(doc(db, "users", u.uid));
-          if (docSnap.exists() && docSnap.data()) {
-            const data = docSnap.data();
-            setProg(desProg(data.prog));
-            setGoals(Array.isArray(data.goals) ? data.goals : []);
-            setSett(prev => ({ ...prev, ...(data.sett || {}) }));
-            setActivity(Array.isArray(data.activity) ? data.activity : []);
-            setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
-          } else {
-            setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
-          }
-        } else {
-          setUser(null); setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
-        }
+         await setPersistence(auth, browserLocalPersistence);
       } catch (e) {
-        console.error(e);
-        setAuthErrorMsg(e.message || "Auth error");
-      } finally {
-        setLoaded(true);
-        authStateResolved = true;
-        checkAuthReady();
+         console.error(e);
       }
-    });
-
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result?.user) {
-          console.log("Redirect sign-in success");
+      
+      onAuthStateChanged(auth, async (u) => {
+        try {
+          if (u) {
+            const safeEmail = u.email || "";
+            setUser({
+              uid: u.uid,
+              email: safeEmail,
+              name: u.displayName || (safeEmail ? safeEmail.split("@")[0] : "משתמש")
+            });
+            const docSnap = await getDoc(doc(db, "users", u.uid));
+            if (docSnap.exists() && docSnap.data()) {
+              const data = docSnap.data();
+              setProg(desProg(data.prog));
+              setGoals(Array.isArray(data.goals) ? data.goals : []);
+              setSett(prev => ({ ...prev, ...(data.sett || {}) }));
+              setActivity(Array.isArray(data.activity) ? data.activity : []);
+              setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
+            } else {
+              setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
+            }
+          } else {
+            setUser(null); setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
+          }
+        } catch (e) {
+          console.error(e);
+          setAuthErrorMsg(e.message || "Auth error");
+        } finally {
+          setLoaded(true);
+          authStateResolved = true;
+          checkAuthReady();
         }
-      })
-      .catch((e) => {
-        if (e.code !== "auth/no-current-user" && e.code !== "auth/null-user") {
-          setAuthErrorMsg(e.message || "Redirect sign-in failed");
-        }
-      })
-      .finally(() => {
-        redirectResolved = true;
-        checkAuthReady();
       });
+      
+      getRedirectResult(auth)
+        .then((result) => {
+          if (result?.user) console.log("Redirect sign-in success");
+        })
+        .catch((e) => {
+          if (e.code !== "auth/no-current-user" && e.code !== "auth/null-user") {
+            setAuthErrorMsg(e.message || "Redirect sign-in failed");
+          }
+        })
+        .finally(() => {
+          redirectResolved = true;
+          checkAuthReady();
+        });
+    };
+    
+    initAuth();
 
-    // כלי חירום: אם פיירבייס נתקע, שחרר את המסך הלבן אחרי 6 שניות
     const emergencyTimeout = setTimeout(() => {
         if (isAuthLoading && !cancelled) {
             setIsAuthLoading(false);
@@ -1755,7 +1757,6 @@ export default function App(){
     return () => {
       cancelled = true;
       clearTimeout(emergencyTimeout);
-      unsubscribe();
     };
   }, []);
 
@@ -1782,7 +1783,7 @@ export default function App(){
      );
   }
 
-if (!user) return (
+  if (!user) return (
     <div style={appSt}>
       <AuthScreen 
         globalError={authErrorMsg} 
@@ -1794,16 +1795,12 @@ if (!user) return (
               return;
             }
             
-            let provider;
+            let provider = method === "apple" ? new OAuthProvider("apple.com") : new GoogleAuthProvider();
             if (method === "apple") {
-              provider = new OAuthProvider("apple.com");
               provider.addScope("email");
               provider.addScope("name");
-            } else {
-              provider = new GoogleAuthProvider();
             }
 
-            // זיהוי אייפון כדי לעקוף את חסימת הפופ-אפ של Safari
             const ua = navigator.userAgent;
             const isIOSApp = /iPad|iPhone|iPod/.test(ua);
 
@@ -1831,6 +1828,7 @@ if (!user) return (
       />
     </div>
   );
+
   if (detail) return (
     <div style={appSt}>
       <DetailScreen 
@@ -1849,7 +1847,7 @@ if (!user) return (
     </div>
   );
 
-  const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
+  const NAV=[{k:"home",l:T.UI.home,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12L12 3l9 9"/><path d="M9 21V12h6v9"/></svg>},{k:"library",l:T.UI.library,ico:<IcoBook/>},{k:"goals",l:T.UI.goals,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>},{k:"settings",l:T.UI.settings,ico:<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>}];
 
   return (<div style={appSt}>
     <WelcomePrompt T={T} />
