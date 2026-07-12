@@ -27,7 +27,7 @@ let analytics = null;
 try {
   analytics = getAnalytics(app);
 } catch (e) {
-  console.warn("Analytics blocked");
+  console.warn("Analytics blocked in this environment");
   analytics = null;
 }
 const auth = getAuth(app);
@@ -103,6 +103,182 @@ const PARASHA_MAP = {
   "ויקרא": "Parashat_Vayikra", "צו": "Parashat_Tzav", "שמיני": "Parashat_Shemini", "תזריע": "Parashat_Tazria", "מצורע": "Parashat_Metzora", "אחרי מות": "Parashat_Achrei_Mot", "קדושים": "Parashat_Kedoshim", "אמור": "Parashat_Emor", "בהר": "Parashat_Behar", "בחוקותי": "Parashat_Bechukotai",
   "במדבר": "Parashat_Bamidbar", "נשא": "Parashat_Naso", "בהעלותך": "Parashat_Behaalotekha", "שלח": "Parashat_Shelach", "קרח": "Parashat_Korach", "חקת": "Parashat_Chukat", "בלק": "Parashat_Balak", "פינחס": "Parashat_Pinchas", "מטות": "Parashat_Matot", "מסעי": "Parashat_Masei",
   "דברים": "Parashat_Devarim", "ואתחנן": "Parashat_Vaetchanan", "עקב": "Parashat_Eikev", "ראה": "Parashat_Re'eh", "שופטים": "Parashat_Shoftim", "כי תצא": "Parashat_Ki_Teitzei", "כי תבוא": "Parashat_Ki_Tavo", "נצבים": "Parashat_Nitzavim", "וילך": "Parashat_Vayeilekh", "האזינו": "Parashat_Ha'Azinu", "וזאת הברכה": "Parashat_V'Zot_HaBerakhah"
+};
+
+const MUSAR = [
+  { n: "מסילת ישרים", a: 'רמח"ל', struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Mesilat_Yesharim,_Introduction"}] }, { t: "פרקים", p: 26, refBase: "Mesilat_Yesharim" }] },
+  { n: "חובת הלבבות", a: "רבינו בחיי", struct: [{ t: "הקדמות", items: [{k:"intro", l:"הקדמה", ref:"Duties_of_the_Heart,_Introduction"}]}, { t: "שער היחוד", p: 10, refBase: "Duties_of_the_Heart,_First_Treatise_on_Unity" }, { t: "שער הבחינה", p: 6, refBase: "Duties_of_the_Heart,_Second_Treatise_on_Examination" }, { t: "שער עבודת האלקים", p: 10, refBase: "Duties_of_the_Heart,_Third_Treatise_on_Service_of_God" }, { t: "שער הבטחון", p: 7, refBase: "Duties_of_the_Heart,_Fourth_Treatise_on_Trust_in_God" }, { t: "שער יחוד המעשה", p: 5, refBase: "Duties_of_the_Heart,_Fifth_Treatise_on_Devotion" }, { t: "שער הכניעה", p: 10, refBase: "Duties_of_the_Heart,_Sixth_Treatise_on_Humility" }, { t: "שער התשובה", p: 10, refBase: "Duties_of_the_Heart,_Seventh_Treatise_on_Repentance" }, { t: "שער חשבון הנפש", p: 6, refBase: "Duties_of_the_Heart,_Eighth_Treatise_on_Self-Accounting" }, { t: "שער הפרישות", p: 7, refBase: "Duties_of_the_Heart,_Ninth_Treatise_on_Abstinence" }, { t: "שער אהבת ה'", p: 7, refBase: "Duties_of_the_Heart,_Tenth_Treatise_on_Love_of_God" }] },
+  { n: "שערי תשובה", a: "רבינו יונה", struct: [{ t: "שערים", p: 4, refBase: "Shaarei_Teshuvah"}] },
+  { n: "אורחות צדיקים", a: "אנונימי", struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Orchot_Tzadikim,_Introduction"}] }, { t: "שערים", p: 28, refBase: "Orchot_Tzadikim"}] },
+  { n: "תומר דבורה", a: 'רמ"ק', struct: [{ t: "פרקים", p: 10, refBase: "Tomer_Devorah"}] },
+  { n: "פלא יועץ", a: "ר' אליעזר פאפו", struct: [{ t: "מערכות", p: 22, refBase: "Pele_Yoetz"}] },
+  { n: "חפץ חיים", a: "החפץ חיים", struct: [{ t: "הקדמות", items: [{k:"intro", l:"הקדמה", ref:"Chafetz_Chaim,_Introduction"}] }, { t: "איסור לשון הרע", p: 10, refBase: "Chafetz_Chaim,_Part_One,_The_Prohibition_Against_Lashon_Hara,_Principle" }, { t: "איסור רכילות", p: 9, refBase: "Chafetz_Chaim,_Part_Two,_The_Prohibition_Against_Rechilut,_Principle" }] },
+  { n: "שמירת הלשון", a: "החפץ חיים", struct: [
+    { t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Shemirat_HaLashon,_Book_I,_Introduction"}] },
+    { t: "שער הזכירה", p: 18, refBase: "Shemirat_HaLashon,_Book_I,_Shaar_HaZechirah" },
+    { t: "שער התבונה", p: 17, refBase: "Shemirat_HaLashon,_Book_I,_Shaar_HaTevunah" },
+    { t: "שער התורה", p: 12, refBase: "Shemirat_HaLashon,_Book_I,_Shaar_HaTorah" },
+    { t: "חלק שני - חתימה", p: 7, refBase: "Shemirat_HaLashon,_Book_II" }
+  ]},
+  { n: "אהבת חסד", a: "החפץ חיים", struct: [
+    { t: "חלק א'", p: 20, refBase: "Ahavat_Chesed,_Part_I" },
+    { t: "חלק ב'", p: 24, refBase: "Ahavat_Chesed,_Part_II" },
+    { t: "חלק ג'", p: 8, refBase: "Ahavat_Chesed,_Part_III" }
+  ]},
+  { n: 'ליקוטי מוהר"ן', a: "ר' נחמן מברסלב", struct: [{ t: "חלק א'", p: 286, refBase: "Likutei_Moharan" }, { t: "חלק ב'", p: 125, refBase: "Likutei_Moharan,_Part_II" }] },
+  { n: "ספר המידות", a: "ר' נחמן מברסלב", p: 30 },
+  { n: "ספר הישר", a: 'ר"ת', struct: [{ t: "שערים", p: 18, refBase: "Sefer_HaYashar"}] }
+];
+
+const MACHSHAVA = [
+  { n: "נפש החיים", a: "ר' חיים מוולוז'ין", struct: [{ t: "שער א'", p: 22, refBase: "Nefesh_HaChaim,_Gate_I" }, { t: "שער ב'", p: 18, refBase: "Nefesh_HaChaim,_Gate_II" }, { t: "שער ג'", p: 14, refBase: "Nefesh_HaChaim,_Gate_III" }, { t: "שער ד'", p: 34, refBase: "Nefesh_HaChaim,_Gate_IV" }] },
+  { n: "כוזרי", a: 'ריה"ל', struct: [{ t: "מאמר ראשון", p: 115, refBase: "Kuzari,_Essay_I" }, { t: "מאמר שני", p: 81, refBase: "Kuzari,_Essay_II" }, { t: "מאמר שלישי", p: 73, refBase: "Kuzari,_Essay_III" }, { t: "מאמר רביעי", p: 31, refBase: "Kuzari,_Essay_IV" }, { t: "מאמר חמישי", p: 28, refBase: "Kuzari,_Essay_V" }] },
+  { n: "תניא", a: 'אדמו"ר הזקן', struct: [{ t: "הסכמות והקדמה", items: [{k:"intro", l:"הקדמה", ref:"Tanya,_Compiler's_Foreword"}] }, { t: "לקוטי אמרים", p: 53, refBase: "Tanya,_Part_I;_Likkutei_Amarim" }, { t: "שער היחוד והאמונה", p: 12, refBase: "Tanya,_Part_II;_Shaar_HaYichud_VehaEmunah" }, { t: "אגרת התשובה", p: 12, refBase: "Tanya,_Part_III;_Iggeret_HaTeshuvah" }, { t: "אגרת הקודש", p: 32, refBase: "Tanya,_Part_IV;_Iggeret_HaKodesh" }, { t: "קונטרס אחרון", p: 9, refBase: "Tanya,_Part_V;_Kuntras_Acharon" }] },
+  { n: "מורה נבוכים", a: 'רמב"ם', struct: [{ t: "חלק א'", p: 76, refBase: "Guide_for_the_Perplexed,_Part_1" }, { t: "חלק ב'", p: 48, refBase: "Guide_for_the_Perplexed,_Part_2" }, { t: "חלק ג'", p: 54, refBase: "Guide_for_the_Perplexed,_Part_3" }] },
+  { n: "אמונות ודעות", a: 'רס"ג', struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"HaEmunot_veHaDeot,_Introduction"}] }, { t: "מאמר ראשון", p: 4, refBase: "HaEmunot_veHaDeot,_[Treatise_I]_The_Creation_of_the_World" }, { t: "מאמר שני", p: 13, refBase: "HaEmunot_veHaDeot,_[Treatise_II]_The_Unity_of_the_Creator" }, { t: "מאמר שלישי", p: 10, refBase: "HaEmunot_veHaDeot,_[Treatise_III]_Commandment_and_Prohibition" }, { t: "מאמר רביעי", p: 7, refBase: "HaEmunot_veHaDeot,_[Treatise_IV]_Obedience_and_Rebellion" }, { t: "מאמר חמישי", p: 8, refBase: "HaEmunot_veHaDeot,_[Treatise_V]_Merits_and_Demerits" }, { t: "מאמר שישי", p: 8, refBase: "HaEmunot_veHaDeot,_[Treatise_VI]_The_Essence_of_the_Soul" }] },
+  { n: "ספר העיקרים", a: "ר' יוסף אלבו", struct: [{ t: "מאמר ראשון", p: 26, refBase: "Sefer_HaIkkarim,_Maamar_1" }, { t: "מאמר שני", p: 31, refBase: "Sefer_HaIkkarim,_Maamar_2" }, { t: "מאמר שלישי", p: 40, refBase: "Sefer_HaIkkarim,_Maamar_3" }, { t: "מאמר רביעי", p: 51, refBase: "Sefer_HaIkkarim,_Maamar_4" }] },
+  { n: "נצח ישראל", a: 'מהר"ל', struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Netzach_Yisrael,_Introduction"}] }, { t: "פרקים", p: 60, refBase: "Netzach_Yisrael" }] },
+  { n: "נתיבות עולם", a: 'מהר"ל', struct: [{ t: "נתיב התורה", p: 19, refBase: "Netivot_Olam,_Netiv_Hatorah" }, { t: "נתיב העבודה", p: 19, refBase: "Netivot_Olam,_Netiv_HaAvodah" }] },
+  { n: "גבורות ה׳", a: 'מהר"ל', struct: [{ t: "הקדמות", items: [{k:"intro1", l:"הקדמה", ref:"Gevurot_Hashem,_First_Introduction"}] }, { t: "פרקים", p: 72, refBase: "Gevurot_Hashem" }] },
+  { n: "באר הגולה", a: 'מהר"ל', struct: [{ t: "בארות", items: [{k:"1", l:"באר א'", ref:"Be'er_HaGolah,_Well_1"}, {k:"2", l:"באר ב'", ref:"Be'er_HaGolah,_Well_2"}, {k:"3", l:"באר ג'", ref:"Be'er_HaGolah,_Well_3"}, {k:"4", l:"באר ד'", ref:"Be'er_HaGolah,_Well_4"}, {k:"5", l:"באר ה'", ref:"Be'er_HaGolah,_Well_5"}, {k:"6", l:"באר ו'", ref:"Be'er_HaGolah,_Well_6"}, {k:"7", l:"באר ז'", ref:"Be'er_HaGolah,_Well_7"}] }] }
+];
+
+const RAV_KOOK = [
+  { n: "אורות", a: 'הראי"ה קוק', struct: [
+      { t: "אורות מאופל - ארץ ישראל", p: 8, refBase: "Orot,_Lights_from_Darkness,_Land_of_Israel" },
+      { t: "אורות מאופל - המלחמה", p: 10, refBase: "Orot,_Lights_from_Darkness,_War" },
+      { t: "אורות מאופל - ישראל ותחיתו", p: 32, refBase: "Orot,_Lights_from_Darkness,_Israel_and_its_Rebirth" },
+      { t: "אורות מאופל - אורות התחיה", p: 72, refBase: "Orot,_Lights_from_Darkness,_Lights_of_Rebirth" },
+      { t: "למהלך האידיאות בישראל", p: 6, refBase: "Orot,_The_Course_of_Ideals_in_Israel" },
+      { t: "זרעונים", p: 8, refBase: "Orot,_Seeds" },
+      { t: "אורות ישראל", p: 9, refBase: "Orot,_Orot_Yisrael" }
+  ] },
+  { n: "אורות הקודש", g: "אורות הקודש", struct: [{ t: "חלק א'", p: 137, refBase: "Orot_HaKodesh_I" }, { t: "חלק ב'", p: 602, refBase: "Orot_HaKodesh_II" }, { t: "חלק ג'", p: 358, refBase: "Orot_HaKodesh_III" }] }, 
+  { n: "מוסר אביך", g: "שונות", struct: [{ t: "הקדמה", items: [{k:"intro", l:"הקדמה", ref:"Musar_Avikha,_Introduction"}]}, { t: "פרקים", p: 6, refBase: "Musar_Avikha" }] },
+  { n: "שמונה קבצים", g: "שמונה קבצים", struct: [
+    { t: "קובץ א'", p: 874, refBase: "Shemonah_Kevatzim.1" }, { t: "קובץ ב'", p: 337, refBase: "Shemonah_Kevatzim.2" }, { t: "קובץ ג'", p: 385, refBase: "Shemonah_Kevatzim.3" }, { t: "קובץ ד'", p: 121, refBase: "Shemonah_Kevatzim.4" }, { t: "קובץ ה'", p: 288, refBase: "Shemonah_Kevatzim.5" }, { t: "קובץ ו'", p: 289, refBase: "Shemonah_Kevatzim.6" }, { t: "קובץ ז'", p: 228, refBase: "Shemonah_Kevatzim.7" }, { t: "קובץ ח'", p: 275, refBase: "Shemonah_Kevatzim.8" }
+  ]}
+];
+
+const GEMARA = [{n:"ברכות",s:"זרעים",d:64,p:9},{n:"שבת",s:"מועד",d:157,p:24},{n:"עירובין",s:"מועד",d:105,p:10},{n:"פסחים",s:"מועד",d:121,p:10},{n:"שקלים",s:"מועד",d:22,p:8},{n:"יומא",s:"מועד",d:88,p:8},{n:"סוכה",s:"מועד",d:56,p:5},{n:"ביצה",s:"מועד",d:40,p:5},{n:"ראש השנה",s:"מועד",d:35,p:4},{n:"תענית",s:"מועד",d:31,p:4},{n:"מגילה",s:"מועד",d:32,p:4},{n:"מועד קטן",s:"מועד",d:29,p:3},{n:"חגיגה",s:"מועד",d:27,p:3},{n:"יבמות",s:"נשים",d:122,p:16},{n:"כתובות",s:"נשים",d:112,p:13},{n:"נדרים",s:"נשים",d:91,p:11},{n:"נזיר",s:"נשים",d:66,p:9},{n:"סוטה",s:"נשים",d:49,p:9},{n:"גיטין",s:"נשים",d:90,p:9},{n:"קידושין",s:"נשים",d:82,p:4},{n:"בבא קמא",s:"נזיקין",d:119,p:10},{n:"בבא מציעא",s:"נזיקין",d:119,p:10},{n:"בבא בתרא",s:"נזיקין",d:176,p:10},{n:"סנהדרין",s:"נזיקין",d:113,p:11},{n:"מכות",s:"נזיקין",d:24,p:3},{n:"שבועות",s:"נזיקין",d:49,p:8},{n:"עבודה זרה",s:"נזיקין",d:76,p:5},{n:"הוריות",s:"נזיקין",d:14,p:3},{n:"זבחים",s:"קדשים",d:120,p:14},{n:"מנחות",s:"קדשים",d:110,p:13},{n:"חולין",s:"קדשים",d:142,p:12},{n:"בכורות",s:"קדשים",d:61,p:9},{n:"ערכין",s:"קדשים",d:34,p:9},{n:"תמורה",s:"קדשים",d:34,p:7},{n:"כריתות",s:"קדשים",d:28,p:6},{n:"מעילה",s:"קדשים",d:22,p:6},{n:"נידה",s:"טהרות",d:73,p:10}];
+
+const GEMARA_CHAP_NAMES = {
+  "ברכות": ["מאימתי", "היה קורא", "מי שמתו", "תפילת השחר", "אין עומדין", "כיצד מברכין", "שלושה שאכלו", "אלו דברים", "הרואה"],
+  "שבת": ["יציאות השבת", "במה מדליקין", "במה טומנין", "במה אשה", "במה בהמה", "במה אשה יוצאה", "כלל גדול", "המוציא יין", "אמר רבי עקיבא", "המצניע", "הזורק", "הבונה", "האורג", "שמונה שרצים", "אלו קשרים", "כל כתבי", "כל הכלים", "מפנין", "רבי אליעזר דמילה", "תולין", "נוטל", "חבית", "שואל", "מי שהחשיך"],
+  "עירובין": ["מבוי", "עושין פסין", "בכל מערבין", "מי שהוציאוהו", "כיצד מעברין", "הדר", "כיצד משתתפין", "כיצד צולין", "כל גגות", "המוצא תפילין"],
+  "פסחים": ["אור לארבעה עשר", "כל שעה", "אלו עוברין", "מקום שנהגו", "תמיד נשחט", "אלו דברים", "כיצד צולין", "האשה", "מה אלו", "ערבי פסחים"],
+  "יומא": ["שבעת ימים", "בראשונה", "אמר להם הממונה", "טרף בקלפי", "הוציאו לו", "שני שעירים", "בא לו כהן גדול", "יום הכפורים"],
+  "סוכה": ["סוכה", "הישן תחת המטה", "לולב הגזול", "לולב וערבה", "החליל"],
+  "ביצה": ["ביצה", "יום טוב", "אין צדין", "המביא", "משילין"],
+  "ראש השנה": ["ארבעה ראשי שנים", "אם אינן מכירין", "ראוהו בית דין", "יום טוב של ראש השנה"],
+  "תענית": ["מאימתי מזכירין", "סדר תעניות", "סדר תעניות אלו", "בשלושה פרקים"],
+  "מגילה": ["מגילה נקראת", "הקורא למפרע", "הקורא עומד", "בני העיר"],
+  "מועד קטן": ["משקין", "מי שהפך", "ואלו מגלחין"],
+  "חגיגה": ["הכל חייבין", "אין דורשין", "חומר בקדש"],
+  "יבמות": ["חמש עשרה נשים", "כיצד", "ארבעה אחין", "החולץ", "רבן גמליאל", "הבא על יבמתו", "אלמנה", "הערל", "יש מותרות", "האשה רבה", "נושאין על האנוסה", "מצות חליצה", "שומרת יבם", "חרש", "האשה שלום", "האשה בתרא"],
+  "כתובות": ["בתולה", "האשה שנתארמלה", "אלו נערות", "נערה", "אף על פי", "מציאת האשה", "המדיר", "האשה שנפלו", "הכותב", "מי שהיה נשוי", "אלמנה ניזונת", "הנושא", "שני דייני גזירות"],
+  "נדרים": ["כל כנויי", "ואלו מותרין", "ארבעה נדרים", "אין בין המודר", "השותפין", "הנודר מן המבושל", "הנודר מן הירק", "קונם יין", "רבי אליעזר", "נערה המאורסה", "ואלו נדרים"],
+  "גיטין": ["המביא גט", "המביא גט", "כל הגט", "השולח", "הניזקין", "האומר", "מי שאחזו", "הזורק", "המגרש"],
+  "קידושין": ["האשה נקנית", "האיש מקדש", "האומר", "עשרה יוחסין"],
+  "בבא קמא": ["ארבעה אבות", "כיצד הרגל", "המניח", "שור שנגח ארבעה", "שור שנגח את הפרה", "הכונס", "מרובה", "החובל", "הגוזל עצים", "הגוזל ומאכיל"],
+  "בבא מציעא": ["שנים אוחזין", "אלו מציאות", "המפקיד", "הזהב", "איזהו נשך", "השוכר את האומנין", "השוכר את הפועלים", "השואל", "המקבל", "הבית והעליה"],
+  "בבא בתרא": ["השותפין", "לא יחפור", "חזקת הבתים", "המוכר את הבית", "המוכר את הספינה", "המוכר פירות", "יש נוחלין", "גט פשוט", "מי שמת"],
+  "סנהדרין": ["דיני ממונות בשלשה", "כהן גדול", "זה בורר", "אחד דיני ממונות", "היו בודקין", "נגמר הדין", "ארבע מיתות", "בן סורר", "אלו הנשרפין", "אלו הן הנחנקין", "חלק"],
+  "מכות": ["כיצד העדים", "אלו הן הגולין", "אלו הן הלוקין"],
+  "שבועות": ["שבועות שתים", "ידיעות הטומאה", "שבועות שתים", "שבועת העדות", "שבועת הפקדון", "שבועת הדיינין", "כל הנשבעין", "ארבעה שומרים"],
+  "עבודה זרה": ["לפני אידיהן", "אין מעמידין", "כל הצלמים", "רבי ישמעאל", "השוכר את הפועל"],
+  "הוריות": ["הורו בית דין", "הורה כהן משיח", "כהן משיח"],
+  "זבחים": ["כל הזבחים", "כל הזבחים שנזבחו", "כל הפסולין", "איזהו מקומן", "קדשי קדשים", "קודש קדשים", "חטאת העוף", "כל הזבחים שקבלו", "המזבח מקדש", "דם חטאת", "התערובות", "טבול יום", "השוחט והמעלה", "פרת חטאת"],
+  "מנחות": ["כל המנחות", "הקומץ רבה", "הקומץ את המנחה", "התכלת", "כל המנחות באות מצה", "העומר", "שתי הלחם", "רבי ישמעאל אומר", "כל קרבנות צבור", "שתי מדות", "המנחות והנסכים", "כל המנחות באות עשר", "התנדב מנחה"],
+  "חולין": ["הכל שוחטין", "השוחט אחד בעוף", "אלו טריפות", "בהמה המקשה", "אותו ואת בנו", "כסוי הדם", "גיד הנשה", "כל הבשר", "העור והרוטב", "זרוע ולחיים", "ראשית הגז", "שלוח הקן"],
+  "בכורות": ["הלוקח עובר", "הלוקח בהמה", "יש בכור", "עד כמה", "כל פסולי", "כל הפסולין", "מומין אלו", "על אלו מומין", "יש בכור לנחלה", "מעשר בהמה"],
+  "ערכין": ["הכל מעריכין", "אין בערכין", "יש בערכין", "המקדיש שדהו", "שום היתומים", "הקדיש שדהו", "אין מקדישין", "המוכר שדהו", "מוכר אדם"],
+  "תמורה": ["הכל ממירין", "יש בקרבנות", "אלו קדשים", "ולד חטאת", "כיצד מערימין", "כל האסורין", "יש בקרבנות צבור"],
+  "כריתות": ["שלשים ושש", "ארבעה מביאין", "אמרו לו", "ספק אכל", "דם שחיטה", "המביא אשם"],
+  "מעילה": ["קדשי קדשים", "חטאת העוף", "ולד חטאת", "הנהנה מן ההקדש", "כל שקלים", "שליח שעשה"],
+  "נידה": ["שמאי אומר", "כל היד", "המפלת חתיכה", "בנות כותים", "יוצא דופן", "בא סימן", "דם הנדה", "רואה כתם", "האשה שהיא", "תינוקת"]
+};
+
+// מיפוי עמודים מדויק למניעת חירטוטים בגמרא
+const EXACT_GEMARA_STARTS = {
+  "ברכות": ["2a", "11a", "18a", "26a", "30b", "35b", "45a", "51b", "54a"],
+  "שבת": ["2a", "20b", "36b", "47a", "51b", "57a", "68a", "76a", "83a", "90a", "96a", "102b", "105b", "107a", "111a", "115a", "122b", "126b", "130a", "137a", "148a", "150a", "153a", "155a"],
+  "עירובין": ["2a", "17b", "26a", "41a", "53b", "61b", "76b", "89a", "94a", "95a"],
+  "פסחים": ["2a", "21a", "42a", "50a", "58a", "66b", "74a", "87a", "92a", "99b"],
+  "ראש השנה": ["2a", "18a", "24b", "29b"],
+  "יומא": ["2a", "15a", "25a", "39a", "53b", "62a", "68b", "73b"],
+  "סוכה": ["2a", "20a", "29b", "42b", "50a"],
+  "ביצה": ["2a", "15b", "23b", "29b", "35b"],
+  "תענית": ["2a", "11a", "15a", "26a"],
+  "מגילה": ["2a", "17a", "25a", "25b"],
+  "מועד קטן": ["2a", "11a", "13b"], 
+  "חגיגה": ["2a", "11b", "18b"], 
+  "יבמות": ["2a", "17a", "26b", "41a", "50a", "54a", "61a", "70a", "84a", "87b", "97a", "101a", "109a", "112b", "114b", "118b"],
+  "כתובות": ["2a", "16a", "29a", "39b", "54b", "64b", "70a", "79a", "83a", "90b", "103a", "108a", "104a"],
+  "קידושין": ["2a", "41a", "58b", "69a"], 
+  "בבא קמא": ["2a", "16a", "27b", "36a", "46a", "55b", "62b", "83b", "96b", "111b"],
+  "בבא מציעא": ["2a", "21a", "33b", "44a", "60b", "73a", "83a", "94a", "103b", "116a"],
+  "בבא בתרא": ["2a", "17a", "28a", "61a", "73a", "83b", "108b", "160b", "164b", "175a"],
+  "סנהדרין": ["2a", "18a", "23a", "32a", "40a", "42b", "52b", "68b", "73a", "84a", "90a"],
+  "מכות": ["2a", "7a", "13b"]
+};
+
+function generateAmudimRange(startStr, endStr, masechetDafLimit) {
+    if (!startStr) return [];
+    let r = [];
+    let startDaf = parseInt(startStr);
+    let startAmud = startStr.slice(-1);
+    let endDaf = endStr ? parseInt(endStr) : masechetDafLimit;
+    let endAmud = endStr ? endStr.slice(-1) : 'b';
+
+    for (let d = startDaf; d <= endDaf; d++) {
+        if (d === startDaf && startAmud === 'b') {
+            r.push(`${d}b`);
+        } else if (d === endDaf) {
+            if (endAmud === 'a') r.push(`${d}a`);
+            else r.push(`${d}a`, `${d}b`);
+        } else {
+            r.push(`${d}a`, `${d}b`);
+        }
+    }
+    if (endStr && r.length > 0 && r[r.length-1] === endStr) {
+        r.pop();
+    }
+    return r;
+}
+
+const MISHNA = [{m:"ברכות",s:"זרעים",p:9,ms:[5,8,6,7,5,8,5,8,5]},{m:"פאה",s:"זרעים",p:8,ms:[6,8,8,11,8,11,8,9]},{m:"דמאי",s:"זרעים",p:7,ms:[4,5,6,7,7,11,8]},{m:"כלאים",s:"זרעים",p:9,ms:[9,11,7,9,8,9,8,6,10]},{m:"שביעית",s:"זרעים",p:10,ms:[8,10,10,10,9,6,7,11,9,9]},{m:"תרומות",s:"זרעים",p:11,ms:[10,6,9,13,9,6,7,12,7,12,10]},{m:"מעשרות",s:"זרעים",p:5,ms:[8,8,10,6,8]},{m:"מעשר שני",s:"זרעים",p:5,ms:[7,10,13,12,15]},{m:"חלה",s:"זרעים",p:4,ms:[9,8,10,11]},{m:"ערלה",s:"זרעים",p:3,ms:[9,17,9]},{m:"ביכורים",s:"זרעים",p:4,ms:[11,11,12,5]},{m:"שבת",s:"מועד",p:24,ms:[11,7,6,7,4,10,4,4,7,6,6,6,7,4,3,8,8,3,6,5,3,6,6,5]},{m:"עירובין",s:"מועד",p:10,ms:[10,6,9,11,9,10,11,11,4,15]},{m:"פסחים",s:"מועד",p:10,ms:[7,8,8,9,10,2,13,8,11,9]},{m:"שקלים",s:"מועד",p:8,ms:[7,5,4,9,6,7,7,8]},{m:"יומא",s:"מועד",p:8,ms:[8,7,11,6,7,8,5,9]},{m:"סוכה",s:"מועד",p:5,ms:[11,9,15,10,8]},{m:"ביצה",s:"מועד",p:5,ms:[10,10,8,7,7]},{m:"ראש השנה",s:"מועד",p:4,ms:[9,8,8,9]},{m:"תענית",s:"מועד",p:4,ms:[7,10,9,8]},{m:"מגילה",s:"מועד",p:4,ms:[11,6,6,10]},{m:"מועד קטן",s:"מועד",p:3,ms:[10,5,9]},{m:"חגיגה",s:"מועד",p:3,ms:[8,7,8]},{m:"יבמות",s:"נשים",p:16,ms:[16,10,10,13,13,6,6,6,6,9,7,6,13,9,10,7]},{m:"כתובות",s:"נשים",p:13,ms:[10,10,9,12,9,7,10,8,9,6,6,4,11]},{m:"נדרים",s:"נשים",p:11,ms:[4,5,11,8,6,10,9,7,9,8,12]},{m:"נזיר",s:"נשים",p:9,ms:[7,10,7,7,7,11,4,2,5]},{m:"סוטה",s:"נשים",p:9,ms:[9,6,8,5,9,3,8,7,15]},{m:"גיטין",s:"נשים",p:9,ms:[6,7,8,9,9,7,9,10,10]},{m:"קידושין",s:"נשים",p:4,ms:[10,10,13,14]},{m:"בבא קמא",s:"נזיקין",p:10,ms:[4,6,11,9,7,6,7,7,12,10]},{m:"בבא מציעא",s:"נזיקין",p:10,ms:[8,11,12,12,11,8,11,10,13,6]},{m:"בבא בתרא",s:"נזיקין",p:10,ms:[6,15,10,9,11,8,10,8,8,8]},{m:"סנהדרין",s:"נזיקין",p:11,ms:[6,5,8,5,5,6,11,7,6,6,6]},{m:"מכות",s:"נזיקין",p:3,ms:[10,8,16]},{m:"שבועות",s:"נזיקין",p:8,ms:[7,5,11,13,5,7,8,6]},{m:"עדיות",s:"נזיקין",p:8,ms:[14,10,12,12,7,3,9,7]},{m:"עבודה זרה",s:"נזיקין",p:5,ms:[9,7,12,12,12]},{m:"אבות",s:"נזיקין",p:6,ms:[18,16,18,22,23,11]},{m:"הוריות",s:"נזיקין",p:3,ms:[5,7,8]},{m:"זבחים",s:"קדשים",p:14,ms:[4,5,8,6,8,7,6,12,7,9,8,6,8,3]},{m:"מנחות",s:"קדשים",p:13,ms:[4,5,7,5,9,7,6,7,9,9,9,5,11]},{m:"חולין",s:"קדשים",p:12,ms:[7,10,7,7,5,7,7,4,8,4,6,5]},{m:"בכורות",s:"קדשים",p:9,ms:[7,9,4,10,6,12,7,10,8]},{m:"ערכין",s:"קדשים",p:9,ms:[4,6,5,5,8,5,5,7,8]},{m:"תמורה",s:"קדשים",p:7,ms:[6,3,4,3,6,5,6]},{m:"כריתות",s:"קדשים",p:6,ms:[7,6,10,3,8,9]},{m:"מעילה",s:"קדשים",p:6,ms:[4,9,3,6,5,4]},{m:"תמיד",s:"קדשים",p:7,ms:[4,5,9,3,7,3,4]},{m:"מידות",s:"קדשים",p:5,ms:[9,6,8,7,4]},{m:"קינים",s:"קדשים",p:3,ms:[4,5,6]},{m:"כלים",s:"טהרות",p:30,ms:[9,8,8,4,11,4,6,11,8,8,9,8,8,8,6,8,17,9,10,7,3,10,5,17,9,9,12,10,9,16]},{m:"אהלות",s:"טהרות",p:18,ms:[8,7,7,7,7,7,6,6,15,7,9,8,9,10,10,9,5,10]},{m:"נגעים",s:"טהרות",p:14,ms:[6,5,4,11,5,8,5,10,3,10,12,7,12,13]},{m:"פרה",s:"טהרות",p:12,ms:[4,3,5,4,9,5,12,10,9,6,9,12]},{m:"טהרות",s:"טהרות",p:10,ms:[9,8,8,13,9,10,9,10,9,8]},{m:"מקוואות",s:"טהרות",p:10,ms:[8,10,4,5,6,11,7,5,7,8]},{m:"נידה",s:"טהרות",p:10,ms:[7,7,7,7,9,14,5,4,11,8]},{m:"מכשירין",s:"טהרות",p:6,ms:[6,11,8,10,11,8]},{m:"זבים",s:"טהרות",p:5,ms:[6,3,3,7,12]},{m:"טבול יום",s:"טהרות",p:4,ms:[5,8,6,7]},{m:"ידים",s:"טהרות",p:4,ms:[5,4,5,8]},{m:"עוקצין",s:"טהרות",p:3,ms:[6,10,12]}];
+
+const HALACHOT = [
+  { t: "השכמת הבוקר: 'יתגבר כארי לעמוד בבוקר לעבודת בוראו'. ההלכה הפותחת את השולחן ערוך מלמדת שמיד עם היקיצה, עוד לפני שהגוף מתרגל לשגרה, עלינו להתמלא בגבורה רוחנית ולהכיר בכך שהיום החדש הוא מתנה לעשיית רצון ה'.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "מודה אני: מצווה לומר מיד שניעור 'מודה אני לפניך מלך חי וקיים'. היתרון העצום בתפילה זו הוא שאין בה שם השם, ולכן ניתן לאומרה עוד לפני נטילת ידיים (גם כשהגוף אינו טהור), כביטוי טהור, טבעי ומיידי של הכרת הטוב על החזרת הנשמה.", s: "שולחן ערוך, אורח חיים א, א" },
+  { t: "נטילת ידיים שחרית: בבוקר יש ליטול כל יד שלוש פעמים לסירוגין מכלי עם מים, כדי להעביר את טומאת הלילה. נטילה זו משמשת גם כהכנה רוחנית לתפילה, בדומה לכהן שמקדש את ידיו לפני העבודה בבית המקדש.", s: "שולחן ערוך, אורח חיים ד, ב" },
+  { t: "ברכות השחר: ברכות אלו נתקנו כדי להודות על התפקודים הבסיסיים ביותר של האדם והעולם – פקיחת העיניים, היכולת ללכת, המלבוש ועוד. ראוי לברך אותן בשמחה ובכוונה, שכן הן 'מקרקעות' אותנו רוחנית ונותנות פרופורציה לפני שאנו צוללים לשגרת היום.", s: "שולחן ערוך, אורח חיים מו, א" },
+  { t: "קביעות עיתים לתורה: חובה על כל אדם מישראל, בין עני ובין עשיר, בין בריא ובין בעל ייסורים, לקבוע זמן מוגדר ללימוד תורה בכל יום ובכל לילה. הקביעות צריכה להיות כה יציבה וחזקה, עד שאפילו טרדות הפרנסה לא יבטלו אותה.", s: "שולחן ערוך, יורה דעה רמו, א" },
+  { t: "אהבת ישראל: 'ואהבת לרעך כמוך' – המשמעות המעשית היא לדאוג לכספו, לכבודו ולרווחתו של חברו בדיוק כפי שאדם דואג לעצמו. הרמב״ם מוסיף ומציין שמי שמתכבד בקלון חברו, פוגע בעצם מהותו הרוחנית ואין לו חלק לעולם הבא.", s: "רמב״ם, הלכות דעות ו, ג" },
+  { t: "איסור לשון הרע: מן האיסורים החמורים ביותר בתורה - הדיבור בגנותו של אדם אחר, ואפילו אם הדברים נכונים לחלוטין (שאם הם שקר - הרי זה 'מוציא שם רע'). דיבור רע מפרק משפחות, הורס קהילות והוא הבסיס לחברה לא בריאה.", s: "חפץ חיים, פתיחה" },
+  { t: "כיבוד אב ואם: מצוות עשה מן התורה שכוללת סיוע פיזי וכן מורא (שלא לסתור את דבריהם, לא לעמוד במקומם ולא לקרוא להם בשמם). חז״ל השוו את כבוד ההורים לכבודו של הקב״ה, שכן שלושתם שותפים ביצירת האדם.", s: "שולחן ערוך, יורה דעה רמ, א" },
+  { t: "ביקור חולים: מצווה גדולה להגיע לבקר חולה, לראות מה צרכיו הרפואיים או הנפשיים, ויותר מכל – להתפלל עליו. חז״ל אומרים שמי שמבקר חולה נוטל חלק מסבלו ו'מחיֶּה' אותו. ובלבד שהביקור לא יכביד על החולה.", s: "שולחן ערוך, יורה דעה שלג, א" },
+  { t: "הכנסת אורחים: 'גדולה הכנסת אורחים מהקבלת פני השכינה' – יסוד שלמדנו מאברהם אבינו. המצווה אינה מסתכמת רק בהגשת אוכל, אלא במאור פנים, דאגה למנוחתו של האורח, וליוויו בעת צאתו מן הבית.", s: "רמב״ם, הלכות אבל יד, ב" },
+  { t: "שמירת שבת (עונג וכבוד): 'עונג שבת' מתבטא באכילת מאכלים מיוחדים ומנוחה אמיתית מטכנולוגיה ומטרדות החול. השבת מוגדרת כ'מעין עולם הבא', וככל שמתכוננים אליה מראש - כך זוכים לטעום מקדושתה במהלך השבת כולה.", s: "שולחן ערוך, אורח חיים רנ, א" },
+  { t: "תפילה בכוונה: תפילה שנאמרת ללא כוונה נחשבת ל'גוף ללא נשמה'. כשאדם מתפלל עליו לחוש כאילו השכינה מולו. אם קשה לו לכוון בכל התפילה, עליו להתאמץ לכוון לכל הפחות בברכת 'אבות' הפותחת את שמונה עשרה.", s: "שולחן ערוך, אורח חיים צה, א" },
+  { t: "מתן צדקה: חובה על כל אדם, ואפילו עני המתפרנס מן הצדקה, לתת צדקה לאחרים. הדרך המהודרת ביותר היא לתת עשירית מכל רווחיו ('מעשר כספים'). הרמב״ם פוסק שמעולם לא העני אדם מן הצדקה, והיא מקרבת את הגאולה.", s: "שולחן ערוך, יורה דעה רמז, א" },
+  { t: "השבת אבידה: הרואה אבידה חייב להיטפל בה ולהשיבה לבעליה, ובלבד שיש בה סימן מזהה. התעלמות מאבידה עוברת על הלאו 'לא תוכל להתעלם'. המשיב אבידה עושה חסד עצום ומקיים את האמון בחברה הישראלית.", s: "שולחן ערוך, חושן משפט רנט, א" },
+  { t: "אונאת דברים: אסור להונות ולצער את חברו בדיבור. איסור זה חמור מאונאת ממון (רמאות כספית) משום שהוא פוגע בנפש. למשל, אסור להזכיר לבעל תשובה את עברו, או להציע מחיר על חפץ כשאין שום כוונה לקנותו.", s: "שולחן ערוך, חושן משפט רכח, א" }
+];
+
+const CATS = ["gemara","mishna","tanach","musar","ravKook","machshava","custom"];
+const NAVY = "#1A3A6B", GOLD = "#C9A84C";
+const CC_L = {gemara:NAVY,mishna:"#0A5757",tanach:"#7A4818",musar:"#1A5C2E",ravKook:"#1A2B6B",machshava:"#4A1A5C",custom:"#444"};
+const CL_L = {gemara:"#E8EFF8",mishna:"#E3F6F6",tanach:"#FDF3E3",musar:"#E3F5EC",ravKook:"#E8EBF8",machshava:"#F5E8FC",custom:"#F0F0F0"};
+const CC_D = {gemara:"#93C5FD",mishna:"#5EEAD4",tanach:"#FCD34D",musar:"#6EE7B7",ravKook:"#A5B4FC",machshava:"#F9A8D4",custom:"#D1D5DB"};
+const CL_D = {gemara:"#1E3A5F",mishna:"#1A3A38",tanach:"#3D2800",musar:"#1A3A28",ravKook:"#1A2A5F",machshava:"#3A1A48",custom:"#374151"};
+const QUOTES = ["״לא עליך המלאכה לגמור, ולא אתה בן חורין ליבטל ממנה״ (אבות ב, טז)"];
+
+const SEFARIA_MAP = {
+  "ברכות": "Berakhot", "שבת": "Shabbat", "עירובין": "Eruvin", "פסחים": "Pesachim", "שקלים": "Shekalim", "יומא": "Yoma", "סוכה": "Sukkah", "ביצה": "Beitzah", "ראש השנה": "Rosh_Hashanah", "תענית": "Taanit", "מגילה": "Megillah", "מועד קטן": "Moed_Katan", "חגיגה": "Chagigah", "יבמות": "Yevamot", "כתובות": "Ketubot", "נדרים": "Nedarim", "נזיר": "Nazir", "סוטה": "Sotah", "גיטין": "Gittin", "קידושין": "Kiddushin", "בבא קמא": "Bava_Kamma", "בבא מציעא": "Bava_Metzia", "בבא בתרא": "Bava_Batra", "סנהדרין": "Sanhedrin", "מכות": "Makkot", "שבועות": "Shevuot", "עבודה זרה": "Avodah_Zarah", "הוריות": "Horayot", "זבחים": "Zevachim", "מנחות": "Menachot", "חולין": "Chullin", "בכורות": "Bekhorot", "ערכין": "Arakhin", "תמורה": "Temurah", "כריתות": "Keritot", "מעילה": "Meilah", "נידה": "Niddah",
+  "פאה": "Peah", "דמאי": "Demai", "כלאים": "Kilayim", "שביעית": "Sheviit", "תרומות": "Terumot", "מעשרות": "Maasrot", "מעשר שני": "Maaser_Sheni", "חלה": "Challah", "ערלה": "Orlah", "ביכורים": "Bikkurim", "עדיות": "Eduyot", "אבות": "Pirkei_Avot", "תמיד": "Tamid", "מידות": "Middot", "קינים": "Kinnim", "כלים": "Kelim", "אהלות": "Oholot", "נגעים": "Negaim", "פרה": "Parah", "טהרות": "Tohorot", "מקוואות": "Mikvaot", "מכשירין": "Makhshirin", "זבים": "Zavim", "טבול יום": "Tevul_Yom", "ידים": "Yadayim", "עוקצין": "Oktzin",
+  "בראשית": "Genesis", "שמות": "Exodus", "ויקרא": "Leviticus", "במדבר": "Numbers", "דברים": "Deuteronomy", "יהושע": "Joshua", "שופטים": "Judges", "שמואל א": "I_Samuel", "שמואל ב": "II_Samuel", "מלכים א": "I_Kings", "מלכים ב": "II_Kings", "ישעיהו": "Isaiah", "ירמיהו": "Jeremiah", "יחזקאל": "Ezekiel", "הושע": "Hosea", "יואל": "Joel", "עמוס": "Amos", "עובדיה": "Obadiah", "יונה": "Jonah", "מיכה": "Micah", "נחום": "Nahum", "חבקוק": "Habakkuk", "צפניה": "Zephaniah", "חגי": "Haggai", "זכריה": "Zechariah", "מלאכי": "Malachi", "תהלים": "Psalms", "משלי": "Proverbs", "איוב": "Job", "שיר השירים": "Song_of_Songs", "רות": "Ruth", "איכה": "Lamentations", "קהלת": "Ecclesiastes", "אסתר": "Esther", "דניאל": "Daniel", "עזרא": "Ezra", "נחמיה": "Nehemiah", "דברי הימים א": "I_Chronicles", "דברי הימים ב": "II_Chronicles"
 };
 
 const COMPLEX_REFS = {
@@ -660,6 +836,7 @@ function SefariaReaderSheet({ show, onClose, title, sefariaRef, cat, isTorah, T 
     </Sheet>
   );
 }
+
 /* ── BOOK CARD ── */
 function BookCard({cat, item, prog, T, cc, cl, onPress, custom}){
   if(!item) return null;
@@ -919,7 +1096,7 @@ function DetailScreen({detail,prog,T,cc,cl,setProg,goBack,onActivity}){
     </div>
   );
 }
-
+/* ── HOME ── */
 function HomeScreen({prog,goals,T,cc,setTab,setDetail,activity,setLibCat}){
   const today=useMemo(()=>hebDateFull(),[]);
   const[now,setNow]=useState(new Date());
@@ -1035,6 +1212,73 @@ function LibraryScreen({prog,T,cc,cl,setProg,setDetail,libCat,setLibCat}){
   );
 }
 
+function GoalsScreen({goals, setGoals, prog, T, cc}){
+  const [showSheet, setShowSheet] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [cat, setCat] = useState("gemara");
+  const [bookIdKey, setBookIdKey] = useState("");
+  const [target, setTarget] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [otherName, setOtherName] = useState("");
+
+  const isOther = cat === "other";
+  const bkList = isOther ? [] : getBkList(cat, prog?.custom);
+  const selectedItem = bkList.find(b => String(b.idKey) === String(bookIdKey));
+
+  let maxTot = 0;
+  if (!isOther && selectedItem) {
+      if (selectedItem.isC) {
+          const customArr = prog?.custom || [];
+          const customBook = customArr[selectedItem.origIdx];
+          maxTot = customBook ? customBook.chapters : 0;
+      } else {
+          maxTot = bkTotal(prog, cat, selectedItem.i, prog?.custom);
+      }
+  }
+
+  function openNew() { 
+      setEditingId(null); setCat("gemara"); setBookIdKey(""); setTarget(""); setDeadline(""); setOtherName(""); setShowSheet(true); 
+  }
+
+  function save() { 
+      if(!deadline || (cat === "other" && !otherName)) return; 
+      const finalTarget = target ? parseInt(target) : maxTot;
+      if(editingId) {
+          setGoals(prev => (prev || []).map(x => x.id === editingId ? { ...x, cat, idx: selectedItem ? selectedItem.i : 0, isC: !!selectedItem?.isC, origIdx: selectedItem ? selectedItem.origIdx : 0, target: finalTarget, deadline, otherName: otherName || "" } : x));
+      } else {
+          setGoals(prev => [...(prev || []), { id: Date.now(), cat, idx: selectedItem ? selectedItem.i : 0, isC: !!selectedItem?.isC, origIdx: selectedItem ? selectedItem.origIdx : 0, target: finalTarget, deadline, startDate: todayKey(), otherName: otherName || "" }]);
+      }
+      setShowSheet(false); 
+  }
+
+  return (
+    <div style={{flex:1,overflow:"auto",padding:"14px 16px 80px"}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <div style={{fontSize:T.f(18),fontWeight:900,color:T.navy}}>{T.UI.goals}</div>
+        <button onClick={openNew} style={{fontSize:T.f(13),padding:"9px 16px",borderRadius:12,background:T.primary,color:"#fff",border:"none",cursor:"pointer",fontWeight:700,fontFamily:T.font}}>{T.UI.newGoal}</button>
+      </div>
+      {(!goals || goals.length === 0) && (
+        <div style={{textAlign:"center",padding:"50px 16px",background:T.card,borderRadius:16,boxShadow:T.shadow}}>
+          <div style={{display:"flex",justifyContent:"center",color:NAVY,marginBottom:14}}><IcoStar/></div>
+          <div style={{fontSize:T.f(17),fontWeight:900,color:T.navy,marginBottom:8}}>{T.UI.noGoals}</div>
+          <div style={{fontSize:T.f(14),color:T.muted,lineHeight:1.7}}>{T.UI.setGoal}</div>
+          <button onClick={openNew} style={{marginTop:16,padding:"11px 24px",background:T.primary,color:"#fff",border:"none",borderRadius:12,cursor:"pointer",fontSize:T.f(14),fontWeight:700,fontFamily:T.font}}>{T.UI.firstGoal}</button>
+        </div>
+      )}
+      <div>
+        {(goals || []).map(g => g ? ( <GoalRow key={g.id} g={g} prog={prog} T={T} cc={cc} onEdit={()=>{setEditingId(g.id);setCat(g.cat);setBookIdKey(g.isC?'custom_c'+g.origIdx:g.cat+'_s'+g.idx);setTarget(g.target);setDeadline(g.deadline);setOtherName(g.otherName||"");setShowSheet(true);}} onDelete={()=>setGoals(prev=>(prev||[]).filter(x=>x.id!==g.id))} custom={prog?.custom}/> ) : null)}
+      </div>
+      <Sheet show={showSheet} onClose={()=>setShowSheet(false)} title={editingId ? (T.isEn ? "Edit Goal" : "עריכת יעד") : T.UI.newGoal} T={T}>
+        <FL label={T.UI.topic} T={T}><FS T={T} value={cat} onChange={e=>{setCat(e.target.value);setBookIdKey("");setTarget("");}}>{CATS.map(c=><option key={c} value={c}>{T.CAT_L[c]}</option>)}</FS></FL>
+        {cat !== "other" && bkList.length > 0 && ( <FL label={T.UI.book} T={T}><FS T={T} value={bookIdKey} onChange={e=>{setBookIdKey(e.target.value);setTarget("");}}><option value="">{T.UI.selectBook}</option>{bkList.map(b=><option key={b.idKey} value={b.idKey}>{b.n}</option>)}</FS></FL> )}
+        <FL label={`${T.UI.target} ${maxTot > 0 ? `(${T.UI.max || "Max"}: ${maxTot})` : ""}`} T={T}><FI T={T} type="number" value={target} onChange={e=>setTarget(e.target.value)} placeholder={maxTot > 0 ? `${maxTot}` : ""}/></FL>
+        <FL label={T.UI.deadline} T={T}><DualDateInput T={T} value={deadline} onChange={e=>setDeadline(e.target.value)}/></FL>
+        <PB T={T} onClick={save} style={{marginTop:16,background:NAVY}}>{T.UI.saveGoal}</PB>
+      </Sheet>
+    </div>
+  );
+}
+
 function SettingsScreen({sett,setSett,T,onLogout,user}){
   const[legalType, setLegalType] = useState(null);
   return (
@@ -1043,8 +1287,34 @@ function SettingsScreen({sett,setSett,T,onLogout,user}){
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.support}</div><div style={{padding:"14px 16px"}}><a href="mailto:eitanshachor1@gmail.com" style={{display:"flex", alignItems:"center", gap:10, color:T.navy, textDecoration:"none", fontSize:T.f(14), fontWeight:600}}>{T.isEn ? "Contact Developer" : "צור קשר / דיווח על באגים"}</a></div></div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.legal}</div><div style={{padding:"14px 16px", borderBottom:`1px solid ${T.border}`}}><button onClick={()=>setLegalType('terms')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.terms}</button></div><div style={{padding:"14px 16px"}}><button onClick={()=>setLegalType('privacy')} style={{background:"none",border:"none",cursor:"pointer",color:T.navy,fontSize:T.f(14),fontWeight:600,textAlign:"start",padding:0,width:"100%"}}>{T.UI.privacy}</button></div></div>
       <div style={{background:T.card,borderRadius:16,overflow:"hidden",boxShadow:T.shadow,marginBottom:16}}><div style={{fontSize:T.f(11),color:T.muted,fontWeight:700,padding:"12px 16px 8px",borderBottom:`1px solid ${T.border}`,letterSpacing:.5,textAlign:"start"}}>{T.UI.account}</div><div style={{padding:"14px 16px",borderBottom:`1px solid ${T.border}`,textAlign:"start"}}><div style={{fontSize:T.f(14),fontWeight:700,color:T.navy}}>{user?.name||"משתמש"}</div><div style={{fontSize:T.f(12),color:T.muted,marginTop:2}}>{user?.email||""}</div></div><div style={{padding:"14px 16px"}}><button onClick={onLogout} style={{background:"none",border:"none",cursor:"pointer",color:T.red,fontSize:T.f(14),fontWeight:700,width:"100%",textAlign:"start"}}>{T.UI.signOut}</button></div></div>
-      <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}><div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div><div style={{direction: "ltr"}}>v 1.0.5</div><div>© {new Date().getFullYear()} פותח ע״י איתן שחור. כל הזכויות שמורות.</div></div>
+      <div style={{textAlign:"center",fontSize:T.f(11),color:T.muted,lineHeight:1.8,marginTop:24}}><div style={{fontWeight:900,color:T.navy,fontSize:T.f(16),letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div><div style={{direction: "ltr"}}>v 1.0.6</div><div>© {new Date().getFullYear()} פותח ע״י איתן שחור. כל הזכויות שמורות.</div></div>
       <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} /></div>
+  );
+}
+
+function AuthScreen({onLogin,T,globalError}){
+  const [err,setErr]=useState("");
+  const [legalType,setLegalType]=useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  
+  return (
+    <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:32,gap:20,background:T.bg}}>
+      <div style={{width:100,height:100,background:`linear-gradient(145deg,${NAVY},#0A1E3A)`,borderRadius:32,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",boxShadow:`0 12px 40px rgba(26,58,107,0.5)`,border:`2px solid ${GOLD}44`}}><LogoAliba T={T} size={54}/></div>
+      <div style={{textAlign:"center", marginBottom:20}}><div style={{fontSize:T.f(36),fontWeight:900,color:T.navy,marginBottom:4,letterSpacing:1}}>א<span style={{color:T.gold||GOLD}}>ל</span>י<span style={{color:T.gold||GOLD}}>ב</span>א</div><div style={{fontSize:T.f(14),color:T.muted, fontWeight:500}}>{T.UI.slogan}</div></div>
+      <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:14}}>
+        {globalError && <div style={{color:T.red,fontSize:T.f(13),marginBottom:8,textAlign:"center", background: "#fee2e2", padding: "10px", borderRadius: 8}}>{globalError}</div>}
+        <FI T={T} placeholder={T.isEn ? "Email" : "אימייל"} value={email} onChange={e=>setEmail(e.target.value)} type="email" />
+        <FI T={T} type="password" placeholder={T.isEn ? "Password" : "סיסמה"} value={password} onChange={e=>setPassword(e.target.value)} />
+        <PB T={T} onClick={()=>onLogin({method:"email", email, password})} style={{background:T.primary, height: "54px"}}>{T.isEn ? "Login" : "כניסה"}</PB>
+        <div style={{textAlign:"center", color:T.muted, fontSize:T.f(12), margin:"4px 0"}}>{T.UI.or || "או"}</div>
+        <button onClick={()=>onLogin({method:"google"})} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1.5px solid ${T.border}`,background:T.card,cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:T.navy,fontFamily:T.font,height:"54px",boxShadow:"0 4px 12px rgba(0,0,0,0.05)",transition:"all 0.2s"}}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>{T.UI.continueWith} Google</button>
+        <button onClick={()=>onLogin({method:"apple"})} style={{display:"flex",alignItems:"center",justifyContent:"center",gap:12,padding:"13px 20px",borderRadius:14,border:`1px solid #000`,background:"#000",cursor:"pointer",fontSize:T.f(15),fontWeight:700,color:"#fff",fontFamily:T.font,height:"54px",boxShadow:"0 4px 12px rgba(0,0,0,0.15)",transition:"all 0.2s"}}><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path fill="#fff" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.126 3.805 3.078 1.52-.046 2.093-.974 3.935-.974 1.83 0 2.453.974 3.985.932 1.595-.04 2.62-1.554 3.618-3.02 1.157-1.697 1.633-3.344 1.657-3.428-.035-.015-3.213-1.233-3.24-4.92-.023-3.08 2.518-4.568 2.632-4.636-1.442-2.106-3.677-2.39-4.475-2.445-2.022-.132-4.004 1.35-5.51 1.35z"/><path fill="#fff" d="M15.523 4.363c.844-1.025 1.41-2.453 1.256-3.873-1.21.05-2.716.808-3.585 1.826-.777.893-1.455 2.355-1.267 3.75 1.354.105 2.753-.674 3.596-1.703z"/></svg>{T.UI.continueWith} Apple</button>
+      </div>
+      {err&&<div style={{color:T.red,fontSize:T.f(13),marginTop:12,textAlign:"center"}}>{err}</div>}
+      <div style={{marginTop:32, display:"flex", gap:16, justifyContent:"center"}}><button onClick={()=>setLegalType('terms')} style={{background:"none", border:"none", textDecoration:"underline", color:T.muted, cursor:"pointer", fontFamily:T.font, fontSize:T.f(13)}}>{T.UI.terms}</button><button onClick={()=>setLegalType('privacy')} style={{background:"none", border:"none", textDecoration:"underline", color:T.muted, cursor:"pointer", fontFamily:T.font, fontSize:T.f(13)}}>{T.UI.privacy}</button></div>
+      <LegalSheet show={!!legalType} onClose={()=>setLegalType(null)} type={legalType} T={T} />
+    </div>
   );
 }
 
@@ -1066,7 +1336,6 @@ export default function App(){
 
   useEffect(() => {
     let cancelled = false;
-
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       try {
         if (u) {
@@ -1095,6 +1364,7 @@ export default function App(){
       return () => clearTimeout(saveTimer);
   }, [prog, goals, sett, activity, activeDays, loaded, user]);
 
+  const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
 
