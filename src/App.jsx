@@ -1663,6 +1663,7 @@ function AuthScreen({onLogin,T,globalError}){
 }
 
 /* ── ROOT ── */
+/* ── ROOT ── */
 export default function App(){
   useEffect(()=>{ if(!document.getElementById("hf")){const l=document.createElement("link");l.id="hf"; l.rel="stylesheet"; l.href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800;900&display=swap";document.head.appendChild(l);} },[]);
   
@@ -1680,72 +1681,41 @@ export default function App(){
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    let authStateResolved = false;
-    let redirectResolved = false;
     let cancelled = false;
 
-    const checkAuthReady = () => {
-      if (!cancelled && authStateResolved && redirectResolved) {
-        setIsAuthLoading(false);
-      }
-    };
-
-    const initAuth = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async (u) => {
       try {
-         await setPersistence(auth, browserLocalPersistence);
-      } catch (e) {
-         console.error(e);
-      }
-      
-      onAuthStateChanged(auth, async (u) => {
-        try {
-          if (u) {
-            const safeEmail = u.email || "";
-            setUser({
-              uid: u.uid,
-              email: safeEmail,
-              name: u.displayName || (safeEmail ? safeEmail.split("@")[0] : "משתמש")
-            });
-            const docSnap = await getDoc(doc(db, "users", u.uid));
-            if (docSnap.exists() && docSnap.data()) {
-              const data = docSnap.data();
-              setProg(desProg(data.prog));
-              setGoals(Array.isArray(data.goals) ? data.goals : []);
-              setSett(prev => ({ ...prev, ...(data.sett || {}) }));
-              setActivity(Array.isArray(data.activity) ? data.activity : []);
-              setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
-            } else {
-              setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
-            }
+        if (u) {
+          const safeEmail = u.email || "";
+          setUser({
+            uid: u.uid,
+            email: safeEmail,
+            name: u.displayName || (safeEmail ? safeEmail.split("@")[0] : "משתמש")
+          });
+          const docSnap = await getDoc(doc(db, "users", u.uid));
+          if (docSnap.exists() && docSnap.data()) {
+            const data = docSnap.data();
+            setProg(desProg(data.prog));
+            setGoals(Array.isArray(data.goals) ? data.goals : []);
+            setSett(prev => ({ ...prev, ...(data.sett || {}) }));
+            setActivity(Array.isArray(data.activity) ? data.activity : []);
+            setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
           } else {
-            setUser(null); setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
+            setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
           }
-        } catch (e) {
-          console.error(e);
-          setAuthErrorMsg(e.message || "Auth error");
-        } finally {
-          setLoaded(true);
-          authStateResolved = true;
-          checkAuthReady();
+        } else {
+          setUser(null); setProg(IP); setGoals([]); setActivity([]); setActiveDays([]);
         }
-      });
-      
-      getRedirectResult(auth)
-        .then((result) => {
-          if (result?.user) console.log("Redirect sign-in success");
-        })
-        .catch((e) => {
-          if (e.code !== "auth/no-current-user" && e.code !== "auth/null-user") {
-            setAuthErrorMsg(e.message || "Redirect sign-in failed");
-          }
-        })
-        .finally(() => {
-          redirectResolved = true;
-          checkAuthReady();
-        });
-    };
-    
-    initAuth();
+      } catch (e) {
+        console.error(e);
+        setAuthErrorMsg(e.message || "Auth error");
+      } finally {
+        if (!cancelled) {
+          setLoaded(true);
+          setIsAuthLoading(false);
+        }
+      }
+    });
 
     const emergencyTimeout = setTimeout(() => {
         if (isAuthLoading && !cancelled) {
@@ -1757,6 +1727,7 @@ export default function App(){
     return () => {
       cancelled = true;
       clearTimeout(emergencyTimeout);
+      unsubscribe();
     };
   }, []);
 
@@ -1773,7 +1744,6 @@ export default function App(){
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
   const cc=sett.dark?CC_D:CC_L, cl=sett.dark?CL_D:CL_L, appSt={direction:T.isEn?"ltr":"rtl",fontFamily:T.font,maxWidth:480, margin:"0 auto", minHeight:"100vh", width:"100%", display:"flex",flexDirection:"column",background:T.bg,color:T.navy,boxSizing:"border-box", position:"relative"};
 
-  // מסך טעינה
   if (isAuthLoading || (user && !loaded)) {
      return (
        <div style={{...appSt, justifyContent: "center", alignItems: "center", height: "100vh"}}>
@@ -1800,26 +1770,12 @@ export default function App(){
               provider.addScope("email");
               provider.addScope("name");
             }
-
-            const ua = navigator.userAgent;
-            const isIOSApp = /iPad|iPhone|iPod/.test(ua);
-
-            if (isIOSApp) {
-              await signInWithRedirect(auth, provider);
-              return;
-            }
             
-            try {
-              await signInWithPopup(auth, provider);
-            } catch (err) {
-              if (err.code === "auth/popup-blocked") {
-                await signInWithRedirect(auth, provider);
-              } else {
-                throw err;
-              }
-            }
+            // שימוש ב-Popup בלבד. הסרנו את הגיבוי של ה-Redirect
+            await signInWithPopup(auth, provider);
+
           } catch (err) {
-            if (err.code !== "auth/popup-closed-by-user") {
+            if (err.code !== "auth/popup-closed-by-user" && err.code !== "auth/cancelled-popup-request") {
               setAuthErrorMsg(err.message || "Login failed");
             }
           }
