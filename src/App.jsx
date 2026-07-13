@@ -1211,7 +1211,46 @@ function LibraryScreen({prog,T,cc,cl,setProg,setDetail,libCat,setLibCat}){
       <Sheet show={custSheet} onClose={()=>setCustSheet(false)} title={T.UI.addBook} T={T}><FL label={T.UI.book} T={T}><FI T={T} value={cd.name} onChange={e=>setCd(f=>({...f,name:e.target.value}))}/></FL><FL label={T.UI.perakim} T={T}><FI T={T} type="number" value={cd.chapters} onChange={e=>setCd(f=>({...f,chapters:e.target.value}))}/></FL><FL label={T.UI.topic} T={T}><FS T={T} value={cd.cat} onChange={e=>setCd(f=>({...f,cat:e.target.value}))}><option value="musar">מוסר</option><option value="ravKook">ספרי הראי״ה</option><option value="machshava">מחשבה</option><option value="other">אישי / אחר</option></FS></FL><PB T={T} onClick={()=>{if(!cd.name||!cd.chapters)return; setProg(prev=>{const p=prev||IP; return {...p,custom:[...(p.custom||[]),{name:cd.name,chapters:parseInt(cd.chapters),catLabel:"אישי",cat:cd.cat,done:new Set()}]}}); setCustSheet(false); setCd({name:"",chapters:"",cat:"musar"});}} style={{marginTop:6,background:NAVY}}>{T.UI.save}</PB></Sheet></div>
   );
 }
+/* ── GOAL ROW ── */
+function GoalRow({ g, prog, T, cc, onEdit, onDelete, custom }) {
+  if (!g) return null;
+  const isO = g.cat === "other";
+  const list = isO ? [] : getBkList(g.cat, custom);
+  const item = list.find(l => String(l.idKey) === String(g.isC ? 'custom_c' + g.origIdx : g.cat + '_s' + g.idx));
+  
+  const nm = isO ? g.otherName : (item?.n || "");
+  const cur = isO ? 0 : (g.isC ? (prog?.custom?.[g.origIdx]?.done?.size || 0) : calcDone(prog, g.cat, g.idx));
+  const target = g.target || 1;
+  const p2 = pct(Math.min(cur, target), target);
+  const rem = Math.max(0, Math.round((new Date(g.deadline) - new Date()) / 86400000));
+  const col = cc[g.cat] || T.primary;
 
+  return (
+    <div style={{ background: T.card, borderRadius: 14, padding: "14px", marginBottom: 12, boxShadow: T.shadow, borderRight: `4px solid ${col}` }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+        <div>
+          <div style={{ fontSize: T.f(15), fontWeight: 700, color: T.navy, textAlign: "start" }}>{nm}</div>
+          <div style={{ fontSize: T.f(12), color: T.muted, textAlign: "start", marginTop: 4 }}>{rem} {T.UI.daysLeft}</div>
+        </div>
+        <div style={{ textAlign: "center", flexShrink: 0, marginLeft: 12 }}>
+          <div style={{ fontSize: T.f(22), fontWeight: 900, color: col }}>{p2}%</div>
+          <div style={{ fontSize: T.f(10), color: T.muted }}>{cur}/{target}</div>
+        </div>
+      </div>
+      
+      <Bar p={p2} color={col} h={6} dark={T.dark} />
+      
+      <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 14 }}>
+        <button onClick={onEdit} style={{ padding: "6px 12px", borderRadius: 8, background: "transparent", border: `1.5px solid ${T.border}`, cursor: "pointer", color: T.navy, fontSize: T.f(12), fontFamily: T.font, display: "flex", alignItems: "center", gap: 6 }}>
+          <IcoEdit /> {T.isEn ? "Edit" : "ערוך"}
+        </button>
+        <button onClick={onDelete} style={{ padding: "6px 12px", borderRadius: 8, background: "transparent", border: `1.5px solid ${T.border}`, cursor: "pointer", color: T.red, fontSize: T.f(12), fontFamily: T.font }}>
+          {T.UI.del}
+        </button>
+      </div>
+    </div>
+  );
+}
 function GoalsScreen({goals, setGoals, prog, T, cc}){
   const [showSheet, setShowSheet] = useState(false);
   const [editingId, setEditingId] = useState(null);
