@@ -7,7 +7,10 @@ import {
   GoogleAuthProvider, 
   signInWithPopup, 
   OAuthProvider, 
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
+  signInWithRedirect
 } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
@@ -1211,6 +1214,7 @@ function LibraryScreen({prog,T,cc,cl,setProg,setDetail,libCat,setLibCat}){
       <Sheet show={custSheet} onClose={()=>setCustSheet(false)} title={T.UI.addBook} T={T}><FL label={T.UI.book} T={T}><FI T={T} value={cd.name} onChange={e=>setCd(f=>({...f,name:e.target.value}))}/></FL><FL label={T.UI.perakim} T={T}><FI T={T} type="number" value={cd.chapters} onChange={e=>setCd(f=>({...f,chapters:e.target.value}))}/></FL><FL label={T.UI.topic} T={T}><FS T={T} value={cd.cat} onChange={e=>setCd(f=>({...f,cat:e.target.value}))}><option value="musar">מוסר</option><option value="ravKook">ספרי הראי״ה</option><option value="machshava">מחשבה</option><option value="other">אישי / אחר</option></FS></FL><PB T={T} onClick={()=>{if(!cd.name||!cd.chapters)return; setProg(prev=>{const p=prev||IP; return {...p,custom:[...(p.custom||[]),{name:cd.name,chapters:parseInt(cd.chapters),catLabel:"אישי",cat:cd.cat,done:new Set()}]}}); setCustSheet(false); setCd({name:"",chapters:"",cat:"musar"});}} style={{marginTop:6,background:NAVY}}>{T.UI.save}</PB></Sheet></div>
   );
 }
+
 /* ── GOAL ROW ── */
 function GoalRow({ g, prog, T, cc, onEdit, onDelete, custom }) {
   if (!g) return null;
@@ -1251,6 +1255,7 @@ function GoalRow({ g, prog, T, cc, onEdit, onDelete, custom }) {
     </div>
   );
 }
+
 function GoalsScreen({goals, setGoals, prog, T, cc}){
   const [showSheet, setShowSheet] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -1372,21 +1377,42 @@ export default function App(){
   const [activity, setActivity] = useState([]);
   const [activeDays, setActiveDays] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  
+  const [isDataReady, setIsDataReady] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+
+    setPersistence(auth, browserLocalPersistence).catch(console.error);
+
     const unsubscribe = onAuthStateChanged(auth, async (u) => {
       try {
         if (u) {
           const safeEmail = u.email || "";
           setUser({ uid: u.uid, email: safeEmail, name: u.displayName || (safeEmail ? safeEmail.split("@")[0] : "משתמש") });
+          
           const docSnap = await getDoc(doc(db, "users", u.uid));
           if (docSnap.exists() && docSnap.data()) {
             const data = docSnap.data();
-            setProg(desProg(data.prog)); setGoals(Array.isArray(data.goals) ? data.goals : []); setSett(prev => ({ ...prev, ...(data.sett || {}) })); setActivity(Array.isArray(data.activity) ? data.activity : []); setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
-          } else { setProg(IP); setGoals([]); setActivity([]); setActiveDays([]); }
-        } else { setUser(null); setProg(IP); setGoals([]); setActivity([]); setActiveDays([]); }
-      } catch (e) { console.error(e); setAuthErrorMsg(e.message || "Auth error"); } 
+            setProg(desProg(data.prog)); 
+            setGoals(Array.isArray(data.goals) ? data.goals : []); 
+            setSett(prev => ({ ...prev, ...(data.sett || {}) })); 
+            setActivity(Array.isArray(data.activity) ? data.activity : []); 
+            setActiveDays(Array.isArray(data.activeDays) ? data.activeDays : []);
+          } else { 
+            setProg(IP); setGoals([]); setActivity([]); setActiveDays([]); 
+          }
+          
+          if (!cancelled) setIsDataReady(true);
+        } else { 
+          setUser(null); 
+          setIsDataReady(false); 
+          setProg(IP); setGoals([]); setActivity([]); setActiveDays([]); 
+        }
+      } catch (e) { 
+        console.error(e); 
+        setAuthErrorMsg(e.message || "Auth error"); 
+      }
       finally { if (!cancelled) { setLoaded(true); setIsAuthLoading(false); } }
     });
 
@@ -1395,13 +1421,14 @@ export default function App(){
   }, []);
 
   useEffect(() => {
-      if (!loaded || !user) return;
+      if (!loaded || !user || !isDataReady) return;
+      
       const saveTimer = setTimeout(() => {
           const rawData = { prog: serProg(prog), goals: goals || [], sett: sett, activity: (activity || []).slice(0, 50), activeDays: (activeDays || []).slice(-60) };
           setDoc(doc(db, "users", user.uid), JSON.parse(JSON.stringify(rawData)), { merge: true }).catch(e => console.error("Firebase Save Error:", e));
       }, 500);
       return () => clearTimeout(saveTimer);
-  }, [prog, goals, sett, activity, activeDays, loaded, user]);
+  }, [prog, goals, sett, activity, activeDays, loaded, user, isDataReady]);
 
   const streak=useMemo(()=>{ if(!Array.isArray(activeDays) || !activeDays.length) return 0; const sorted=[...new Set(activeDays)].sort().reverse(); const td=todayKey(), yd=new Date(); yd.setDate(yd.getDate()-1); const ydStr=yd.toISOString().slice(0,10); if(sorted[0]!==td&&sorted[0]!==ydStr)return 0; let count=1; for(let i=1;i<sorted.length;i++){ if(sorted[i]===(new Date(new Date(sorted[i-1]).getTime()-86400000).toISOString().slice(0,10))) count++; else break; } return count; },[activeDays]);
   const T=useMemo(()=>mkT(sett.dark,sett.fontSize,sett.lang||"he"),[sett.dark,sett.fontSize,sett.lang]);
